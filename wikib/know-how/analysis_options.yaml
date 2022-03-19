@@ -1,0 +1,12 @@
+analyzer:
+  exclude: 
+    - '**/*.g.dart'
+  errors:
+    todo: ignore
+    unused_catch_clause: ignore
+    unused_import: ignore
+    unnecessary_import: ignore
+    deprecated_member_use: ignore
+
+linter:
+  rules:
