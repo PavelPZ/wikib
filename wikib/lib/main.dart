@@ -3,12 +3,21 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_navigator/riverpod_navigator.dart';
+import 'package:protobuf_for_dart/algorithm.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+import 'utils/protobuf.dart';
+//import 'package:path_provider/path_provider.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'main.g.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final byteData = await rootBundle.load('assets/bin/lang-info.bin');
+  final langInfos = Protobuf.fromBytes(byteData.buffer.asUint8List(), () => LangInfos());
+
   runApp(
     ProviderScope(
       overrides: providerOverrides(const [HomeSegment()], AppNavigator.new),
