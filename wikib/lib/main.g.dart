@@ -10,7 +10,7 @@ class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext _context, WidgetRef _ref) => myApp(_ref);
+  Widget build(BuildContext _context, WidgetRef _ref) => myApp(_context, _ref);
 }
 
 /// for Row or Column childs

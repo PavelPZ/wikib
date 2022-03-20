@@ -6,6 +6,7 @@ import 'package:riverpod_navigator/riverpod_navigator.dart';
 import 'package:protobuf_for_dart/algorithm.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import 'utils/media_query.dart';
 import 'utils/protobuf.dart';
 //import 'package:path_provider/path_provider.dart';
 
@@ -27,7 +28,7 @@ void main() async {
 }
 
 @cwidget
-Widget myApp(WidgetRef ref) {
+Widget myApp(BuildContext context, WidgetRef ref) {
   final navigator = ref.read(navigatorProvider) as AppNavigator;
   return MaterialApp.router(
     title: 'Flutter Demo',
@@ -62,7 +63,9 @@ class HomeScreen extends RScreen<AppNavigator, HomeSegment> {
   const HomeScreen(HomeSegment segment) : super(segment);
 
   @override
-  Widget buildScreen(context, ref, navigator, appBarLeading) => Scaffold(
+  Widget buildScreen(context, ref, navigator, appBarLeading) {
+    return MediaQueryWrapper(
+      child: Scaffold(
         appBar: AppBar(
           title: Text('Home'),
           leading: appBarLeading,
@@ -72,7 +75,14 @@ class HomeScreen extends RScreen<AppNavigator, HomeSegment> {
             onTap: () => FocusScope.of(context).unfocus(),
             child: Column(
               children: [
-                Wrapper(flex: 1, child: Text('')),
+                Consumer(builder: (_, ref, __) {
+                  final data = ref.watch(widthProvider.select((v) => v < 300
+                      ? 'mobile'
+                      : v < 900
+                          ? 'tablet'
+                          : 'desktop'));
+                  return Wrapper(flex: 1, child: Text('$data'));
+                }),
                 Spacer(flex: 1),
                 Container(),
                 SizedBox(),
@@ -81,7 +91,9 @@ class HomeScreen extends RScreen<AppNavigator, HomeSegment> {
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 /// for Row or Column childs
