@@ -2,6 +2,12 @@
 	"folders": [
 		{
 			"path": "wikib"
+		},
+		{
+			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator"
+		},
+		{
+			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator_core"
 		}
 	],
 	"settings": {
@@ -15,7 +21,7 @@
 			"tsconfig.json": "tsconfig.*.json",
 			"package.json": "package-lock.json, .npmrc, yarn.lock, .yarnrc, pnpm-lock.yaml",
 			"pubspec.yaml": ".*,*.iml,*.lock",
-			"readme.md": "readme.*,changelog.md,license"
+			"readme.md": "readme.*,changelog.md,license,*.md"
 		}
 	}
 }

@@ -3,11 +3,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_navigator/riverpod_navigator.dart';
-import 'package:protobuf_for_dart/algorithm.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 import 'utils/media_query.dart';
-import 'utils/protobuf.dart';
+import 'world/world.dart';
 //import 'package:path_provider/path_provider.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
@@ -15,13 +13,9 @@ part 'main.g.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final byteData = await rootBundle.load('assets/bin/lang-info.bin');
-  final langInfos = Protobuf.fromBytes(byteData.buffer.asUint8List(), () => LangInfos());
-
   runApp(
     ProviderScope(
-      overrides: providerOverrides(const [HomeSegment()], AppNavigator.new),
+      overrides: providerOverrides([RegionSegment()], AppNavigator.new),
       child: const MyApp(),
     ),
   );
@@ -40,7 +34,7 @@ Widget myApp(BuildContext context, WidgetRef ref) {
 
 class HomeSegment extends TypedSegment {
   const HomeSegment();
-  // ignore: avoid_unused_constructor_parameters
+  // ignore: avoid_ unused_constructor_parameters
   factory HomeSegment.fromUrlPars(UrlPars pars) => const HomeSegment();
 }
 
@@ -54,8 +48,12 @@ class AppNavigator extends RNavigator {
               HomeSegment.fromUrlPars,
               HomeScreen.new,
             ),
+            ...worldRoutes,
           ],
           progressIndicatorBuilder: () => const SpinKitCircle(color: Colors.blue, size: 45),
+          navigatorWraperBuilder: (rnavig, navig) => MediaQueryWrapper(
+            child: NavigatorWraper(rnavig, navig),
+          ),
         );
 }
 
@@ -64,31 +62,29 @@ class HomeScreen extends RScreen<AppNavigator, HomeSegment> {
 
   @override
   Widget buildScreen(context, ref, navigator, appBarLeading) {
-    return MediaQueryWrapper(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Home'),
-          leading: appBarLeading,
-        ),
-        body: SafeArea(
-          child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Column(
-              children: [
-                Consumer(builder: (_, ref, __) {
-                  final data = ref.watch(widthProvider.select((v) => v < 300
-                      ? 'mobile'
-                      : v < 900
-                          ? 'tablet'
-                          : 'desktop'));
-                  return Wrapper(flex: 1, child: Text('$data'));
-                }),
-                Spacer(flex: 1),
-                Container(),
-                SizedBox(),
-                Align(),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+        leading: appBarLeading,
+      ),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: [
+              Consumer(builder: (_, ref, __) {
+                final data = ref.watch(mediaWidthProvider.select((v) => v < 300
+                    ? 'mobile'
+                    : v < 900
+                        ? 'tablet'
+                        : 'desktop'));
+                return Wrapper(flex: 1, child: Text('$data'));
+              }),
+              Spacer(flex: 1),
+              Container(),
+              SizedBox(),
+              Align(),
+            ],
           ),
         ),
       ),
