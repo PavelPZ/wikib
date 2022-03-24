@@ -15,3 +15,9 @@ world (@c, @l, @s, p, regions*)
     lang (speakers, s*, c*)
   scripts 
     script (letters, l*)
+
+
+--------
+
+https://github.com/felixblaschke/simple_animations
+https://pub.dev/documentation/locales/latest/locales/Locale-class.html#constants 

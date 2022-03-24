@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator_core"
+		},
+		{
+			"path": "localization"
 		}
 	],
 	"settings": {

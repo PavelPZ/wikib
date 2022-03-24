@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:localization/localization_meta.dart';
 import 'package:riverpod_navigator/riverpod_navigator.dart';
 
+import 'localize.dart';
 import 'utils/media_query.dart';
 import 'world/world.dart';
 //import 'package:path_provider/path_provider.dart';
@@ -80,6 +82,7 @@ class HomeScreen extends RScreen<AppNavigator, HomeSegment> {
                         : 'desktop'));
                 return Wrapper(flex: 1, child: Text('$data'));
               }),
+              Text(Lo$msg(1, 'Hi, how are you?', _lo$file).loc),
               Spacer(flex: 1),
               Container(),
               SizedBox(),
@@ -100,3 +103,6 @@ Widget wrapper({int flex = 0, AlignmentDirectional? alignment, EdgeInsetsDirecti
   if (flex > 0) child = Expanded(flex: flex, child: child);
   return child;
 }
+
+const _lo$file = Lo$file(1, r'main.dart', lo$project);
+final _msg = Lo$msg(2, 'Hi, how are you?', _lo$file).loc;

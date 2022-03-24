@@ -4,7 +4,9 @@ import 'package:protobuf_for_dart/algorithm.dart';
 import 'package:riverpod_navigator/riverpod_navigator.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:localization/localization_meta.dart';
 
+import '../localize.dart';
 import '../utils/protobuf.dart';
 import '../utils/lowutils.dart';
 
@@ -12,3 +14,5 @@ part 'world.g.dart';
 part 'data.dart';
 part 'segment.dart';
 part 'screens.dart';
+
+const _lo$file = Lo$file(2, r'world\world.dart', lo$project);
