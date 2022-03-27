@@ -15,4 +15,4 @@ part 'data.dart';
 part 'segment.dart';
 part 'screens.dart';
 
-const _lo$file = Lo$file(2, r'world\world.dart', lo$project);
+const _lo$file = Lo$file('2', lo$project);

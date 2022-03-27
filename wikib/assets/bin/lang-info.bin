@@ -37,17 +37,17 @@ Micronesia"FM"GU"KI"MH"MP"NR"PW"UM8
 achAcoli"Latn
 adaAdangme"Latn
 adyAdyghe"Cyrl
-aebTunisian Arabic"Arab
-af	Afrikaans"Latn
+aebTunisian Arabic"Arab
+af	Afrikaans"LatnJLatn
 agqAghem"Latn
 akAkan"Latn
 alnGheg Albanian"Latn
-altSouthern Altai"Cyrl
-amAmharic"Ethi
+altSouthern Altai"Cyrl
+amAmharic"EthiJEthi
 amoAmo"Latn
 an	Aragonese"Latn
-aozUab Meto"Latn
-arArabic"Arab"Syrc
+aozUab Meto"Latn
+arArabic"Arab"SyrcJArab
 arnMapuche"Latn
 aroAraona"Latn
 arqAlgerian Arabic"Arab
@@ -60,8 +60,8 @@ Micronesia"FM"GU"KI"MH"MP"NR"PW"UM8
 atj	Atikamekw"Latn
 avAvaric"Cyrl
 awaAwadhi"Deva
-ayAymara"Latn#
-azAzerbaijani"Arab"Cyrl"Latn
+ayAymara"Latn)
+azAzerbaijani"Arab"Cyrl"LatnJLatn
 baBashkir"Cyrl
 balBaluchi"Arab"Latn
 banBalinese"Latn"Bali
@@ -72,9 +72,9 @@ Micronesia"FM"GU"KI"MH"MP"NR"PW"UM8
 bbc
 Batak Toba"Latn"Batk
 bbjGhomala"Latn
-bciBaoulÃ©"Latn
+bciBaoulÃ©"Latn
 be
-Belarusian"Cyrl
+Belarusian"CyrlJCyrl
 bejBeja"Arab
 bemBemba"Latn
 bewBetawi"Latn
@@ -82,8 +82,8 @@ Belarusian"Cyrl
 bfdBafut"Latn
 bfqBadaga"Taml
 bftBalti"Arab"Tibt
-bfyBagheli"Deva
-bg	Bulgarian"Cyrl
+bfyBagheli"Deva
+bg	Bulgarian"CyrlJCyrl
 bgcHaryanvi"Deva
 bgnWestern Balochi"Arab"
 bgxBalkan Gagauz Turkish"Grek
@@ -99,8 +99,8 @@ Belarusian"Cyrl
 bkmKom"Latn
 bkuBuhid"Latn"Buhd
 bmBambara"Latn"Nkoo
-bmqBomu"Latn
-bnBangla"Beng
+bmqBomu"Latn
+bnBangla"BengJBeng
 boTibetan"Tibt
 bpyBishnupriya"Beng
 bqi	Bakhtiari"Arab
@@ -109,8 +109,8 @@ Koro Wachi"Latn
 brBreton"LatnBch
 braBraj"Deva
 brhBrahui"Arab"Latn
-brxBodo"Deva
-bsBosnian"Cyrl"Latn
+brxBodo"Deva
+bsBosnian"Cyrl"LatnJLatn
 bssAkoose"Latn
 btoRinconada Bikol"Latn
 btvBateri"Deva
@@ -121,12 +121,12 @@ Koro Wachi"Latn
 bvbBube"Latn
 bynBlin"Ethi
 byvMedumba"Latn
-bzeJenaama Bozo"Latn
-caCatalan"LatnBchBll
+bzeJenaama Bozo"Latn!
+caCatalan"LatnBchBllJLatn
 cchAtsam"Latn
 ccpChakma"Beng
-ceChechen"Cyrl
-cebCebuano"LatnBng
+ceChechen"Cyrl
+cebCebuano"LatnBngJLatn
 cggChiga"Latn
 chChamorro"Latn
 chkChuukese"Latn
@@ -136,8 +136,8 @@ Koro Wachi"Latn
 chrCherokee"Cher
 cjaWestern Cham"Arab"Cham
 cjmEastern Cham"Cham"Arab
-ckbCentral Kurdish"Arab
-coCorsican"Latn
+ckbCentral Kurdish"Arab
+coCorsican"LatnJLatn
 cpsCapiznon"Latn
 crCree"Cans"Latn
 crhCrimean Turkish"Cyrl%
@@ -146,18 +146,18 @@ Koro Wachi"Latn
 crlNorthern East Cree"Cans"Latn
 crm
 Moose Cree"Cans"
-crsSeselwa Creole French"Latn
-csCzech"LatnBch
+crsSeselwa Creole French"Latn
+csCzech"LatnBchJLatn
 csb	Kashubian"Latn
 cswSwampy Cree"Cans
-cvChuvash"Cyrl1
-cyWelsh"LatnBchBddBffBngBllBphBrhBth
-daDanish"LatnBaa
+cvChuvash"Cyrl7
+cyWelsh"LatnBchBddBffBngBllBphBrhBthJLatn
+daDanish"LatnBaaJLatn
 dakDakota"Latn
 darDargwa"Cyrl
 davTaita"Latn
-dccDeccan"Arab
-deGerman"Latn"Runr
+dccDeccan"Arab
+deGerman"Latn"RunrJLatn
 denSlave"Latn"Cans
 dgrDogrib"Latn
 djeZarma"Latn
@@ -176,28 +176,28 @@ Jola-Fonyi"Latn"Arab
 ebuEmbu"Latn#
 eeEwe"LatnBdzBgbBkpBnyBts
 efiEfik"Latn
-eglEmilian"Latn
-elGreek"Grek
-enEnglish"Latn
-eo	Esperanto"Latn
-esSpanish"LatnBchBll
-esuCentral Yupik"Latn
-etEstonian"Latn
-euBasque"Latn
+eglEmilian"Latn
+elGreek"GrekJGrek
+enEnglish"LatnJLatn
+eo	Esperanto"LatnJLatn!
+esSpanish"LatnBchBllJLatn
+esuCentral Yupik"Latn
+etEstonian"LatnJLatn
+euBasque"LatnJLatn
 ewoEwondo"Latn
-extExtremaduran"Latn
-faPersian"Arab
+extExtremaduran"Latn
+faPersian"ArabJArab
 fanFang"Latn
 ffFulah"Latn
-ffmMaasina Fulfulde"Latn
-fiFinnish"Latn
-fiaNobiin"Arab
-filFilipino"Latn"TglgBng
+ffmMaasina Fulfulde"Latn
+fiFinnish"LatnJLatn
+fiaNobiin"Arab%
+filFilipino"Latn"TglgBngJLatn
 fitTornedalen Finnish"Latn
 fjFijian"Latn
 foFaroese"LatnBaa
-fonFon"Latn
-frFrench"Latn
+fonFon"Latn
+frFrench"LatnJLatn
 frcCajun French"Latn
 frpArpitan"Latn
 frrNorthern Frisian"Latn
@@ -206,23 +206,23 @@ Jola-Fonyi"Latn"Arab
 fuqCentral-Eastern Niger Fulfulde"Latn
 furFriulian"Latn
 fuvNigerian Fulfulde"Latn
-fvrFur"Latn
-fyWestern Frisian"Latn
-gaIrish"Latn
+fvrFur"Latn!
+fyWestern Frisian"LatnJLatn
+gaIrish"LatnJLatn
 gaaGa"Latn
 gagGagauz"Latn"Cyrl
 ganGan Chinese"Hans
 gayGayo"Latn
 gbmGarhwali"Deva
 gbzZoroastrian Dari"Arab#
-gcrGuianese Creole French"Latn
-gdScottish Gaelic"Latn
+gcrGuianese Creole French"Latn!
+gdScottish Gaelic"LatnJLatn
 gil
 Gilbertese"Latn
 gjk
 Kachi Koli"Arab
-gjuGujari"Arab
-glGalician"Latn
+gjuGujari"Arab
+glGalician"LatnJLatn
 glkGilaki"Arab
 gnGuarani"Latn
 gomGoan Konkani"Deva
@@ -230,8 +230,8 @@ Kachi Koli"Arab
 gor	Gorontalo"Latn
 gosGronings"Latn
 grtGaro"Beng
-gswSwiss German"Latn
-guGujarati"Gujr
+gswSwiss German"Latn
+guGujarati"GujrJGujr
 gub
 GuajajÃ¡ra"Latn
 gucWayuu"Latn
@@ -239,13 +239,13 @@ GuajajÃ¡ra"Latn
 guzGusii"Latn
 gvManx"Latn
 gvrGurung"Deva
-gwi	GwichÊ¼in"Latn
-haHausa"Arab"LatnBshBts
-hakHakka Chinese"Hans
-hawHawaiian"Latn
-hazHazaragi"Arab
-heHebrew"Hebr
-hiHindi"Deva"Latn
+gwi	GwichÊ¼in"Latn%
+haHausa"Arab"LatnBshBtsJLatn
+hakHakka Chinese"Hans
+hawHawaiian"LatnJLatn
+hazHazaragi"Arab
+heHebrew"HebrJHebr
+hiHindi"Deva"LatnJDeva
 hif
 Fiji Hindi"Deva"Latn
 hil
@@ -256,38 +256,38 @@ Hiligaynon"Latn
 hnoNorthern Hindko"Arab
 ho	Hiri Motu"Latn
 hocHo"Deva
-hojHadothi"Deva
-hrCroatian"LatnBljBnj
+hojHadothi"Deva"
+hrCroatian"LatnBljBnjJLatn
 hsbUpper Sorbian"LatnBch
-hsnXiang Chinese"Hans
-htHaitian Creole"Latn:
-hu	Hungarian"LatnBcsBdzBdzsBgyBlyBnyBszBtyBzs
-hyArmenian"Armn
+hsnXiang Chinese"Hans 
+htHaitian Creole"LatnJLatn@
+hu	Hungarian"LatnBcsBdzBdzsBgyBlyBnyBszBtyBzsJLatn
+hyArmenian"ArmnJArmn
 hzHerero"Latn
 iaInterlingua"Latn
 ibaIban"Latn
-ibbIbibio"Latn
+ibbIbibio"Latn"
 id
-Indonesian"Latn"Arab
-ifeIfÃ¨"Latn4
-igIgbo"LatnBchBgbBghBgwBkpBkwBnwBnyBsh
+Indonesian"Latn"ArabJLatn
+ifeIfÃ¨"Latn:
+igIgbo"LatnBchBgbBghBgwBkpBkwBnwBnyBshJLatn
 ii
 Sichuan Yi"Yiii"Latn
 ikInupiaq"Latn
 iktInuinnaqtun"Latn
 iloIloko"Latn
-inhIngush"Cyrl"Arab"Latn
-is	Icelandic"Latn
-itItalian"Latn
+inhIngush"Cyrl"Arab"Latn
+is	Icelandic"LatnJLatn
+itItalian"LatnJLatn
 iu	Inuktitut"Cans"Latn
-izhIngrian"Latn
-jaJapanese"Jpan$
+izhIngrian"Latn
+jaJapanese"JpanJHira$
 jamJamaican Creole English"Latn
 jgoNgomba"Latn
 jmcMachame"Latn
-jmlJumli"Deva
-jvJavanese"Latn"Java
-kaGeorgian"Geor
+jmlJumli"Deva 
+jvJavanese"Latn"JavaJLatn
+kaGeorgian"GeorJGeor
 kaaKara-Kalpak"Cyrl
 kabKabyle"Latn
 kacKachin"Latn
@@ -315,16 +315,16 @@ Sichuan Yi"Yiii"Latn
 kiKikuyu"Latn
 kiu	Kirmanjki"Latn
 kjKuanyama"Latn
-kjgKhmu"Laoo"Latn
-kkKazakh"Arab"Cyrl
+kjgKhmu"Laoo"Latn
+kkKazakh"Arab"CyrlJCyrl
 kkjKako"Latn
 klKalaallisut"Latn
-klnKalenjin"Latn
-kmKhmer"Khmr
-kmbKimbundu"Latn
-knKannada"Knda
-knfMankanya"Latn
-koKorean"Kore
+klnKalenjin"Latn
+kmKhmer"KhmrJKhmr
+kmbKimbundu"Latn
+knKannada"KndaJKnda
+knfMankanya"Latn
+koKorean"KoreJHang
 koiKomi-Permyak"Cyrl
 kokKonkani"Deva
 kosKosraean"Latn
@@ -337,22 +337,22 @@ Sichuan Yi"Yiii"Latn
 ksKashmiri"Arab"Deva
 ksbShambala"Latn
 ksfBafia"Latn
-ksh	Colognian"Latn
-kuKurdish"Arab"Cyrl"Latn
+ksh	Colognian"Latn%
+kuKurdish"Arab"Cyrl"LatnJLatn
 kumKumyk"Cyrl
 kvKomi"Cyrl
 kvrKerinci"Latn
 kvxParkari Koli"Arab
 kwCornish"Latn
 kxmNorthern Khmer"Thai
-kxpWadiyara Koli"Arab
-kyKyrgyz"Arab"Cyrl"Latn
-laLatin"Latn
+kxpWadiyara Koli"Arab$
+kyKyrgyz"Arab"Cyrl"LatnJCyrl
+laLatin"LatnJLatn
 ladLadino"Hebr
 lagLangi"Latn
 lahLahnda"Arab
-lajLango (Uganda)"Latn
-lbLuxembourgish"Latn
+lajLango (Uganda)"Latn
+lbLuxembourgish"LatnJLatn
 lbeLak"Cyrl
 lbwTolaki"Latn
 lcpWestern Lawa"Thai
@@ -369,21 +369,21 @@ Limburgish"Latn
 lktLakota"Latn
 lmnLambadi"Telu
 lmoLombard"LatnT
-lnLingala"LatnBgbBkpBmbBmfBmpBmvBndBngBngbBnkBnsBntBnyBnzBshBts
-loLao"Laoo
+lnLingala"LatnBgbBkpBmbBmfBmpBmvBndBngBngbBnkBnsBntBnyBnzBshBts
+loLao"LaooJLaoo
 lolMongo"Latn
 lozLozi"Latn
-lrcNorthern Luri"Arab
+lrcNorthern Luri"Arab
 lt
-Lithuanian"Latn
+Lithuanian"LatnJLatn
 ltg	Latgalian"Latn
 luLuba-Katanga"Latn
 lua
 Luba-Lulua"Latn
 luoLuo"Latn
 luyLuyia"Latn
-luzSouthern Luri"Arab
-lvLatvian"Latn
+luzSouthern Luri"Arab
+lvLatvian"LatnJLatn
 lwlEastern Lawa"Thai
 lzzLaz"Geor"Latn
 madMadurese"Latn
@@ -400,31 +400,31 @@ Luba-Lulua"Latn
 menMende"Latn
 merMeru"Latn
 mfaPattani Malay"Arab
-mfeMorisyen"Latn
-mgMalagasy"Latn
+mfeMorisyen"Latn
+mgMalagasy"LatnJLatn
 mghMakhuwa-Meetto"Latn
 mgoMetaÊ¼"Latn
 mgpEastern Magar"Deva
 mgyMbunga"Latn
-mhMarshallese"Latn
-miMaori"Latn
-minMinangkabau"Latn
+mhMarshallese"Latn
+miMaori"LatnJLatn
+minMinangkabau"Latn
 mk
-Macedonian"Cyrl
-ml	Malayalam"Mlym
-mlsMasalit"Latn!
-mn	Mongolian"Cyrl"Mong"Phag
+Macedonian"CyrlJCyrl
+ml	Malayalam"MlymJMlym
+mlsMasalit"Latn'
+mn	Mongolian"Cyrl"Mong"PhagJCyrl
 mniManipuri"Beng"Mtei
 mnwMon"Mymr
 moeInnu"Latn
 mohMohawk"Latn
-mosMossi"Latn
-mrMarathi"Deva
+mosMossi"Latn
+mrMarathi"DevaJDeva
 mrdWestern Magar"Deva
 mrjWestern Mari"Cyrl
-mroMru"Latn
-msMalay"Arab"Latn
-mtMaltese"Latn
+mroMru"Latn
+msMalay"Arab"LatnJLatn
+mtMaltese"LatnJLatn
 mtrMewari"Deva
 muaMundang"Latn
 musMuscogee"Latn
@@ -432,8 +432,8 @@ Macedonian"Cyrl
 mwkKita Maninkakan"Latn
 mwrMarwari"Deva
 mwvMentawai"Latn
-mxcManyika"Latn
-myBurmese"Mymr
+mxcManyika"Latn
+myBurmese"MymrJMymr
 myvErzya"Cyrl
 myxMasaaba"Latn
 mznMazanderani"Arab
@@ -441,14 +441,14 @@ Macedonian"Cyrl
 nanMin Nan Chinese"Hans
 nap
 Neapolitan"Latn
-naqNama"Latn!
-nbNorwegian BokmÃ¥l"LatnBaa%
+naqNama"Latn'
+nbNorwegian BokmÃ¥l"LatnBaaJLatn%
 nchCentral Huasteca Nahuatl"Latn
 ndNorth Ndebele"Latn
 ndcNdau"Latn
 nds
-Low German"Latn
-neNepali"Deva
+Low German"Latn
+neNepali"DevaJDeva
 newNewari"Deva
 ngNdonga"Latn
 nglLomwe"Latn%
@@ -456,8 +456,8 @@ Low German"Latn
 nhwWestern Huasteca Nahuatl"Latn
 nijNgaju"Latn
 niuNiuean"Latn
-njoAo Naga"Latn
-nlDutch"Latn
+njoAo Naga"Latn
+nlDutch"LatnJLatn
 nmgKwasio"Latn
 nnNorwegian Nynorsk"Latn
 nnh	Ngiemboon"Latn
@@ -469,16 +469,16 @@ Low German"Latn
 nsoNorthern Sotho"Latn
 nusNuer"Latn
 nvNavajo"Latn
-nxqNaxi"Latn
-nyNyanja"Latn
+nxqNaxi"Latn
+nyNyanja"LatnJLatn
 nymNyamwezi"Latn
 nynNyankole"Latn
 nziNzima"Latn
 ocOccitan"Latn+
-omOromo"Latn"EthiBchBdhBkhBnyBph
-orOdia"Orya
-osOssetic"Cyrl
-paPunjabi"Arab"Guru
+omOromo"Latn"EthiBchBdhBkhBnyBph
+orOdia"OryaJOrya
+osOssetic"Cyrl
+paPunjabi"Arab"GuruJGuru
 pag
 Pangasinan"Latn
 pamPampanga"Latn
@@ -489,16 +489,16 @@ Papiamento"Latn
 pcmNigerian Pidgin"Latn 
 pdcPennsylvania German"Latn
 pdtPlautdietsch"Latn
-pkoPÃ¶koot"Latn
-plPolish"Latn
+pkoPÃ¶koot"Latn
+plPolish"LatnJLatn
 pmsPiedmontese"Latn
 pntPontic"Cyrl"Grek"Latn
 pon	Pohnpeian"Latn
 prd
-Parsi-Dari"Arab
-psPashto"Arab
+Parsi-Dari"Arab
+psPashto"ArabJArab
 pt
-Portuguese"Latn
+Portuguese"LatnJLatn
 puuPunu"Latn
 quQuechua"Latn
 quc	KÊ¼icheÊ¼"Latn(
@@ -517,15 +517,15 @@ Rajasthani"Deva#
 rmtDomari"Arab
 rmuTavringer Romani"Latn
 rnRundi"Latn
-rngRonga"Latn
-roRomanian"Latn"Cyrl
+rngRonga"Latn 
+roRomanian"Latn"CyrlJLatn
 robTae'"Latn
 rofRombo"Latn
-rtmRotuman"Latn
-ruRussian"Cyrl
+rtmRotuman"Latn
+ruRussian"CyrlJCyrl
 rueRusyn"Cyrl
-rugRoviana"Latn
-rwKinyarwanda"Latn
+rugRoviana"Latn
+rwKinyarwanda"LatnJLatn
 rwkRwa"Latn
 ryuCentral Okinawan"Kana
 saSanskrit"Deva"Sinh
@@ -542,8 +542,8 @@ Saurashtra"Saur
 sckSadri"Deva
 scnSicilian"Latn
 scoScots"Latn
-scsNorth Slavey"Latn
-sdSindhi"Arab"Deva 
+scsNorth Slavey"Latn
+sdSindhi"Arab"DevaJArab 
 sdcSassarese Sardinian"Latn
 sdhSouthern Kurdish"Arab
 seNorthern Sami"Latn"Cyrl
@@ -553,39 +553,39 @@ Saurashtra"Saur
 sesKoyraboro Senni"Latn
 sgSango"Latn"
 shi	Tachelhit"Arab"Latn"Tfng
-shnShan"Mymr
-siSinhala"Sinh
-sidSidamo"Latn
-skSlovak"LatnBch
-skrSaraiki"Arab
-sl	Slovenian"Latn
+shnShan"Mymr
+siSinhala"SinhJSinh
+sidSidamo"Latn
+skSlovak"LatnBchJLatn
+skrSaraiki"Arab
+sl	Slovenian"LatnJLatn
 sliLower Silesian"Latn
-slySelayar"Latn
-smSamoan"Latn
+slySelayar"Latn
+smSamoan"LatnJLatn
 smaSouthern Sami"Latn
 smj	Lule Sami"Latn
 smn
 Inari Sami"Latn
 sms
-Skolt Sami"Latn
-snShona"Latn
-snkSoninke"Latn
-soSomali"Latn"Arab
-souSouthern Thai"Thai8
-sqAlbanian"LatnBdhBgjBllBnjBrrBshBthBxhBzh
-srSerbian"Cyrl"Latn
+Skolt Sami"Latn
+snShona"LatnJLatn
+snkSoninke"Latn
+soSomali"Latn"ArabJLatn
+souSouthern Thai"Thai>
+sqAlbanian"LatnBdhBgjBllBnjBrrBshBthBxhBzhJLatn
+srSerbian"Cyrl"LatnJCyrl
 srnSranan Tongo"Latn
 srrSerer"Latn
 srxSirmauri"Deva
 ssSwati"Latn
-ssySaho"Latn
-stSouthern Sotho"Latn
-stqSaterland Frisian"Latn
-su	Sundanese"Latn"Sund
+ssySaho"Latn 
+stSouthern Sotho"LatnJLatn
+stqSaterland Frisian"Latn!
+su	Sundanese"Latn"SundJLatn
 sukSukuma"Latn
-susSusu"Latn"Arab
-svSwedish"Latn
-swSwahili"Latn
+susSusu"Latn"Arab
+svSwedish"LatnJLatn
+swSwahili"LatnJLatn
 swbComorian"Arab"Latn
 swgSwabian"Latn
 swv
@@ -593,28 +593,28 @@ Shekhawati"Deva
 sxnSangir"Latn
 sylSylheti"Beng"Sylo
 syrSyriac"Syrc
-szlSilesian"Latn
-taTamil"Taml!
+szlSilesian"Latn
+taTamil"TamlJTaml!
 tajEastern Tamang"Deva"Tibt
 tbwTagbanwa"Latn"Tagb
 tcyTulu"Knda
 tddTai NÃ¼a"Tale!
 tdgWestern Tamang"Deva"Tibt
-tdhThulung"Deva
-teTelugu"Telu
+tdhThulung"Deva
+teTelugu"TeluJTelu
 temTimne"Latn
 teoTeso"Latn
-tetTetum"Latn
-tgTajik"Arab"Cyrl"Latn
-thThai"Thai
+tetTetum"Latn#
+tgTajik"Arab"Cyrl"LatnJCyrl
+thThai"ThaiJThai
 thlDangaura Tharu"Deva
 thqKochila Tharu"Deva
 thr
 Rana Tharu"Deva
 tiTigrinya"Ethi
 tigTigre"Ethi
-tivTiv"Latn
-tkTurkmen"Arab"Cyrl"Latn
+tivTiv"Latn%
+tkTurkmen"Arab"Cyrl"LatnJLatn
 tklTokelau"Latn
 tkrTsakhur"Cyrl"Latn
 tktKathoriya Tharu"Deva
@@ -623,16 +623,16 @@ Rana Tharu"Deva
 tnTswana"Latn
 toTongan"LatnBng
 togNyasa Tonga"Latn
-tpi	Tok Pisin"Latn
-trTurkish"Latn"Arab
+tpi	Tok Pisin"Latn
+trTurkish"Latn"ArabJLatn
 truTuroyo"Latn"Syrc
 trvTaroko"Latn
 trwTorwali"Arab
 tsTsonga"Latn
 tsd	Tsakonian"Grek
 tsgTausug"Latn
-tsjTshangla"Tibt
-ttTatar"Cyrl
+tsjTshangla"Tibt
+ttTatar"CyrlJCyrl
 ttjTooro"Latn
 ttsNortheastern Thai"Thai#
 ttt
@@ -643,21 +643,21 @@ Muslim Tat"Cyrl"Latn"Arab
 tyTahitian"Latn
 tyvTuvinian"Cyrl*
 tzmCentral Atlas Tamazight"Latn"Tfng
-udmUdmurt"Cyrl"Latn
-ugUyghur"Arab"Cyrl"Latn
-uk	Ukrainian"Cyrl
+udmUdmurt"Cyrl"Latn$
+ugUyghur"Arab"Cyrl"LatnJArab
+uk	Ukrainian"CyrlJCyrl
 uliUlithian"Latn
 umbUmbundu"Latn
 unrMundari"Beng"Deva
-unxMunda"Beng"Deva
-urUrdu"Arab%
-uzUzbek"Arab"Cyrl"LatnBshBch
+unxMunda"Beng"Deva
+urUrdu"ArabJArab+
+uzUzbek"Arab"Cyrl"LatnBshBchJLatn
 vaiVai"Latn"Vaii
 veVenda"Latn
 vecVenetian"Latn
-vepVeps"LatnI
+vepVeps"LatnO
 vi
-Vietnamese"Latn"HaniBchBghBgiBkhBnhBngBnghBphBquBthBtr*
+Vietnamese"Latn"HaniBchBghBgiBkhBnhBngBnghBphBquBthBtrJLatn*
 vicVirgin Islands Creole English"Latn
 vlsWest Flemish"Latn
 vmfMain-Franconian"Latn
@@ -677,8 +677,8 @@ Vietnamese"Latn"HaniBchBghBgiBkhBnhBngBnghBphBquBthBtr*
 wtmMewati"Deva
 wuu
 Wu Chinese"Hans
-xavXavÃ¡nte"Latn
-xhXhosa"Latn
+xavXavÃ¡nte"Latn
+xhXhosa"LatnJLatn
 xmf
 Mingrelian"Geor
 xnrKangri"Deva
@@ -687,9 +687,9 @@ Mingrelian"Geor
 yaoYao"Latn
 yapYapese"Latn
 yavYangben"Latn
-ybbYemba"Latn
-yiYiddish"Hebr
-yoYoruba"LatnBgb
+ybbYemba"Latn
+yiYiddish"HebrJHebr
+yoYoruba"LatnBgbJLatn
 yrl	Nheengatu"Latn
 yuaYucateco"Latn
 yue	Cantonese"Hans"Hant
@@ -697,18 +697,20 @@ Mingrelian"Geor
 zagZaghawa"Latn
 zdjNgazidja Comorian"Arab
 zea	Zeelandic"Latn(
-zghStandard Moroccan Tamazight"Tfng%
-zhChinese"Hans"Hant"Bopo"Phag"
-zmiNegeri Sembilan Malay"Latn
-zuZulu"Latn
+zghStandard Moroccan Tamazight"Tfng+
+zhChinese"Hans"Hant"Bopo"PhagJHani"
+zmiNegeri Sembilan Malay"Latn
+zuZulu"LatnJLatn
 zzaZaza"Latn
 zxx"Latn
 bsc"Latn
-fbl"Latn
+fbl"Latn
+hmn"LatnJLatn
 mey"Latn
 mfv"Latn
 snf"Latn
-tnr"Latn"
+tnr"Latn.
+zh-TWChinese"Hans"Hant"Bopo"PhagJHani"
 ACAscension Island¬"
 en£.
 ADAndorraÈÙ"
@@ -773,10 +775,10 @@ Antarctica¬"
 it¦Õ0"
 hrÉ¾"
 slŒ€"
-huû³=
+huû³@
 AU	Australia„­’"	
-enà–Ô"
-zhŒÒ "
+enà–Ô"
+zh-TWŒÒ "
 it˜Ä"
 wbpÀ-
 AWAruba„¥"
@@ -847,9 +849,9 @@ Bangladeshø¶ÇM"
 BLSt. BarthÃ©lemyÒ7"
 frµ5
 BMBermudaÆ°"
-enÚƒ-
-BNBruneiŞ¬"
-zh•"
+enÚƒ0
+BNBruneiŞ¬"
+zh-TW•"
 ms•ä"
 enØ=F
 BOBoliviaÜ¸Æ"	
@@ -1206,7 +1208,7 @@ Micronesia¤ "
 iaˆ%
 GAGabonş”ˆ"
 fr¡äU"	
-puuÎ Ç
+puuÎ Ê
 GBUnited KingdomÌŞ­"	
 enÍ…"	
 fr‘Îú"	
@@ -1214,8 +1216,8 @@ Micronesia¤ "
 sco¾¯l"
 paÙÚ"
 cyøó"
-bn—ò"
-zh¦Ö"	
+bn—ò"
+zh-TW¦Ö"	
 syl–¼"
 el´Ÿ"
 it´Ÿ"
@@ -1234,11 +1236,12 @@ Micronesia¤ "
 hyî‰"
 abş®"
 os•ı	"
-kuõ•5
+kuõ•8
 GFFrench GuianaÕ–"
 fr–°	"	
-gcr •"
-zhü&
+gcr •"
+
+zh-TWü&
 GGGuernseyì‹"
 enì‹|
 GHGhana¨äş"	
@@ -1304,12 +1307,13 @@ Guadeloupe¨Ñ"
 knf¹‡"
 ff
 GYGuyanaüä-"
-enüä-@
-HKHong Kong SAR Chinaö¿º"	
-zhö¿º"
+enüä-M
+HKHong Kong SAR Chinaö¿º"
+zh-TWö¯¤"
 
 yue÷Ÿ"	
-en®Öá)
+en®Öá"
+zh€)
 HMHeard & McDonald Islands"
 zxx(
 HNHondurasŒ×³"	
@@ -1332,7 +1336,7 @@ Guadeloupe¨Ñ"
 skÎ["
 slø&#
 ICCanary Islands‹€"
-esªÃ}Ü
+esªÃ}ß
 ID	IndonesiaĞü©"	
 id€Ú¾Q"	
 jvè§¥+"	
@@ -1355,8 +1359,8 @@ Guadeloupe¨Ñ"
 
 sasÈ‹"
 
-bbc¿ø•"	
-zh¿ø•"	
+bbc¿ø•"
+zh-TW¿ø•"	
 makêüv"	
 ljp¯ºp"	
 rej üJ"	
@@ -1754,10 +1758,11 @@ Madagascar´Ÿí"
 kk‚ö"
 zhÀÚ"
 ru– "
-ugö6
-MOMacao SAR ChinaºÀ%"
-zh¼Ğ&"
-ptƒğ"
+ugöC
+MOMacao SAR ChinaºÀ%"
+zh-TW¹à$"
+ptƒğ"
+zhƒğ"
 enµn5
 MPNorthern Mariana Islandsé‘"
 enâ…"
@@ -1936,25 +1941,26 @@ Mozambique˜†­"
 OMOmanˆÜœ"	
 arØÏæ"	
 baláù"
-faÉÖ/
+faÉÖ2
 PAPanamaÀÖí"	
 esÃÿ£"
-en“£!"
-zhÑ-/
+en“£!"
+
+zh-TWÑ-/
 PEPeruø÷›"	
 esÿ"	
 qu²˜¤"
-ay°•8
+ay°•;
 PFFrench PolynesiaÑ"
 fr¸ş
 "
-tyàÊ"
-zhë³<
+tyàÊ"
+zh-TWë³<
 PGPapua New GuineaÄŠ»"
 
 tpi©Ëº"	
 en¢Åİ"
-ho§	÷
+ho§	ú
 PHPhilippinesÈğ‡4"	
 en€ñ¨!"
 
@@ -1976,8 +1982,8 @@ Mozambique˜†­"
 pam»¢™"	
 pagÖ¥]"	
 mdhÜûO"	
-tsgß¦I"
-zhİÒ0"	
+tsgß¦I"
+zh-TWİÒ0"	
 cpsÓı+"	
 krjÎş"	
 bto«Ô"	
@@ -2203,11 +2209,12 @@ San Marino¸‹"
 soêÜ¯"	
 aræıó"
 sw†­"
-omä0
+omä3
 SRSuriname¡š%"
 nl„¾!"	
-srn«¦"
-zh±47
+srn«¦"
+
+zh-TW±47
 SSSouth Sudan°Í„"	
 arÄ…®"	
 enÄ…®"	
@@ -2245,7 +2252,7 @@ San Marino¸‹"
 TGTogo¸µ"	
 frÌÀÀ"
 ee‹©Y"	
-ife¦ê£
+ife¦ê¦
 THThailandø…ò "	
 thà„¨"	
 enšÛğ"
@@ -2256,8 +2263,8 @@ San Marino¸‹"
 
 souğæĞ"
 
-mfa¦ÀÒ"
-zhùãK"	
+mfa¦ÀÒ"
+zh-TWùãK"	
 kxmˆÉG"	
 kdtÔš"	
 mnw”"	
@@ -2319,9 +2326,9 @@ TajikistanÆÍ"
 es "
 TVTuvaluÎX"
 tvlŒM"
-enª&
-TWTaiwan¸Î "	
-zhÂÊØ
+enª)
+TWTaiwan¸Î "
+zh-TWÂÊØ
 "
 trvñ$Ä
 TZTanzaniaàãõ"	
@@ -2373,12 +2380,12 @@ TajikistanÆÍ"
 ttj¯”2"
 hi'
 UMU.S. Outlying Islands¼"
-en¼ÿ
+en¼
 USUnited States˜ÖÎ"
 
 enÀÈ¢˜"	
-es ‡"	
-zh©‹Œ"
+es ‡"
+zh-TW©‹Œ"
 frúØq"
 de‹¶_"	
 filÜ¢U"
@@ -2398,7 +2405,8 @@ TajikistanÆÍ"
 choáU"
 lktü@"
 ik¯>"
-mus˜
+mus˜"	
+hmnÀ‹
 UYUruguayÚáÎ"	
 eséùµ@
 UZ
@@ -2417,10 +2425,10 @@ Uzbekistan˜ÈÉ"
 VGBritish Virgin Islands…¤"
 en™'
 VIU.S. Virgin Islandsû½"
-en¼î2
+en¼î5
 VNVietnam”¼‰/"	
-viŞó½("
-zhî£B"	
+viŞó½("
+zh-TWî£B"	
 cjm¶®/
 VUVanuatuİš"
 biÔ±"

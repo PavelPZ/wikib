@@ -2,7 +2,8 @@ part of 'world.dart';
 
 @cwidget
 Widget regionScreen(RegionSegment segment) => WorldScreen(
-      child: Container(color: Colors.white, child: Center(child: Text(Lo$msg(3, 'Home', _lo$file).loc))),
+      //child: Container(color: Colors.white, child: Center(child: Text(Lo$msg('1', 'Home', _lo$file, descr: 'd1').loc))),
+      child: Container(color: Colors.white, child: Center(child: Text(Lo$msg('2', 'Hi, how are you 2?', _lo$file, descr: 'd4').loc))),
     );
 
 @cwidget

@@ -82,7 +82,7 @@ class HomeScreen extends RScreen<AppNavigator, HomeSegment> {
                         : 'desktop'));
                 return Wrapper(flex: 1, child: Text('$data'));
               }),
-              Text(Lo$msg(1, 'Hi, how are you?', _lo$file).loc),
+              Text(Lo$msg('1', 'Hi, how are you?', _lo$file, descr: 'd1').loc),
               Spacer(flex: 1),
               Container(),
               SizedBox(),
@@ -104,5 +104,4 @@ Widget wrapper({int flex = 0, AlignmentDirectional? alignment, EdgeInsetsDirecti
   return child;
 }
 
-const _lo$file = Lo$file(1, r'main.dart', lo$project);
-final _msg = Lo$msg(2, 'Hi, how are you?', _lo$file).loc;
+const _lo$file = Lo$file('1', lo$project);

@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   analyzer: ^3.3.0
-  protobuf_for_dart: ^0.4.0
+  protobuf_for_dart: ^0.8.0
   path:
   tuple:
 
