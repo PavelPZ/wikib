@@ -20,6 +20,23 @@ final projects = <TransDB_Project>[
   TransDB_Project()
     ..id = 'w'
     ..dir = 'wikib\\wikib\\lib',
+  TransDB_Project()
+    ..id = 'cldr'
+    ..dir = 'wikibulary\\localize\\data\\cldr'
+    ..files.addAll({
+      'langs': TransDB_File()
+        ..id = 'langs'
+        ..projectId = 'cldr'
+        ..path = 'langs.bin',
+      'terries': TransDB_File()
+        ..id = 'terries'
+        ..projectId = 'cldr'
+        ..path = 'terries.bin',
+      'alphas': TransDB_File()
+        ..id = 'alphas'
+        ..projectId = 'cldr'
+        ..path = 'alphas.bin',
+    }),
 ];
 
 List<SyntacticEntity> _flatten_tree(AstNode n, [int depth = 9999999]) {
@@ -93,6 +110,15 @@ void main() async {
     final project = p.deepCopy();
     transDB.projects[project.id] = project;
     final prefix = '$drive\\${project.dir}';
+    if (project.id == 'cldr') {
+      for (var fn in project.files.values) {
+        var f = File('$prefix\\${fn.path}');
+        final bytes = f.readAsBytesSync();
+        final data = TransDB()..mergeFromBuffer(bytes);
+        transDB.items.addAll(data.items);
+      }
+      continue;
+    }
     //https://github.com/dart-lang/sdk/blob/master/pkg/analyzer/doc/tutorial/analysis.md
     AnalysisContextCollection collection = new AnalysisContextCollection(includedPaths: [prefix]);
     for (AnalysisContext context in collection.contexts) {

@@ -29,688 +29,716 @@
 057
 Micronesia"FM"GU"KI"MH"MP"NR"PW"UM8
 061	Polynesia"AS"CK"NU"PF"PN"TK"TO"TV"WF"WS+
-999Outlying Oceania"AQ"AC"CP"DG"TA
-aaAfar"Latn
-ab	Abkhazian"Cyrl
-abrAbron"Latn
-aceAchinese"Latn
-achAcoli"Latn
-adaAdangme"Latn
-adyAdyghe"Cyrl
-aebTunisian Arabic"Arab
-af	Afrikaans"LatnJLatn
-agqAghem"Latn
-akAkan"Latn
-alnGheg Albanian"Latn
-altSouthern Altai"Cyrl
-amAmharic"EthiJEthi
-amoAmo"Latn
-an	Aragonese"Latn
-aozUab Meto"Latn
-arArabic"Arab"SyrcJArab
-arnMapuche"Latn
-aroAraona"Latn
-arqAlgerian Arabic"Arab
-arsNajdi Arabic"Arab
-aryMoroccan Arabic"Arab
-arzEgyptian Arabic"Arab
-asAssamese"Beng
-asaAsu"Latn
-astAsturian"Latn
-atj	Atikamekw"Latn
-avAvaric"Cyrl
-awaAwadhi"Deva
-ayAymara"Latn)
-azAzerbaijani"Arab"Cyrl"LatnJLatn
-baBashkir"Cyrl
-balBaluchi"Arab"Latn
-banBalinese"Latn"Bali
-bapBantawa"Deva
-barBavarian"Latn
-basBasaa"Latn
-baxBamun"Bamu
+999Outlying Oceania"AQ"AC"CP"DG"TA
+
+aaAfar
+ab	Abkhazian
+abrAbron
+aceAchinese
+achAcoli
+adaAdangme
+adyAdyghe
+aebTunisian Arabic
+af	Afrikaans
+agqAghem
+
+akAkan
+alnGheg Albanian
+altSouthern Altai
+amAmharic
+
+amoAmo
+an	Aragonese
+aozUab Meto
+arArabic
+arnMapuche
+aroAraona
+arqAlgerian Arabic
+arsNajdi Arabic
+aryMoroccan Arabic
+arzEgyptian Arabic
+asAssamese
+
+asaAsu
+astAsturian
+atj	Atikamekw
+avAvaric
+awaAwadhi
+ayAymara
+azAzerbaijani
+baBashkir
+balBaluchi
+banBalinese
+bapBantawa
+barBavarian
+basBasaa
+baxBamun
 bbc
-Batak Toba"Latn"Batk
-bbjGhomala"Latn
-bciBaoulÃ©"Latn
+Batak Toba
+bbjGhomala
+bciBaoulÃ©
 be
-Belarusian"CyrlJCyrl
-bejBeja"Arab
-bemBemba"Latn
-bewBetawi"Latn
-bezBena"Latn
-bfdBafut"Latn
-bfqBadaga"Taml
-bftBalti"Arab"Tibt
-bfyBagheli"Deva
-bg	Bulgarian"CyrlJCyrl
-bgcHaryanvi"Deva
-bgnWestern Balochi"Arab"
-bgxBalkan Gagauz Turkish"Grek
-bhbBhili"Deva
-bhiBhilali"Deva
-bhoBhojpuri"Deva
-biBislama"Latn
-bikBikol"Latn
-binBini"Latn
-bjjKanauji"Deva
-bjnBanjar"Latn
-bjtBalanta-Ganja"Latn
-bkmKom"Latn
-bkuBuhid"Latn"Buhd
-bmBambara"Latn"Nkoo
-bmqBomu"Latn
-bnBangla"BengJBeng
-boTibetan"Tibt
-bpyBishnupriya"Beng
-bqi	Bakhtiari"Arab
+Belarusian
+bejBeja
+bemBemba
+bewBetawi
+bezBena
+bfdBafut
+bfqBadaga
+bftBalti
+bfyBagheli
+bg	Bulgarian
+bgcHaryanvi
+bgnWestern Balochi
+bgxBalkan Gagauz Turkish
+bhbBhili
+bhiBhilali
+bhoBhojpuri
+biBislama
+bikBikol
+binBini
+bjjKanauji
+bjnBanjar
+bjtBalanta-Ganja
+
+bkmKom
+bkuBuhid
+bmBambara
+bmqBomu
+bnBangla
+boTibetan
+bpyBishnupriya
+bqi	Bakhtiari
 bqv
-Koro Wachi"Latn
-brBreton"LatnBch
-braBraj"Deva
-brhBrahui"Arab"Latn
-brxBodo"Deva
-bsBosnian"Cyrl"LatnJLatn
-bssAkoose"Latn
-btoRinconada Bikol"Latn
-btvBateri"Deva
-buaBuriat"Cyrl
-bucBushi"Latn
-bugBuginese"Latn"Bugi
-bumBulu"Latn
-bvbBube"Latn
-bynBlin"Ethi
-byvMedumba"Latn
-bzeJenaama Bozo"Latn!
-caCatalan"LatnBchBllJLatn
-cchAtsam"Latn
-ccpChakma"Beng
-ceChechen"Cyrl
-cebCebuano"LatnBngJLatn
-cggChiga"Latn
-chChamorro"Latn
-chkChuukese"Latn
-chmMari"Cyrl
-choChoctaw"Latn
-chp	Chipewyan"Latn"Cans
-chrCherokee"Cher
-cjaWestern Cham"Arab"Cham
-cjmEastern Cham"Cham"Arab
-ckbCentral Kurdish"Arab
-coCorsican"LatnJLatn
-cpsCapiznon"Latn
-crCree"Cans"Latn
-crhCrimean Turkish"Cyrl%
-crjSouthern East Cree"Cans"Latn
-crkPlains Cree"Cans%
-crlNorthern East Cree"Cans"Latn
+Koro Wachi
+brBretonBch
+braBraj
+brhBrahui
+brxBodo
+bsBosnian
+bssAkoose
+btoRinconada Bikol
+btvBateri
+buaBuriat
+bucBushi
+bugBuginese
+bumBulu
+bvbBube
+bynBlin
+byvMedumba
+bzeJenaama Bozo
+caCatalanBchBll
+cchAtsam
+ccpChakma
+ceChechen
+cebCebuanoBng
+cggChiga
+chChamorro
+chkChuukese
+chmMari
+choChoctaw
+chp	Chipewyan
+chrCherokee
+cjaWestern Cham
+cjmEastern Cham
+ckbCentral Kurdish
+coCorsican
+cpsCapiznon
+
+crCree
+crhCrimean Turkish
+crjSouthern East Cree
+crkPlains Cree
+crlNorthern East Cree
 crm
-Moose Cree"Cans"
-crsSeselwa Creole French"Latn
-csCzech"LatnBchJLatn
-csb	Kashubian"Latn
-cswSwampy Cree"Cans
-cvChuvash"Cyrl7
-cyWelsh"LatnBchBddBffBngBllBphBrhBthJLatn
-daDanish"LatnBaaJLatn
-dakDakota"Latn
-darDargwa"Cyrl
-davTaita"Latn
-dccDeccan"Arab
-deGerman"Latn"RunrJLatn
-denSlave"Latn"Cans
-dgrDogrib"Latn
-djeZarma"Latn
-dnjDan"Latn
-doiDogri"Deva"Arab
-dsbLower Sorbian"LatnBch
-dtmTomo Kan Dogon"Latn
-dtpCentral Dusun"Latn
-dtyDotyali"Deva
-duaDuala"Latn
-dvDivehi"Thaa
+Moose Cree
+crsSeselwa Creole French
+csCzechBch
+csb	Kashubian
+cswSwampy Cree
+cvChuvash+
+cyWelshBchBddBffBngBllBphBrhBth
+daDanishBaa
+dakDakota
+darDargwa
+davTaita
+dccDeccan
+deGerman
+denSlave
+dgrDogrib
+djeZarma
+
+dnjDan
+doiDogri
+dsbLower SorbianBch
+dtmTomo Kan Dogon
+dtpCentral Dusun
+dtyDotyali
+duaDuala
+dvDivehi
 dyo
-Jola-Fonyi"Latn"Arab
-dyuDyula"Latn
-dzDzongkha"Tibt
-ebuEmbu"Latn#
-eeEwe"LatnBdzBgbBkpBnyBts
-efiEfik"Latn
-eglEmilian"Latn
-elGreek"GrekJGrek
-enEnglish"LatnJLatn
-eo	Esperanto"LatnJLatn!
-esSpanish"LatnBchBllJLatn
-esuCentral Yupik"Latn
-etEstonian"LatnJLatn
-euBasque"LatnJLatn
-ewoEwondo"Latn
-extExtremaduran"Latn
-faPersian"ArabJArab
-fanFang"Latn
-ffFulah"Latn
-ffmMaasina Fulfulde"Latn
-fiFinnish"LatnJLatn
-fiaNobiin"Arab%
-filFilipino"Latn"TglgBngJLatn
-fitTornedalen Finnish"Latn
-fjFijian"Latn
-foFaroese"LatnBaa
-fonFon"Latn
-frFrench"LatnJLatn
-frcCajun French"Latn
-frpArpitan"Latn
-frrNorthern Frisian"Latn
-frsEastern Frisian"Latn
-fudEast Futuna"Latn+
-fuqCentral-Eastern Niger Fulfulde"Latn
-furFriulian"Latn
-fuvNigerian Fulfulde"Latn
-fvrFur"Latn!
-fyWestern Frisian"LatnJLatn
-gaIrish"LatnJLatn
-gaaGa"Latn
-gagGagauz"Latn"Cyrl
-ganGan Chinese"Hans
-gayGayo"Latn
-gbmGarhwali"Deva
-gbzZoroastrian Dari"Arab#
-gcrGuianese Creole French"Latn!
-gdScottish Gaelic"LatnJLatn
+Jola-Fonyi
+dyuDyula
+dzDzongkha
+ebuEmbu
+eeEweBdzBgbBkpBnyBts
+efiEfik
+eglEmilian
+elGreek
+enEnglish
+eo	Esperanto
+esSpanishBchBll
+esuCentral Yupik
+etEstonian
+euBasque
+ewoEwondo
+extExtremaduran
+faPersian
+fanFang
+ffFulah
+ffmMaasina Fulfulde
+fiFinnish
+fiaNobiin
+filFilipinoBng
+fitTornedalen Finnish
+fjFijian
+foFaroeseBaa
+
+fonFon
+frFrench
+frcCajun French
+frpArpitan
+frrNorthern Frisian
+frsEastern Frisian
+fudEast Futuna%
+fuqCentral-Eastern Niger Fulfulde
+furFriulian
+fuvNigerian Fulfulde
+
+fvrFur
+fyWestern Frisian
+gaIrish	
+gaaGa
+gagGagauz
+ganGan Chinese
+gayGayo
+gbmGarhwali
+gbzZoroastrian Dari
+gcrGuianese Creole French
+gdScottish Gaelic
 gil
-Gilbertese"Latn
+Gilbertese
 gjk
-Kachi Koli"Arab
-gjuGujari"Arab
-glGalician"LatnJLatn
-glkGilaki"Arab
-gnGuarani"Latn
-gomGoan Konkani"Deva
-gonGondi"Deva"Telu
-gor	Gorontalo"Latn
-gosGronings"Latn
-grtGaro"Beng
-gswSwiss German"Latn
-guGujarati"GujrJGujr
+Kachi Koli
+gjuGujari
+glGalician
+glkGilaki
+gnGuarani
+gomGoan Konkani
+gonGondi
+gor	Gorontalo
+gosGronings
+grtGaro
+gswSwiss German
+guGujarati
 gub
-GuajajÃ¡ra"Latn
-gucWayuu"Latn
-gurFrafra"Latn
-guzGusii"Latn
-gvManx"Latn
-gvrGurung"Deva
-gwi	GwichÊ¼in"Latn%
-haHausa"Arab"LatnBshBtsJLatn
-hakHakka Chinese"Hans
-hawHawaiian"LatnJLatn
-hazHazaragi"Arab
-heHebrew"HebrJHebr
-hiHindi"Deva"LatnJDeva
+GuajajÃ¡ra
+gucWayuu
+gurFrafra
+guzGusii
+
+gvManx
+gvrGurung
+gwi	GwichÊ¼in
+haHausaBshBts
+hakHakka Chinese
+hawHawaiian
+hazHazaragi
+heHebrew
+hiHindi
 hif
-Fiji Hindi"Deva"Latn
+Fiji Hindi
 hil
-Hiligaynon"Latn
-hndSouthern Hindko"Arab
-hneChhattisgarhi"Deva
-hnnHanunoo"Latn"Hano
-hnoNorthern Hindko"Arab
-ho	Hiri Motu"Latn
-hocHo"Deva
-hojHadothi"Deva"
-hrCroatian"LatnBljBnjJLatn
-hsbUpper Sorbian"LatnBch
-hsnXiang Chinese"Hans 
-htHaitian Creole"LatnJLatn@
-hu	Hungarian"LatnBcsBdzBdzsBgyBlyBnyBszBtyBzsJLatn
-hyArmenian"ArmnJArmn
-hzHerero"Latn
-iaInterlingua"Latn
-ibaIban"Latn
-ibbIbibio"Latn"
+Hiligaynon
+hndSouthern Hindko
+hneChhattisgarhi
+hnnHanunoo
+hnoNorthern Hindko
+ho	Hiri Motu	
+hocHo
+hojHadothi
+hrCroatianBljBnj
+hsbUpper SorbianBch
+hsnXiang Chinese
+htHaitian Creole4
+hu	HungarianBcsBdzBdzsBgyBlyBnyBszBtyBzs
+hyArmenian
+hzHerero
+iaInterlingua
+ibaIban
+ibbIbibio
 id
-Indonesian"Latn"ArabJLatn
-ifeIfÃ¨"Latn:
-igIgbo"LatnBchBgbBghBgwBkpBkwBnwBnyBshJLatn
+Indonesian
+ifeIfÃ¨.
+igIgboBchBgbBghBgwBkpBkwBnwBnyBsh
 ii
-Sichuan Yi"Yiii"Latn
-ikInupiaq"Latn
-iktInuinnaqtun"Latn
-iloIloko"Latn
-inhIngush"Cyrl"Arab"Latn
-is	Icelandic"LatnJLatn
-itItalian"LatnJLatn
-iu	Inuktitut"Cans"Latn
-izhIngrian"Latn
-jaJapanese"JpanJHira$
-jamJamaican Creole English"Latn
-jgoNgomba"Latn
-jmcMachame"Latn
-jmlJumli"Deva 
-jvJavanese"Latn"JavaJLatn
-kaGeorgian"GeorJGeor
-kaaKara-Kalpak"Cyrl
-kabKabyle"Latn
-kacKachin"Latn
-kajJju"Latn
-kamKamba"Latn
-kaoXaasongaxango"Latn
-kbd	Kabardian"Cyrl
-kcgTyap"Latn
-kckKalanga"Latn
-kdeMakonde"Latn
-kdtKuy"Thai
-keaKabuverdianu"Latn
-kfoKoro"Latn
-kfrKachhi"Deva
-kfyKumaoni"Deva
-kgKongo"Latn
-kgeKomering"Latn
-kgpKaingang"Latn
-khaKhasi"Latn"Beng
-khbLÃ¼"Talu
-khnKhandesi"Deva
-khqKoyra Chiini"Latn
-khtKhamti"Mymr
-khwKhowar"Arab
-kiKikuyu"Latn
-kiu	Kirmanjki"Latn
-kjKuanyama"Latn
-kjgKhmu"Laoo"Latn
-kkKazakh"Arab"CyrlJCyrl
-kkjKako"Latn
-klKalaallisut"Latn
-klnKalenjin"Latn
-kmKhmer"KhmrJKhmr
-kmbKimbundu"Latn
-knKannada"KndaJKnda
-knfMankanya"Latn
-koKorean"KoreJHang
-koiKomi-Permyak"Cyrl
-kokKonkani"Deva
-kosKosraean"Latn
-kpeKpelle"Latn
-krcKarachay-Balkar"Cyrl
-kriKrio"Latn
-krj	Kinaray-a"Latn
-krlKarelian"Latn
-kruKurukh"Deva
-ksKashmiri"Arab"Deva
-ksbShambala"Latn
-ksfBafia"Latn
-ksh	Colognian"Latn%
-kuKurdish"Arab"Cyrl"LatnJLatn
-kumKumyk"Cyrl
-kvKomi"Cyrl
-kvrKerinci"Latn
-kvxParkari Koli"Arab
-kwCornish"Latn
-kxmNorthern Khmer"Thai
-kxpWadiyara Koli"Arab$
-kyKyrgyz"Arab"Cyrl"LatnJCyrl
-laLatin"LatnJLatn
-ladLadino"Hebr
-lagLangi"Latn
-lahLahnda"Arab
-lajLango (Uganda)"Latn
-lbLuxembourgish"LatnJLatn
-lbeLak"Cyrl
-lbwTolaki"Latn
-lcpWestern Lawa"Thai
-lepLepcha"Lepc
-lezLezghian"Cyrl
-lgGanda"Latn
+Sichuan Yi
+ikInupiaq
+iktInuinnaqtun
+iloIloko
+inhIngush
+is	Icelandic
+itItalian
+iu	Inuktitut
+izhIngrian
+jaJapanese
+jamJamaican Creole English
+jgoNgomba
+jmcMachame
+jmlJumli
+jvJavanese
+kaGeorgian
+kaaKara-Kalpak
+kabKabyle
+kacKachin
+
+kajJju
+kamKamba
+kaoXaasongaxango
+kbd	Kabardian
+kcgTyap
+kckKalanga
+kdeMakonde
+
+kdtKuy
+keaKabuverdianu
+kfoKoro
+kfrKachhi
+kfyKumaoni
+kgKongo
+kgeKomering
+kgpKaingang
+khaKhasi
+
+khbLÃ¼
+khnKhandesi
+khqKoyra Chiini
+khtKhamti
+khwKhowar
+kiKikuyu
+kiu	Kirmanjki
+kjKuanyama
+kjgKhmu
+kkKazakh
+kkjKako
+klKalaallisut
+klnKalenjin
+kmKhmer
+kmbKimbundu
+knKannada
+knfMankanya
+koKorean
+koiKomi-Permyak
+kokKonkani
+kosKosraean
+kpeKpelle
+krcKarachay-Balkar
+kriKrio
+krj	Kinaray-a
+krlKarelian
+kruKurukh
+ksKashmiri
+ksbShambala
+ksfBafia
+ksh	Colognian
+kuKurdish
+kumKumyk
+
+kvKomi
+kvrKerinci
+kvxParkari Koli
+kwCornish
+kxmNorthern Khmer
+kxpWadiyara Koli
+kyKyrgyz
+laLatin
+ladLadino
+lagLangi
+lahLahnda
+lajLango (Uganda)
+lbLuxembourgish
+
+lbeLak
+lbwTolaki
+lcpWestern Lawa
+lepLepcha
+lezLezghian
+lgGanda
 li
-Limburgish"Latn
-lifLimbu"Deva"Limb
-lijLigurian"Latn
-lisLisu"Lisu
-ljpLampung Api"Latn
-lkiLaki"Arab
-lktLakota"Latn
-lmnLambadi"Telu
-lmoLombard"LatnT
-lnLingala"LatnBgbBkpBmbBmfBmpBmvBndBngBngbBnkBnsBntBnyBnzBshBts
-loLao"LaooJLaoo
-lolMongo"Latn
-lozLozi"Latn
-lrcNorthern Luri"Arab
+Limburgish
+lifLimbu
+lijLigurian
+lisLisu
+ljpLampung Api
+lkiLaki
+lktLakota
+lmnLambadi
+lmoLombardN
+lnLingalaBgbBkpBmbBmfBmpBmvBndBngBngbBnkBnsBntBnyBnzBshBts	
+loLao
+lolMongo
+lozLozi
+lrcNorthern Luri
 lt
-Lithuanian"LatnJLatn
-ltg	Latgalian"Latn
-luLuba-Katanga"Latn
+Lithuanian
+ltg	Latgalian
+luLuba-Katanga
 lua
-Luba-Lulua"Latn
-luoLuo"Latn
-luyLuyia"Latn
-luzSouthern Luri"Arab
-lvLatvian"LatnJLatn
-lwlEastern Lawa"Thai
-lzzLaz"Geor"Latn
-madMadurese"Latn
-mafMafa"Latn
-magMagahi"Deva
-maiMaithili"Deva
-makMakasar"Latn"Bugi
-manMandingo"Latn"Nkoo
-masMasai"Latn
-mazCentral Mazahua"Latn
-mdfMoksha"Cyrl
-mdhMaguindanaon"Latn
-mdrMandar"Latn"Bugi
-menMende"Latn
-merMeru"Latn
-mfaPattani Malay"Arab
-mfeMorisyen"Latn
-mgMalagasy"LatnJLatn
-mghMakhuwa-Meetto"Latn
-mgoMetaÊ¼"Latn
-mgpEastern Magar"Deva
-mgyMbunga"Latn
-mhMarshallese"Latn
-miMaori"LatnJLatn
-minMinangkabau"Latn
+Luba-Lulua
+
+luoLuo
+luyLuyia
+luzSouthern Luri
+lvLatvian
+lwlEastern Lawa
+
+lzzLaz
+madMadurese
+mafMafa
+magMagahi
+maiMaithili
+makMakasar
+manMandingo
+masMasai
+mazCentral Mazahua
+mdfMoksha
+mdhMaguindanaon
+mdrMandar
+menMende
+merMeru
+mfaPattani Malay
+mfeMorisyen
+mgMalagasy
+mghMakhuwa-Meetto
+mgoMetaÊ¼
+mgpEastern Magar
+mgyMbunga
+mhMarshallese
+miMaori
+minMinangkabau
 mk
-Macedonian"CyrlJCyrl
-ml	Malayalam"MlymJMlym
-mlsMasalit"Latn'
-mn	Mongolian"Cyrl"Mong"PhagJCyrl
-mniManipuri"Beng"Mtei
-mnwMon"Mymr
-moeInnu"Latn
-mohMohawk"Latn
-mosMossi"Latn
-mrMarathi"DevaJDeva
-mrdWestern Magar"Deva
-mrjWestern Mari"Cyrl
-mroMru"Latn
-msMalay"Arab"LatnJLatn
-mtMaltese"LatnJLatn
-mtrMewari"Deva
-muaMundang"Latn
-musMuscogee"Latn
-mvyIndus Kohistani"Arab
-mwkKita Maninkakan"Latn
-mwrMarwari"Deva
-mwvMentawai"Latn
-mxcManyika"Latn
-myBurmese"MymrJMymr
-myvErzya"Cyrl
-myxMasaaba"Latn
-mznMazanderani"Arab
-naNauru"Latn
-nanMin Nan Chinese"Hans
+Macedonian
+ml	Malayalam
+mlsMasalit
+mn	Mongolian
+mniManipuri
+
+mnwMon
+moeInnu
+mohMohawk
+mosMossi
+mrMarathi
+mrdWestern Magar
+mrjWestern Mari
+
+mroMru
+msMalay
+mtMaltese
+mtrMewari
+muaMundang
+musMuscogee
+mvyIndus Kohistani
+mwkKita Maninkakan
+mwrMarwari
+mwvMentawai
+mxcManyika
+myBurmese
+myvErzya
+myxMasaaba
+mznMazanderani
+naNauru
+nanMin Nan Chinese
 nap
-Neapolitan"Latn
-naqNama"Latn'
-nbNorwegian BokmÃ¥l"LatnBaaJLatn%
-nchCentral Huasteca Nahuatl"Latn
-ndNorth Ndebele"Latn
-ndcNdau"Latn
+Neapolitan
+naqNama
+nbNorwegian BokmÃ¥lBaa
+nchCentral Huasteca Nahuatl
+ndNorth Ndebele
+ndcNdau
 nds
-Low German"Latn
-neNepali"DevaJDeva
-newNewari"Deva
-ngNdonga"Latn
-nglLomwe"Latn%
-nheEastern Huasteca Nahuatl"Latn%
-nhwWestern Huasteca Nahuatl"Latn
-nijNgaju"Latn
-niuNiuean"Latn
-njoAo Naga"Latn
-nlDutch"LatnJLatn
-nmgKwasio"Latn
-nnNorwegian Nynorsk"Latn
-nnh	Ngiemboon"Latn
-nodNorthern Thai"Lana
-noeNimadi"Deva
-nqoNâ€™Ko"Nkoo
-nrSouth Ndebele"Latn
-nskNaskapi"Cans"Latn
-nsoNorthern Sotho"Latn
-nusNuer"Latn
-nvNavajo"Latn
-nxqNaxi"Latn
-nyNyanja"LatnJLatn
-nymNyamwezi"Latn
-nynNyankole"Latn
-nziNzima"Latn
-ocOccitan"Latn+
-omOromo"Latn"EthiBchBdhBkhBnyBph
-orOdia"OryaJOrya
-osOssetic"Cyrl
-paPunjabi"Arab"GuruJGuru
+Low German
+neNepali
+newNewari
+ngNdonga
+nglLomwe
+nheEastern Huasteca Nahuatl
+nhwWestern Huasteca Nahuatl
+nijNgaju
+niuNiuean
+njoAo Naga
+nlDutch
+nmgKwasio
+nnNorwegian Nynorsk
+nnh	Ngiemboon
+nodNorthern Thai
+noeNimadi
+nqoNâ€™Ko
+nrSouth Ndebele
+nskNaskapi
+nsoNorthern Sotho
+nusNuer
+nvNavajo
+nxqNaxi
+nyNyanja
+nymNyamwezi
+nynNyankole
+nziNzima
+ocOccitan
+omOromoBchBdhBkhBnyBph
+
+orOdia
+osOssetic
+paPunjabi
 pag
-Pangasinan"Latn
-pamPampanga"Latn
+Pangasinan
+pamPampanga
 pap
-Papiamento"Latn
-pauPalauan"Latn
-pcdPicard"Latn
-pcmNigerian Pidgin"Latn 
-pdcPennsylvania German"Latn
-pdtPlautdietsch"Latn
-pkoPÃ¶koot"Latn
-plPolish"LatnJLatn
-pmsPiedmontese"Latn
-pntPontic"Cyrl"Grek"Latn
-pon	Pohnpeian"Latn
+Papiamento
+pauPalauan
+pcdPicard
+pcmNigerian Pidgin
+pdcPennsylvania German
+pdtPlautdietsch
+pkoPÃ¶koot
+plPolish
+pmsPiedmontese
+pntPontic
+pon	Pohnpeian
 prd
-Parsi-Dari"Arab
-psPashto"ArabJArab
+Parsi-Dari
+psPashto
 pt
-Portuguese"LatnJLatn
-puuPunu"Latn
-quQuechua"Latn
-quc	KÊ¼icheÊ¼"Latn(
-qugChimborazo Highland Quichua"Latn
+Portuguese
+puuPunu
+quQuechua
+quc	KÊ¼icheÊ¼"
+qugChimborazo Highland Quichua
 raj
-Rajasthani"Deva#
-rcfRÃ©union Creole French"Latn
-rejRejang"Latn"Rjng
-riaRiang (India)"Latn
-rifRiffian"Latn"Tfng
-rjs	Rajbanshi"Deva
-rktRangpuri"Beng
-rmRomansh"Latn 
-rmfKalo Finnish Romani"Latn
-rmoSinte Romani"Latn
-rmtDomari"Arab
-rmuTavringer Romani"Latn
-rnRundi"Latn
-rngRonga"Latn 
-roRomanian"Latn"CyrlJLatn
-robTae'"Latn
-rofRombo"Latn
-rtmRotuman"Latn
-ruRussian"CyrlJCyrl
-rueRusyn"Cyrl
-rugRoviana"Latn
-rwKinyarwanda"LatnJLatn
-rwkRwa"Latn
-ryuCentral Okinawan"Kana
-saSanskrit"Deva"Sinh
-safSafaliba"Latn
-sahSakha"Cyrl
-saqSamburu"Latn
-sasSasak"Latn,
-satSantali"Olck"Beng"Deva"Latn"Orya
-savSaafi-Saafi"Latn
+Rajasthani
+rcfRÃ©union Creole French
+rejRejang
+riaRiang (India)
+rifRiffian
+rjs	Rajbanshi
+rktRangpuri
+rmRomansh
+rmfKalo Finnish Romani
+rmoSinte Romani
+rmtDomari
+rmuTavringer Romani
+rnRundi
+rngRonga
+roRomanian
+robTae'
+rofRombo
+rtmRotuman
+ruRussian
+rueRusyn
+rugRoviana
+rwKinyarwanda
+
+rwkRwa
+ryuCentral Okinawan
+saSanskrit
+safSafaliba
+sahSakha
+saqSamburu
+sasSasak
+satSantali
+savSaafi-Saafi
 saz
-Saurashtra"Saur
-sbpSangu"Latn
-sc	Sardinian"Latn
-sckSadri"Deva
-scnSicilian"Latn
-scoScots"Latn
-scsNorth Slavey"Latn
-sdSindhi"Arab"DevaJArab 
-sdcSassarese Sardinian"Latn
-sdhSouthern Kurdish"Arab
-seNorthern Sami"Latn"Cyrl
-sefCebaara Senoufo"Latn
-sehSena"Latn
-seiSeri"Latn
-sesKoyraboro Senni"Latn
-sgSango"Latn"
-shi	Tachelhit"Arab"Latn"Tfng
-shnShan"Mymr
-siSinhala"SinhJSinh
-sidSidamo"Latn
-skSlovak"LatnBchJLatn
-skrSaraiki"Arab
-sl	Slovenian"LatnJLatn
-sliLower Silesian"Latn
-slySelayar"Latn
-smSamoan"LatnJLatn
-smaSouthern Sami"Latn
-smj	Lule Sami"Latn
+Saurashtra
+sbpSangu
+sc	Sardinian
+sckSadri
+scnSicilian
+scoScots
+scsNorth Slavey
+sdSindhi
+sdcSassarese Sardinian
+sdhSouthern Kurdish
+seNorthern Sami
+sefCebaara Senoufo
+sehSena
+seiSeri
+sesKoyraboro Senni
+sgSango
+shi	Tachelhit
+shnShan
+siSinhala
+sidSidamo
+skSlovakBch
+skrSaraiki
+sl	Slovenian
+sliLower Silesian
+slySelayar
+smSamoan
+smaSouthern Sami
+smj	Lule Sami
 smn
-Inari Sami"Latn
+Inari Sami
 sms
-Skolt Sami"Latn
-snShona"LatnJLatn
-snkSoninke"Latn
-soSomali"Latn"ArabJLatn
-souSouthern Thai"Thai>
-sqAlbanian"LatnBdhBgjBllBnjBrrBshBthBxhBzhJLatn
-srSerbian"Cyrl"LatnJCyrl
-srnSranan Tongo"Latn
-srrSerer"Latn
-srxSirmauri"Deva
-ssSwati"Latn
-ssySaho"Latn 
-stSouthern Sotho"LatnJLatn
-stqSaterland Frisian"Latn!
-su	Sundanese"Latn"SundJLatn
-sukSukuma"Latn
-susSusu"Latn"Arab
-svSwedish"LatnJLatn
-swSwahili"LatnJLatn
-swbComorian"Arab"Latn
-swgSwabian"Latn
+Skolt Sami
+snShona
+snkSoninke
+soSomali
+souSouthern Thai2
+sqAlbanianBdhBgjBllBnjBrrBshBthBxhBzh
+srSerbian
+srnSranan Tongo
+srrSerer
+srxSirmauri
+ssSwati
+ssySaho
+stSouthern Sotho
+stqSaterland Frisian
+su	Sundanese
+sukSukuma
+susSusu
+svSwedish
+swSwahili
+swbComorian
+swgSwabian
 swv
-Shekhawati"Deva
-sxnSangir"Latn
-sylSylheti"Beng"Sylo
-syrSyriac"Syrc
-szlSilesian"Latn
-taTamil"TamlJTaml!
-tajEastern Tamang"Deva"Tibt
-tbwTagbanwa"Latn"Tagb
-tcyTulu"Knda
-tddTai NÃ¼a"Tale!
-tdgWestern Tamang"Deva"Tibt
-tdhThulung"Deva
-teTelugu"TeluJTelu
-temTimne"Latn
-teoTeso"Latn
-tetTetum"Latn#
-tgTajik"Arab"Cyrl"LatnJCyrl
-thThai"ThaiJThai
-thlDangaura Tharu"Deva
-thqKochila Tharu"Deva
+Shekhawati
+sxnSangir
+sylSylheti
+syrSyriac
+szlSilesian
+taTamil
+tajEastern Tamang
+tbwTagbanwa
+tcyTulu
+tddTai NÃ¼a
+tdgWestern Tamang
+tdhThulung
+teTelugu
+temTimne
+teoTeso
+tetTetum
+tgTajik
+
+thThai
+thlDangaura Tharu
+thqKochila Tharu
 thr
-Rana Tharu"Deva
-tiTigrinya"Ethi
-tigTigre"Ethi
-tivTiv"Latn%
-tkTurkmen"Arab"Cyrl"LatnJLatn
-tklTokelau"Latn
-tkrTsakhur"Cyrl"Latn
-tktKathoriya Tharu"Deva
-tlyTalysh"Arab"Cyrl"Latn
-tmhTamashek"Latn
-tnTswana"Latn
-toTongan"LatnBng
-togNyasa Tonga"Latn
-tpi	Tok Pisin"Latn
-trTurkish"Latn"ArabJLatn
-truTuroyo"Latn"Syrc
-trvTaroko"Latn
-trwTorwali"Arab
-tsTsonga"Latn
-tsd	Tsakonian"Grek
-tsgTausug"Latn
-tsjTshangla"Tibt
-ttTatar"CyrlJCyrl
-ttjTooro"Latn
-ttsNortheastern Thai"Thai#
+Rana Tharu
+tiTigrinya
+tigTigre
+
+tivTiv
+tkTurkmen
+tklTokelau
+tkrTsakhur
+tktKathoriya Tharu
+tlyTalysh
+tmhTamashek
+tnTswana
+toTonganBng
+togNyasa Tonga
+tpi	Tok Pisin
+trTurkish
+truTuroyo
+trvTaroko
+trwTorwali
+tsTsonga
+tsd	Tsakonian
+tsgTausug
+tsjTshangla
+ttTatar
+ttjTooro
+ttsNortheastern Thai
 ttt
-Muslim Tat"Cyrl"Latn"Arab
-tumTumbuka"Latn
-tvlTuvalu"Latn
-twqTasawaq"Latn
-tyTahitian"Latn
-tyvTuvinian"Cyrl*
-tzmCentral Atlas Tamazight"Latn"Tfng
-udmUdmurt"Cyrl"Latn$
-ugUyghur"Arab"Cyrl"LatnJArab
-uk	Ukrainian"CyrlJCyrl
-uliUlithian"Latn
-umbUmbundu"Latn
-unrMundari"Beng"Deva
-unxMunda"Beng"Deva
-urUrdu"ArabJArab+
-uzUzbek"Arab"Cyrl"LatnBshBchJLatn
-vaiVai"Latn"Vaii
-veVenda"Latn
-vecVenetian"Latn
-vepVeps"LatnO
+Muslim Tat
+tumTumbuka
+tvlTuvalu
+twqTasawaq
+tyTahitian
+tyvTuvinian
+tzmCentral Atlas Tamazight
+udmUdmurt
+ugUyghur
+uk	Ukrainian
+uliUlithian
+umbUmbundu
+unrMundari
+unxMunda
+
+urUrdu
+uzUzbekBshBch
+
+vaiVai
+veVenda
+vecVenetian
+vepVeps=
 vi
-Vietnamese"Latn"HaniBchBghBgiBkhBnhBngBnghBphBquBthBtrJLatn*
-vicVirgin Islands Creole English"Latn
-vlsWest Flemish"Latn
-vmfMain-Franconian"Latn
-vmwMakhuwa"Latn
-vroVÃµro"Latn
-vunVunjo"Latn
-waWalloon"Latn
-waeWalser"Latn
-walWolaytta"Ethi
-warWaray"Latn
-wbpWarlpiri"Latn
-wbqWaddar"Telu
-wbrWagdi"Deva
-wls	Wallisian"Latn
-wniNdzwani Comorian"Arab
-woWolof"Latn"Arab
-wtmMewati"Deva
+VietnameseBchBghBgiBkhBnhBngBnghBphBquBthBtr$
+vicVirgin Islands Creole English
+vlsWest Flemish
+vmfMain-Franconian
+vmwMakhuwa
+vroVÃµro
+vunVunjo
+waWalloon
+waeWalser
+walWolaytta
+warWaray
+wbpWarlpiri
+wbqWaddar
+wbrWagdi
+wls	Wallisian
+wniNdzwani Comorian
+woWolof
+wtmMewati
 wuu
-Wu Chinese"Hans
-xavXavÃ¡nte"Latn
-xhXhosa"LatnJLatn
+Wu Chinese
+xavXavÃ¡nte
+xhXhosa
 xmf
-Mingrelian"Geor
-xnrKangri"Deva
-xogSoga"Latn
-xsrSherpa"Deva
-yaoYao"Latn
-yapYapese"Latn
-yavYangben"Latn
-ybbYemba"Latn
-yiYiddish"HebrJHebr
-yoYoruba"LatnBgbJLatn
-yrl	Nheengatu"Latn
-yuaYucateco"Latn
-yue	Cantonese"Hans"Hant
-zaZhuang"Latn"Hans
-zagZaghawa"Latn
-zdjNgazidja Comorian"Arab
-zea	Zeelandic"Latn(
-zghStandard Moroccan Tamazight"Tfng+
-zhChinese"Hans"Hant"Bopo"PhagJHani"
-zmiNegeri Sembilan Malay"Latn
-zuZulu"LatnJLatn
-zzaZaza"Latn
-zxx"Latn
-bsc"Latn
-fbl"Latn
-hmn"LatnJLatn
-mey"Latn
-mfv"Latn
-snf"Latn
-tnr"Latn.
-zh-TWChinese"Hans"Hant"Bopo"PhagJHani"
+Mingrelian
+xnrKangri
+xogSoga
+xsrSherpa
+
+yaoYao
+yapYapese
+yavYangben
+ybbYemba
+yiYiddish
+yoYorubaBgb
+yrl	Nheengatu
+yuaYucateco
+yue	Cantonese
+zaZhuang
+zagZaghawa
+zdjNgazidja Comorian
+zea	Zeelandic"
+zghStandard Moroccan Tamazight
+zhChinese
+zmiNegeri Sembilan Malay
+
+zuZulu
+zzaZaza
+zxx
+bscBassari
+fblWest Albay Bikol
+hmn
+mey
+Hassaniyya
+mfvMandjak
+snfNoon
+tnrMÃ©nik
+zh-TWChinese"
 ACAscension Island¬"
 en£.
 ADAndorraÈÙ"
@@ -2485,69 +2513,70 @@ Uzbekistan˜ÈÉ"
 kckŠ‡/"
 nyœï"
 ve¨×"
-tn‚ú"
-ArabArabic0"
-ArmnArmenian0"
-BaliBalinese"
-BamuBamum0"
-BatkBatak"
-BengBengali0"
+tn‚ú"
+ArabArabic"
+ArmnArmenian"
+BaliBalinese"
+BamuBamum"
+BatkBatak"
+BengBengali"
 BopoBopomofo"
 BugiBuginese"
-BuhdBuhid"
-CansCanadian_Aboriginal0"
-ChamCham0"
-CherCherokee0"
-CyrlCyrillic0"
+BuhdBuhid"
+CansCanadian_Aboriginal"
+ChamCham"
+CherCherokee"
+CyrlCyrillic"
 Deva
-Devanagari0"
-EthiEthiopic0"
-GeorGeorgian0"
-GrekGreek0"
-GujrGujarati0"
-GuruGurmukhi0"
-HaniHan0"
-HanoHanunoo"
-HansHans*Hani0"
-HantHant*Hani0"
-HebrHebrew0"
-JavaJavanese" 
-JpanJpan*Hani*Hira*Kana0"
-KanaKatakana0"
-KhmrKhmer0"
-KndaKannada0"
-KoreKore*Hani*Hang0"
-LanaTai_Tham0"
-LaooLao0"
-LatnLatin0"
-LepcLepcha0"
-LimbLimbu"
-LisuLisu0"
-Mlym	Malayalam0"
-Mong	Mongolian0"
-MteiMeetei_Mayek"
-MymrMyanmar0"
-NkooNko0"
-OlckOl_Chiki0"
-OryaOriya0"
+Devanagari"
+EthiEthiopic"
+GeorGeorgian"
+GrekGreek"
+GujrGujarati"
+GuruGurmukhi"
+HaniHan"
+HanoHanunoo"
+HansHans*Hani"
+HantHant*Hani"
+HebrHebrew"
+JavaJavanese"
+JpanJpan*Hani*Hira*Kana"
+KanaKatakana"
+KhmrKhmer"
+KndaKannada"
+KoreKore*Hani*Hang"
+LanaTai_Tham"
+LaooLao"
+LatnLatin"
+LepcLepcha"
+LimbLimbu"
+LisuLisu"
+Mlym	Malayalam"
+Mong	Mongolian"
+MteiMeetei_Mayek"
+MymrMyanmar"
+NkooNko"
+OlckOl_Chiki"
+OryaOriya"
 PhagPhags_Pa"
 RjngRejang"
-RunrRunic"
+RunrRunic"
 Saur
-Saurashtra0"
-SinhSinhala0"
+Saurashtra"
+SinhSinhala"
 Sund	Sundanese"
-SyloSyloti_Nagri"
-SyrcSyriac0"
-TagbTagbanwa"
-TaleTai_Le0"
-TaluNew_Tai_Lue0"
-TamlTamil0"
-TeluTelugu0"
-TfngTifinagh0"
-TglgTagalog"
-ThaaThaana0"
-ThaiThai0"
-TibtTibetan0"
-VaiiVai0"
-YiiiYi0
+SyloSyloti_Nagri"
+SyrcSyriac"
+TagbTagbanwa"
+TaleTai_Le"
+TaluNew_Tai_Lue"
+TamlTamil"
+TeluTelugu"
+TfngTifinagh"
+TglgTagalog"
+ThaaThaana"
+ThaiThai"
+TibtTibetan"
+VaiiVai"
+
+YiiiYi
