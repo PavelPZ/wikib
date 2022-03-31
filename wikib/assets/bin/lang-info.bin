@@ -29,716 +29,683 @@
 057
 Micronesia"FM"GU"KI"MH"MP"NR"PW"UM8
 061	Polynesia"AS"CK"NU"PF"PN"TK"TO"TV"WF"WS+
-999Outlying Oceania"AQ"AC"CP"DG"TA
-
-aaAfar
-ab	Abkhazian
-abrAbron
-aceAchinese
-achAcoli
-adaAdangme
-adyAdyghe
-aebTunisian Arabic
-af	Afrikaans
-agqAghem
-
-akAkan
-alnGheg Albanian
-altSouthern Altai
-amAmharic
-
-amoAmo
-an	Aragonese
-aozUab Meto
-arArabic
-arnMapuche
-aroAraona
-arqAlgerian Arabic
-arsNajdi Arabic
-aryMoroccan Arabic
-arzEgyptian Arabic
-asAssamese
-
-asaAsu
-astAsturian
-atj	Atikamekw
-avAvaric
-awaAwadhi
-ayAymara
-azAzerbaijani
-baBashkir
-balBaluchi
-banBalinese
-bapBantawa
-barBavarian
-basBasaa
-baxBamun
+999Outlying Oceania"AQ"AC"CP"DG"TA
+aaAfarJLatn
+ab	AbkhazianJCyrl
+abrAbronJLatn
+aceAchineseJLatn
+achAcoliJLatn
+adaAdangmeJLatn
+adyAdygheJCyrl
+aebTunisian ArabicJArab
+af	AfrikaansJLatn
+agqAghemJLatn
+akAkanJLatn
+alnGheg AlbanianJLatn
+altSouthern AltaiJCyrl
+amAmharicJEthi
+amoAmoJLatn
+an	AragoneseJLatn
+aozUab MetoJLatn
+arArabicJArab
+arnMapucheJLatn
+aroAraonaJLatn
+arqAlgerian ArabicJArab
+arsNajdi ArabicJArab
+aryMoroccan ArabicJArab
+arzEgyptian ArabicJArab
+asAssameseJBeng
+asaAsuJLatn
+astAsturianJLatn
+atj	AtikamekwJLatn
+avAvaricJCyrl
+awaAwadhiJDeva
+ayAymaraJLatn
+azAzerbaijaniJLatn
+baBashkirJCyrl
+balBaluchiJArab
+banBalineseJLatn
+bapBantawaJDeva
+barBavarianJLatn
+basBasaaJLatn
 bbc
-Batak Toba
-bbjGhomala
-bciBaoulé
+Batak TobaJLatn
+bbjGhomalaJLatn
+bciBaouléJLatn
 be
-Belarusian
-bejBeja
-bemBemba
-bewBetawi
-bezBena
-bfdBafut
-bfqBadaga
-bftBalti
-bfyBagheli
-bg	Bulgarian
-bgcHaryanvi
-bgnWestern Balochi
-bgxBalkan Gagauz Turkish
-bhbBhili
-bhiBhilali
-bhoBhojpuri
-biBislama
-bikBikol
-binBini
-bjjKanauji
-bjnBanjar
-bjtBalanta-Ganja
-
-bkmKom
-bkuBuhid
-bmBambara
-bmqBomu
-bnBangla
-boTibetan
-bpyBishnupriya
-bqi	Bakhtiari
+BelarusianJCyrl
+bejBejaJArab
+bemBembaJLatn
+bewBetawiJLatn
+bezBenaJLatn
+bfdBafutJLatn
+bfqBadagaJTaml
+bftBaltiJArab
+bfyBagheliJDeva
+bg	BulgarianJCyrl
+bgcHaryanviJDeva
+bgnWestern BalochiJArab"
+bgxBalkan Gagauz TurkishJGrek
+bhbBhiliJDeva
+bhiBhilaliJDeva
+bhoBhojpuriJDeva
+biBislamaJLatn
+bikBikolJLatn
+binBiniJLatn
+bjjKanaujiJDeva
+bjnBanjarJLatn
+bjtBalanta-GanjaJLatn
+bkmKomJLatn
+bkuBuhidJLatn
+bmBambaraJLatn
+bmqBomuJLatn
+bnBanglaJBeng
+boTibetanJTibt
+bpyBishnupriyaJBeng
+bqi	BakhtiariJArab
 bqv
-Koro Wachi
-brBretonBch
-braBraj
-brhBrahui
-brxBodo
-bsBosnian
-bssAkoose
-btoRinconada Bikol
-btvBateri
-buaBuriat
-bucBushi
-bugBuginese
-bumBulu
-bvbBube
-bynBlin
-byvMedumba
-bzeJenaama Bozo
-caCatalanBchBll
-cchAtsam
-ccpChakma
-ceChechen
-cebCebuanoBng
-cggChiga
-chChamorro
-chkChuukese
-chmMari
-choChoctaw
-chp	Chipewyan
-chrCherokee
-cjaWestern Cham
-cjmEastern Cham
-ckbCentral Kurdish
-coCorsican
-cpsCapiznon
-
-crCree
-crhCrimean Turkish
-crjSouthern East Cree
-crkPlains Cree
-crlNorthern East Cree
+Koro WachiJLatn
+brBretonBchJLatn
+braBrajJDeva
+brhBrahuiJArab
+brxBodoJDeva
+bsBosnianJLatn
+bssAkooseJLatn
+btoRinconada BikolJLatn
+btvBateriJDeva
+buaBuriatJCyrl
+bucBushiJLatn
+bugBugineseJLatn
+bumBuluJLatn
+bvbBubeJLatn
+bynBlinJEthi
+byvMedumbaJLatn
+bzeJenaama BozoJLatn
+caCatalanBchBllJLatn
+cchAtsamJLatn
+ccpChakmaJLatn
+ceChechenJCyrl
+cebCebuanoBngJLatn
+cggChigaJLatn
+chChamorroJLatn
+chkChuukeseJLatn
+chmMariJCyrl
+choChoctawJLatn
+chp	ChipewyanJLatn
+chrCherokeeJCher
+cjaWestern ChamJArab
+ckbCentral KurdishJArab
+coCorsicanJLatn
+cpsCapiznonJLatn
+crCreeJCans
+crhCrimean TurkishJCyrl
+crjSouthern East CreeJCans
+crkPlains CreeJCans
+crlNorthern East CreeJCans
 crm
-Moose Cree
-crsSeselwa Creole French
-csCzechBch
-csb	Kashubian
-cswSwampy Cree
-cvChuvash+
-cyWelshBchBddBffBngBllBphBrhBth
-daDanishBaa
-dakDakota
-darDargwa
-davTaita
-dccDeccan
-deGerman
-denSlave
-dgrDogrib
-djeZarma
-
-dnjDan
-doiDogri
-dsbLower SorbianBch
-dtmTomo Kan Dogon
-dtpCentral Dusun
-dtyDotyali
-duaDuala
-dvDivehi
+Moose CreeJCans"
+crsSeselwa Creole FrenchJLatn
+csCzechBchJLatn
+csb	KashubianJLatn
+cswSwampy CreeJCans
+cvChuvashJCyrl1
+cyWelshBchBddBffBngBllBphBrhBthJLatn
+daDanishBaaJLatn
+dakDakotaJLatn
+darDargwaJCyrl
+davTaitaJLatn
+dccDeccanJArab
+deGermanJLatn
+denSlaveJLatn
+dgrDogribJLatn
+djeZarmaJLatn
+dnjDanJLatn
+doiDogriJDeva
+dsbLower SorbianBchJLatn
+dtmTomo Kan DogonJLatn
+dtpCentral DusunJLatn
+dtyDotyaliJDeva
+duaDualaJLatn
+dvDivehiJThaa
 dyo
-Jola-Fonyi
-dyuDyula
-dzDzongkha
-ebuEmbu
-eeEweBdzBgbBkpBnyBts
-efiEfik
-eglEmilian
-elGreek
-enEnglish
-eo	Esperanto
-esSpanishBchBll
-esuCentral Yupik
-etEstonian
-euBasque
-ewoEwondo
-extExtremaduran
-faPersian
-fanFang
-ffFulah
-ffmMaasina Fulfulde
-fiFinnish
-fiaNobiin
-filFilipinoBng
-fitTornedalen Finnish
-fjFijian
-foFaroeseBaa
-
-fonFon
-frFrench
-frcCajun French
-frpArpitan
-frrNorthern Frisian
-frsEastern Frisian
-fudEast Futuna%
-fuqCentral-Eastern Niger Fulfulde
-furFriulian
-fuvNigerian Fulfulde
-
-fvrFur
-fyWestern Frisian
-gaIrish	
-gaaGa
-gagGagauz
-ganGan Chinese
-gayGayo
-gbmGarhwali
-gbzZoroastrian Dari
-gcrGuianese Creole French
-gdScottish Gaelic
+Jola-FonyiJLatn
+dyuDyulaJLatn
+dzDzongkhaJTibt
+ebuEmbuJLatn#
+eeEweBdzBgbBkpBnyBtsJLatn
+efiEfikJLatn
+eglEmilianJLatn
+elGreekJGrek
+enEnglishJLatn
+eo	EsperantoJLatn
+esSpanishBchBllJLatn
+esuCentral YupikJLatn
+etEstonianJLatn
+euBasqueJLatn
+ewoEwondoJLatn
+extExtremaduranJLatn
+faPersianJArab
+fanFangJLatn
+ffFulahJLatn
+ffmMaasina FulfuldeJLatn
+fiFinnishJLatn
+fiaNobiinJArab
+filFilipinoBngJLatn
+fitTornedalen FinnishJLatn
+fjFijianJLatn
+foFaroeseBaaJLatn
+fonFonJLatn
+frFrenchJLatn
+frcCajun FrenchJLatn
+frpArpitanJLatn
+frrNorthern FrisianJLatn
+frsEastern FrisianJLatn
+fudEast FutunaJLatn+
+fuqCentral-Eastern Niger FulfuldeJLatn
+furFriulianJLatn
+fuvNigerian FulfuldeJLatn
+fvrFurJLatn
+fyWestern FrisianJLatn
+gaIrishJLatn
+gaaGaJLatn
+gagGagauzJLatn
+ganGan ChineseJHans
+gayGayoJLatn
+gbmGarhwaliJDeva
+gbzZoroastrian DariJArab#
+gcrGuianese Creole FrenchJLatn
+gdScottish GaelicJLatn
 gil
-Gilbertese
+GilberteseJLatn
 gjk
-Kachi Koli
-gjuGujari
-glGalician
-glkGilaki
-gnGuarani
-gomGoan Konkani
-gonGondi
-gor	Gorontalo
-gosGronings
-grtGaro
-gswSwiss German
-guGujarati
+Kachi KoliJArab
+gjuGujariJArab
+glGalicianJLatn
+glkGilakiJArab
+gnGuaraniJLatn
+gomGoan KonkaniJDeva
+gonGondiJTelu
+gor	GorontaloJLatn
+gosGroningsJLatn
+grtGaroJBeng
+gswSwiss GermanJLatn
+guGujaratiJGujr
 gub
-Guajajára
-gucWayuu
-gurFrafra
-guzGusii
-
-gvManx
-gvrGurung
-gwi	Gwichʼin
-haHausaBshBts
-hakHakka Chinese
-hawHawaiian
-hazHazaragi
-heHebrew
-hiHindi
+GuajajáraJLatn
+gucWayuuJLatn
+gurFrafraJLatn
+guzGusiiJLatn
+gvManxJLatn
+gvrGurungJDeva
+gwi	GwichʼinJLatn
+haHausaBshBtsJLatn
+hakHakka ChineseJHans
+hawHawaiianJLatn
+hazHazaragiJArab
+heHebrewJHebr
+hiHindiJDeva
 hif
-Fiji Hindi
+Fiji HindiJLatn
 hil
-Hiligaynon
-hndSouthern Hindko
-hneChhattisgarhi
-hnnHanunoo
-hnoNorthern Hindko
-ho	Hiri Motu	
-hocHo
-hojHadothi
-hrCroatianBljBnj
-hsbUpper SorbianBch
-hsnXiang Chinese
-htHaitian Creole4
-hu	HungarianBcsBdzBdzsBgyBlyBnyBszBtyBzs
-hyArmenian
-hzHerero
-iaInterlingua
-ibaIban
-ibbIbibio
+HiligaynonJLatn
+hndSouthern HindkoJArab
+hneChhattisgarhiJDeva
+hnnHanunooJLatn
+hnoNorthern HindkoJArab
+ho	Hiri MotuJLatn
+hocHoJDeva
+hojHadothiJDeva
+hrCroatianBljBnjJLatn
+hsbUpper SorbianBchJLatn
+hsnXiang ChineseJHans
+htHaitian CreoleJLatn:
+hu	HungarianBcsBdzBdzsBgyBlyBnyBszBtyBzsJLatn
+hyArmenianJArmn
+hzHereroJLatn
+iaInterlinguaJLatn
+ibaIbanJLatn
+ibbIbibioJLatn
 id
-Indonesian
-ifeIfè.
-igIgboBchBgbBghBgwBkpBkwBnwBnyBsh
+IndonesianJLatn
+ifeIfèJLatn4
+igIgboBchBgbBghBgwBkpBkwBnwBnyBshJLatn
 ii
-Sichuan Yi
-ikInupiaq
-iktInuinnaqtun
-iloIloko
-inhIngush
-is	Icelandic
-itItalian
-iu	Inuktitut
-izhIngrian
-jaJapanese
-jamJamaican Creole English
-jgoNgomba
-jmcMachame
-jmlJumli
-jvJavanese
-kaGeorgian
-kaaKara-Kalpak
-kabKabyle
-kacKachin
-
-kajJju
-kamKamba
-kaoXaasongaxango
-kbd	Kabardian
-kcgTyap
-kckKalanga
-kdeMakonde
-
-kdtKuy
-keaKabuverdianu
-kfoKoro
-kfrKachhi
-kfyKumaoni
-kgKongo
-kgeKomering
-kgpKaingang
-khaKhasi
-
-khbLü
-khnKhandesi
-khqKoyra Chiini
-khtKhamti
-khwKhowar
-kiKikuyu
-kiu	Kirmanjki
-kjKuanyama
-kjgKhmu
-kkKazakh
-kkjKako
-klKalaallisut
-klnKalenjin
-kmKhmer
-kmbKimbundu
-knKannada
-knfMankanya
-koKorean
-koiKomi-Permyak
-kokKonkani
-kosKosraean
-kpeKpelle
-krcKarachay-Balkar
-kriKrio
-krj	Kinaray-a
-krlKarelian
-kruKurukh
-ksKashmiri
-ksbShambala
-ksfBafia
-ksh	Colognian
-kuKurdish
-kumKumyk
-
-kvKomi
-kvrKerinci
-kvxParkari Koli
-kwCornish
-kxmNorthern Khmer
-kxpWadiyara Koli
-kyKyrgyz
-laLatin
-ladLadino
-lagLangi
-lahLahnda
-lajLango (Uganda)
-lbLuxembourgish
-
-lbeLak
-lbwTolaki
-lcpWestern Lawa
-lepLepcha
-lezLezghian
-lgGanda
+Sichuan YiJYiii
+ikInupiaqJLatn
+iktInuinnaqtunJLatn
+iloIlokoJLatn
+inhIngushJCyrl
+is	IcelandicJLatn
+itItalianJLatn
+iu	InuktitutJCans
+izhIngrianJLatn
+jaJapaneseJJpan$
+jamJamaican Creole EnglishJLatn
+jgoNgombaJLatn
+jmcMachameJLatn
+jmlJumliJDeva
+jvJavaneseJLatn
+kaGeorgianJGeor
+kaaKara-KalpakJCyrl
+kabKabyleJLatn
+kacKachinJLatn
+kajJjuJLatn
+kamKambaJLatn
+kaoXaasongaxangoJLatn
+kbd	KabardianJCyrl
+kcgTyapJLatn
+kckKalangaJLatn
+kdeMakondeJLatn
+kdtKuyJThai
+keaKabuverdianuJLatn
+kfoKoroJLatn
+kfrKachhiJDeva
+kfyKumaoniJDeva
+kgKongoJLatn
+kgeKomeringJLatn
+kgpKaingangJLatn
+khaKhasiJLatn
+khbLüJTalu
+khnKhandesiJDeva
+khqKoyra ChiiniJLatn
+khtKhamtiJMymr
+khwKhowarJArab
+kiKikuyuJLatn
+kiu	KirmanjkiJLatn
+kjKuanyamaJLatn
+kjgKhmuJLaoo
+kkKazakhJCyrl
+kkjKakoJLatn
+klKalaallisutJLatn
+klnKalenjinJLatn
+kmKhmerJKhmr
+kmbKimbunduJLatn
+knKannadaJKnda
+knfMankanyaJLatn
+koKoreanJKore
+koiKomi-PermyakJCyrl
+kokKonkaniJDeva
+kosKosraeanJLatn
+kpeKpelleJLatn
+krcKarachay-BalkarJCyrl
+kriKrioJLatn
+krj	Kinaray-aJLatn
+krlKarelianJLatn
+kruKurukhJDeva
+ksKashmiriJArab
+ksbShambalaJLatn
+ksfBafiaJLatn
+ksh	ColognianJLatn
+kuKurdishJLatn
+kumKumykJCyrl
+kvKomiJCyrl
+kvrKerinciJLatn
+kvxParkari KoliJArab
+kwCornishJLatn
+kxmNorthern KhmerJThai
+kxpWadiyara KoliJArab
+kyKyrgyzJCyrl
+laLatinJLatn
+ladLadinoJHebr
+lagLangiJLatn
+lahLahndaJArab
+lajLango (Uganda)JLatn
+lbLuxembourgishJLatn
+lbeLakJCyrl
+lbwTolakiJLatn
+lcpWestern LawaJThai
+lezLezghianJCyrl
+lgGandaJLatn
 li
-Limburgish
-lifLimbu
-lijLigurian
-lisLisu
-ljpLampung Api
-lkiLaki
-lktLakota
-lmnLambadi
-lmoLombardN
-lnLingalaBgbBkpBmbBmfBmpBmvBndBngBngbBnkBnsBntBnyBnzBshBts	
-loLao
-lolMongo
-lozLozi
-lrcNorthern Luri
+LimburgishJLatn
+lifLimbuJDeva
+lijLigurianJLatn
+lisLisuJLisu
+ljpLampung ApiJLatn
+lkiLakiJArab
+lktLakotaJLatn
+lmnLambadiJTelu
+lmoLombardJLatnT
+lnLingalaBgbBkpBmbBmfBmpBmvBndBngBngbBnkBnsBntBnyBnzBshBtsJLatn
+loLaoJLaoo
+lolMongoJLatn
+lozLoziJLatn
+lrcNorthern LuriJArab
 lt
-Lithuanian
-ltg	Latgalian
-luLuba-Katanga
+LithuanianJLatn
+ltg	LatgalianJLatn
+luLuba-KatangaJLatn
 lua
-Luba-Lulua
-
-luoLuo
-luyLuyia
-luzSouthern Luri
-lvLatvian
-lwlEastern Lawa
-
-lzzLaz
-madMadurese
-mafMafa
-magMagahi
-maiMaithili
-makMakasar
-manMandingo
-masMasai
-mazCentral Mazahua
-mdfMoksha
-mdhMaguindanaon
-mdrMandar
-menMende
-merMeru
-mfaPattani Malay
-mfeMorisyen
-mgMalagasy
-mghMakhuwa-Meetto
-mgoMetaʼ
-mgpEastern Magar
-mgyMbunga
-mhMarshallese
-miMaori
-minMinangkabau
+Luba-LuluaJLatn
+luoLuoJLatn
+luyLuyiaJLatn
+luzSouthern LuriJArab
+lvLatvianJLatn
+lwlEastern LawaJThai
+lzzLazJLatn
+madMadureseJLatn
+mafMafaJLatn
+magMagahiJDeva
+maiMaithiliJDeva
+makMakasarJLatn
+manMandingoJLatn
+masMasaiJLatn
+mazCentral MazahuaJLatn
+mdfMokshaJCyrl
+mdhMaguindanaonJLatn
+mdrMandarJLatn
+menMendeJLatn
+merMeruJLatn
+mfaPattani MalayJArab
+mfeMorisyenJLatn
+mgMalagasyJLatn
+mghMakhuwa-MeettoJLatn
+mgoMetaʼJLatn
+mgpEastern MagarJDeva
+mgyMbungaJLatn
+mhMarshalleseJLatn
+miMaoriJLatn
+minMinangkabauJLatn
 mk
-Macedonian
-ml	Malayalam
-mlsMasalit
-mn	Mongolian
-mniManipuri
-
-mnwMon
-moeInnu
-mohMohawk
-mosMossi
-mrMarathi
-mrdWestern Magar
-mrjWestern Mari
-
-mroMru
-msMalay
-mtMaltese
-mtrMewari
-muaMundang
-musMuscogee
-mvyIndus Kohistani
-mwkKita Maninkakan
-mwrMarwari
-mwvMentawai
-mxcManyika
-myBurmese
-myvErzya
-myxMasaaba
-mznMazanderani
-naNauru
-nanMin Nan Chinese
+MacedonianJCyrl
+ml	MalayalamJMlym
+mlsMasalitJLatn
+mn	MongolianJCyrl
+mniManipuriJBeng
+mnwMonJMymr
+moeInnuJLatn
+mohMohawkJLatn
+mosMossiJLatn
+mrMarathiJDeva
+mrdWestern MagarJDeva
+mrjWestern MariJCyrl
+mroMruJLatn
+msMalayJLatn
+mtMalteseJLatn
+mtrMewariJDeva
+muaMundangJLatn
+musMuscogeeJLatn
+mvyIndus KohistaniJArab
+mwkKita ManinkakanJLatn
+mwrMarwariJDeva
+mwvMentawaiJLatn
+mxcManyikaJLatn
+myBurmeseJMymr
+myvErzyaJCyrl
+myxMasaabaJLatn
+mznMazanderaniJArab
+naNauruJLatn
+nanMin Nan ChineseJHans
 nap
-Neapolitan
-naqNama
-nbNorwegian BokmålBaa
-nchCentral Huasteca Nahuatl
-ndNorth Ndebele
-ndcNdau
+NeapolitanJLatn
+naqNamaJLatn!
+nbNorwegian BokmålBaaJLatn%
+nchCentral Huasteca NahuatlJLatn
+ndNorth NdebeleJLatn
+ndcNdauJLatn
 nds
-Low German
-neNepali
-newNewari
-ngNdonga
-nglLomwe
-nheEastern Huasteca Nahuatl
-nhwWestern Huasteca Nahuatl
-nijNgaju
-niuNiuean
-njoAo Naga
-nlDutch
-nmgKwasio
-nnNorwegian Nynorsk
-nnh	Ngiemboon
-nodNorthern Thai
-noeNimadi
-nqoN’Ko
-nrSouth Ndebele
-nskNaskapi
-nsoNorthern Sotho
-nusNuer
-nvNavajo
-nxqNaxi
-nyNyanja
-nymNyamwezi
-nynNyankole
-nziNzima
-ocOccitan
-omOromoBchBdhBkhBnyBph
-
-orOdia
-osOssetic
-paPunjabi
+Low GermanJLatn
+neNepaliJDeva
+newNewariJDeva
+ngNdongaJLatn
+nglLomweJLatn%
+nheEastern Huasteca NahuatlJLatn%
+nhwWestern Huasteca NahuatlJLatn
+nijNgajuJLatn
+niuNiueanJLatn
+njoAo NagaJLatn
+nlDutchJLatn
+nmgKwasioJLatn
+nnNorwegian NynorskJLatn
+nnh	NgiemboonJLatn
+noeNimadiJDeva
+nqoN’KoJNkoo
+nrSouth NdebeleJLatn
+nskNaskapiJCans
+nsoNorthern SothoJLatn
+nusNuerJLatn
+nvNavajoJLatn
+nxqNaxiJLatn
+nyNyanjaJLatn
+nymNyamweziJLatn
+nynNyankoleJLatn
+nziNzimaJLatn
+ocOccitanJLatn%
+omOromoBchBdhBkhBnyBphJLatn
+orOdiaJOrya
+osOsseticJCyrl
+paPunjabiJGuru
 pag
-Pangasinan
-pamPampanga
+PangasinanJLatn
+pamPampangaJLatn
 pap
-Papiamento
-pauPalauan
-pcdPicard
-pcmNigerian Pidgin
-pdcPennsylvania German
-pdtPlautdietsch
-pkoPökoot
-plPolish
-pmsPiedmontese
-pntPontic
-pon	Pohnpeian
+PapiamentoJLatn
+pauPalauanJLatn
+pcdPicardJLatn
+pcmNigerian PidginJLatn 
+pdcPennsylvania GermanJLatn
+pdtPlautdietschJLatn
+pkoPökootJLatn
+plPolishJLatn
+pmsPiedmonteseJLatn
+pntPonticJGrek
+pon	PohnpeianJLatn
 prd
-Parsi-Dari
-psPashto
+Parsi-DariJArab
+psPashtoJArab
 pt
-Portuguese
-puuPunu
-quQuechua
-quc	Kʼicheʼ"
-qugChimborazo Highland Quichua
+PortugueseJLatn
+puuPunuJLatn
+quQuechuaJLatn
+quc	KʼicheʼJLatn(
+qugChimborazo Highland QuichuaJLatn
 raj
-Rajasthani
-rcfRéunion Creole French
-rejRejang
-riaRiang (India)
-rifRiffian
-rjs	Rajbanshi
-rktRangpuri
-rmRomansh
-rmfKalo Finnish Romani
-rmoSinte Romani
-rmtDomari
-rmuTavringer Romani
-rnRundi
-rngRonga
-roRomanian
-robTae'
-rofRombo
-rtmRotuman
-ruRussian
-rueRusyn
-rugRoviana
-rwKinyarwanda
-
-rwkRwa
-ryuCentral Okinawan
-saSanskrit
-safSafaliba
-sahSakha
-saqSamburu
-sasSasak
-satSantali
-savSaafi-Saafi
-saz
-Saurashtra
-sbpSangu
-sc	Sardinian
-sckSadri
-scnSicilian
-scoScots
-scsNorth Slavey
-sdSindhi
-sdcSassarese Sardinian
-sdhSouthern Kurdish
-seNorthern Sami
-sefCebaara Senoufo
-sehSena
-seiSeri
-sesKoyraboro Senni
-sgSango
-shi	Tachelhit
-shnShan
-siSinhala
-sidSidamo
-skSlovakBch
-skrSaraiki
-sl	Slovenian
-sliLower Silesian
-slySelayar
-smSamoan
-smaSouthern Sami
-smj	Lule Sami
+RajasthaniJDeva#
+rcfRéunion Creole FrenchJLatn
+rejRejangJLatn
+riaRiang (India)JLatn
+rifRiffianJTfng
+rjs	RajbanshiJDeva
+rktRangpuriJBeng
+rmRomanshJLatn 
+rmfKalo Finnish RomaniJLatn
+rmoSinte RomaniJLatn
+rmtDomariJArab
+rmuTavringer RomaniJLatn
+rnRundiJLatn
+rngRongaJLatn
+roRomanianJLatn
+robTae'JLatn
+rofRomboJLatn
+rtmRotumanJLatn
+ruRussianJCyrl
+rueRusynJCyrl
+rugRovianaJLatn
+rwKinyarwandaJLatn
+rwkRwaJLatn
+ryuCentral OkinawanJKana
+saSanskritJDeva
+safSafalibaJLatn
+sahSakhaJCyrl
+saqSamburuJLatn
+sasSasakJLatn
+satSantaliJOlck
+savSaafi-SaafiJLatn
+sbpSanguJLatn
+sc	SardinianJLatn
+sckSadriJDeva
+scnSicilianJLatn
+scoScotsJLatn
+scsNorth SlaveyJLatn
+sdSindhiJArab 
+sdcSassarese SardinianJLatn
+sdhSouthern KurdishJArab
+seNorthern SamiJLatn
+sefCebaara SenoufoJLatn
+sehSenaJLatn
+seiSeriJLatn
+sesKoyraboro SenniJLatn
+sgSangoJLatn
+shi	TachelhitJTfng
+shnShanJMymr
+siSinhalaJSinh
+sidSidamoJLatn
+skSlovakBchJLatn
+skrSaraikiJArab
+sl	SlovenianJLatn
+sliLower SilesianJLatn
+slySelayarJLatn
+smSamoanJLatn
+smaSouthern SamiJLatn
+smj	Lule SamiJLatn
 smn
-Inari Sami
+Inari SamiJLatn
 sms
-Skolt Sami
-snShona
-snkSoninke
-soSomali
-souSouthern Thai2
-sqAlbanianBdhBgjBllBnjBrrBshBthBxhBzh
-srSerbian
-srnSranan Tongo
-srrSerer
-srxSirmauri
-ssSwati
-ssySaho
-stSouthern Sotho
-stqSaterland Frisian
-su	Sundanese
-sukSukuma
-susSusu
-svSwedish
-swSwahili
-swbComorian
-swgSwabian
+Skolt SamiJLatn
+snShonaJLatn
+snkSoninkeJLatn
+soSomaliJLatn
+souSouthern ThaiJThai8
+sqAlbanianBdhBgjBllBnjBrrBshBthBxhBzhJLatn
+srSerbianJCyrl
+srnSranan TongoJLatn
+srrSererJLatn
+srxSirmauriJDeva
+ssSwatiJLatn
+ssySahoJLatn
+stSouthern SothoJLatn
+stqSaterland FrisianJLatn
+su	SundaneseJLatn
+sukSukumaJLatn
+susSusuJLatn
+svSwedishJLatn
+swSwahiliJLatn
+swbComorianJArab
+swgSwabianJLatn
 swv
-Shekhawati
-sxnSangir
-sylSylheti
-syrSyriac
-szlSilesian
-taTamil
-tajEastern Tamang
-tbwTagbanwa
-tcyTulu
-tddTai Nüa
-tdgWestern Tamang
-tdhThulung
-teTelugu
-temTimne
-teoTeso
-tetTetum
-tgTajik
-
-thThai
-thlDangaura Tharu
-thqKochila Tharu
+ShekhawatiJDeva
+sxnSangirJLatn
+sylSylhetiJBeng
+syrSyriacJSyrc
+szlSilesianJLatn
+taTamilJTaml
+tajEastern TamangJDeva
+tbwTagbanwaJLatn
+tcyTuluJKnda
+tddTai NüaJTale
+tdgWestern TamangJDeva
+tdhThulungJDeva
+teTeluguJTelu
+temTimneJLatn
+teoTesoJLatn
+tetTetumJLatn
+tgTajikJCyrl
+thThaiJThai
+thlDangaura TharuJDeva
+thqKochila TharuJDeva
 thr
-Rana Tharu
-tiTigrinya
-tigTigre
-
-tivTiv
-tkTurkmen
-tklTokelau
-tkrTsakhur
-tktKathoriya Tharu
-tlyTalysh
-tmhTamashek
-tnTswana
-toTonganBng
-togNyasa Tonga
-tpi	Tok Pisin
-trTurkish
-truTuroyo
-trvTaroko
-trwTorwali
-tsTsonga
-tsd	Tsakonian
-tsgTausug
-tsjTshangla
-ttTatar
-ttjTooro
-ttsNortheastern Thai
+Rana TharuJDeva
+tiTigrinyaJEthi
+tigTigreJEthi
+tivTivJLatn
+tkTurkmenJLatn
+tklTokelauJLatn
+tkrTsakhurJLatn
+tktKathoriya TharuJDeva
+tlyTalyshJLatn
+tmhTamashekJLatn
+tnTswanaJLatn
+toTonganBngJLatn
+togNyasa TongaJLatn
+tpi	Tok PisinJLatn
+trTurkishJLatn
+truTuroyoJLatn
+trvTarokoJLatn
+trwTorwaliJArab
+tsTsongaJLatn
+tsd	TsakonianJGrek
+tsgTausugJLatn
+tsjTshanglaJTibt
+ttTatarJCyrl
+ttjTooroJLatn
+ttsNortheastern ThaiJThai
 ttt
-Muslim Tat
-tumTumbuka
-tvlTuvalu
-twqTasawaq
-tyTahitian
-tyvTuvinian
-tzmCentral Atlas Tamazight
-udmUdmurt
-ugUyghur
-uk	Ukrainian
-uliUlithian
-umbUmbundu
-unrMundari
-unxMunda
-
-urUrdu
-uzUzbekBshBch
-
-vaiVai
-veVenda
-vecVenetian
-vepVeps=
+Muslim TatJLatn
+tumTumbukaJLatn
+tvlTuvaluJLatn
+twqTasawaqJLatn
+tyTahitianJLatn
+tyvTuvinianJCyrl$
+tzmCentral Atlas TamazightJLatn
+udmUdmurtJCyrl
+ugUyghurJArab
+uk	UkrainianJCyrl
+uliUlithianJLatn
+umbUmbunduJLatn
+unrMundariJBeng
+unxMundaJBeng
+urUrduJArab
+uzUzbekBshBchJLatn
+vaiVaiJVaii
+veVendaJLatn
+vecVenetianJLatn
+vepVepsJLatnC
 vi
-VietnameseBchBghBgiBkhBnhBngBnghBphBquBthBtr$
-vicVirgin Islands Creole English
-vlsWest Flemish
-vmfMain-Franconian
-vmwMakhuwa
-vroVõro
-vunVunjo
-waWalloon
-waeWalser
-walWolaytta
-warWaray
-wbpWarlpiri
-wbqWaddar
-wbrWagdi
-wls	Wallisian
-wniNdzwani Comorian
-woWolof
-wtmMewati
+VietnameseBchBghBgiBkhBnhBngBnghBphBquBthBtrJLatn*
+vicVirgin Islands Creole EnglishJLatn
+vlsWest FlemishJLatn
+vmfMain-FranconianJLatn
+vmwMakhuwaJLatn
+vroVõroJLatn
+vunVunjoJLatn
+waWalloonJLatn
+waeWalserJLatn
+walWolayttaJEthi
+warWarayJLatn
+wbpWarlpiriJLatn
+wbqWaddarJTelu
+wbrWagdiJDeva
+wls	WallisianJLatn
+wniNdzwani ComorianJArab
+woWolofJLatn
+wtmMewatiJDeva
 wuu
-Wu Chinese
-xavXavánte
-xhXhosa
+Wu ChineseJHans
+xavXavánteJLatn
+xhXhosaJLatn
 xmf
-Mingrelian
-xnrKangri
-xogSoga
-xsrSherpa
-
-yaoYao
-yapYapese
-yavYangben
-ybbYemba
-yiYiddish
-yoYorubaBgb
-yrl	Nheengatu
-yuaYucateco
-yue	Cantonese
-zaZhuang
-zagZaghawa
-zdjNgazidja Comorian
-zea	Zeelandic"
-zghStandard Moroccan Tamazight
-zhChinese
-zmiNegeri Sembilan Malay
-
-zuZulu
-zzaZaza
-zxx
-bscBassari
-fblWest Albay Bikol
-hmn
+MingrelianJGeor
+xnrKangriJDeva
+xogSogaJLatn
+xsrSherpaJDeva
+yaoYaoJLatn
+yapYapeseJLatn
+yavYangbenJLatn
+ybbYembaJLatn
+yiYiddishJHebr
+yoYorubaBgbJLatn
+yrl	NheengatuJLatn
+yuaYucatecoJLatn
+yue	CantoneseJHant
+zaZhuangJLatn
+zagZaghawaJLatn
+zdjNgazidja ComorianJArab
+zea	ZeelandicJLatn(
+zghStandard Moroccan TamazightJTfng
+zhChineseJHans"
+zmiNegeri Sembilan MalayJLatn
+zuZuluJLatn
+zzaZazaJLatn
+zxxJLatn
+bscBassariJLatn
+fblWest Albay BikolJLatn
+hmnJLatn
 mey
-Hassaniyya
-mfvMandjak
-snfNoon
-tnrMénik
-zh-TWChinese"
+HassaniyyaJLatn
+mfvMandjakJLatn
+snfNoonJLatn
+tnrMénikJLatn
+zh-TWChineseJHant"
 ACAscension Island�"
 en�.
 ADAndorra��"
@@ -904,13 +871,12 @@ Bangladesh���M"
 yrl�V"
 xav�M
 BSBahamas��"
-en��D
+en��9
 BTBhutan��/"
 dzɸ"
 ne��"	
 tsj�"
-en��"	
-lep��
+en��
 BVBouvet Island"
 zxx0
 BWBotswana���"
@@ -992,7 +958,7 @@ Bangladesh���M"
 CLChile���"	
 es��"
 en��i"	
-arn���
+arn���
 CMCameroon赝"	
 fr���"	
 en���"	
@@ -1004,7 +970,6 @@ Bangladesh���M"
 nnh��"	
 bkm�"	
 bas��"	
-bax��"	
 byv��"	
 mua��"	
 maf��"	
@@ -1423,7 +1388,7 @@ Guadeloupe��"
 ml�>(
 IMIsle of Man��"
 en��"
-gv��
+gv��
 INIndia����"	
 en잒x"	
 bn���3"	
@@ -1509,7 +1474,6 @@ Guadeloupe��"
 unx��&"	
 bfy��"	
 srx��"	
-saz��"	
 ccp��"	
 bfq��"	
 njo��"	
@@ -1519,7 +1483,6 @@ Guadeloupe��"
 bpy��"	
 bft��"	
 bra�"	
-lep��"	
 btv��"	
 lif��"	
 lah��"
@@ -1926,7 +1889,7 @@ Mozambique���"
 NONorway���"	
 nb���"
 nn̶S"
-se�{�
+se�{�
 NPNepal܈�"	
 ne���"
 
@@ -1955,8 +1918,7 @@ Mozambique���"
 tktӸ"	
 tdh��"
 bn��"
-unr�-"
-lep� 
+unr�- 
 NRNauru�U"
 en�I"
 na�6 
@@ -2280,14 +2242,12 @@ San Marino��"
 TGTogo���"	
 fr���"
 ee��Y"	
-ife���
+ife���
 THThailand��� "	
 th���"	
 en���"
 
 ttsд�"
-
-nod���"
 
 sou���"
 
@@ -2453,11 +2413,10 @@ Uzbekistan���"
 VGBritish Virgin Islands��"
 en��'
 VIU.S. Virgin Islands��"
-en��5
+en��*
 VNVietnam���/"	
 vi��("
-zh-TW�B"	
-cjm��/
+zh-TW�B/
 VUVanuatuݚ"
 biԱ"
 en��"
@@ -2513,70 +2472,45 @@ Uzbekistan���"
 kck��/"
 ny��"
 ve��"
-tn��"
-ArabArabic"
-ArmnArmenian"
-BaliBalinese"
-BamuBamum"
-BatkBatak"
-BengBengali"
-BopoBopomofo"
-BugiBuginese"
-BuhdBuhid"
-CansCanadian_Aboriginal"
-ChamCham"
-CherCherokee"
-CyrlCyrillic"
+tn��"�
+ArabArabic"�ؠءآأؤإئابةتثجحخدذرزسشصضطظعغؽفقكلمنهوىيٯٲٹٺٻټٽپٿڀځڃڄڅچڇڈډڊڌڍڏڑړڕږژڙښڜڢڤڥڦڧڨکڪګڭگڱڳڵںڻڼھہۂۃۄۆۇۈۉۊۋیۍێېےە"�
+ArmnArmenian"�ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖաբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆև"�
+BengBengali"�অআইঈউঊঋঌএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহঽৎৠৡৰৱ"�
+CansCanadian_Aboriginal"�ᐁᐂᐃᐄᐅᐆᐇᐈᐉᐊᐋᐌᐍᐎᐏᐐᐑᐒᐓᐔᐕᐖᐗᐘᐙᐚᐛᐜᐝᐞᐟᐠᐡᐢᐣᐤᐥᐦᐧᐨᐩᐪᐫᐬᐭᐮᐯᐰᐱᐲᐳᐴᐵᐶᐷᐸᐹᐺᐻᐼᐽᐾᐿᑀᑁᑂᑃᑄᑅᑆᑇᑈᑉᑊᑋᑌᑍᑎᑏᑐᑑᑒᑓᑔᑕᑖᑗᑘᑙᑚᑛᑜᑝᑞᑟᑠᑡᑢᑣᑤᑥᑦᑧᑨᑩᑪᑫᑬᑭᑮᑯᑰᑱᑲᑳᑴᑵᑶᑷᑸᑹᑺᑻᑼᑽᑾᑿᒀᒁᒂᒃᒄᒅᒆᒇᒈᒉᒊᒋᒌᒍᒎᒏᒐᒑᒒᒓᒔᒕᒖᒗᒘᒙᒚᒛᒜᒝᒞᒟᒠᒡᒢᒣᒤᒥᒦᒧᒨᒩᒪᒫᒬᒭᒮᒯᒰᒱᒲᒳᒴᒵᒶᒷᒸᒹᒺᒻᒼᒽᒾᒿᓀᓁᓂᓃᓄᓅᓆᓇᓈᓉᓊᓋᓌᓍᓎᓏᓐᓑᓒᓓᓔᓕᓖᓗᓘᓙᓚᓛᓜᓝᓞᓟᓠᓡᓢᓣᓤᓥᓦᓧᓨᓩᓪᓫᓬᓭᓮᓯᓰᓱᓲᓳᓴᓵᓶᓷᓸᓹᓺᓻᓼᓽᓾᓿᔀᔁᔂᔃᔄᔅᔆᔇᔈᔉᔊᔋᔌᔍᔎᔏᔐᔑᔒᔓᔔᔕᔖᔗᔘᔙᔚᔛᔜᔝᔞᔟᔠᔡᔢᔣᔤᔥᔦᔧᔨᔩᔪᔫᔬᔭᔮᔯᔰᔱᔲᔳᔴᔵᔶᔷᔸᔹᔺᔻᔼᔽᔾᔿᕀᕁᕂᕃᕄᕅᕆᕇᕈᕉᕊᕋᕌᕍᕎᕏᕐᕑᕒᕓᕔᕕᕖᕗᕘᕙᕚᕛᕜᕝᕞᕟᕠᕡᕢᕣᕤᕥᕦᕧᕨᕩᕪᕫᕬᕭᕮᕯᕰᕱᕲᕳᕴᕵᕶᕷᕸᕹᕺᕻᕼᕽᕾᕿᖀᖁᖂᖃᖄᖅᖆᖇᖈᖉᖊᖋᖌᖍᖎᖏᖐᖑᖒᖓᖔᖕᖖᖗᖘᖙᖚᖛᖜᖝᖞᖟᖠᖡᖢᖣᖤᖥᖦᖧᖨᖩᖪᖫᖬᖭᖮᖯᖰᖱᖲᖳᖴᖵᖶᖷᖸᖹᖺᖻᖼᖽᖾᖿᗀᗁᗂᗃᗄᗅᗆᗇᗈᗉᗊᗋᗌᗍᗎᗏᗐᗑᗒᗓᗔᗕᗖᗗᗘᗙᗚᗛᗜᗝᗞᗟᗠᗡᗢᗣᗤᗥᗦᗧᗨᗩᗪᗫᗬᗭᗮᗯᗰᗱᗲᗳᗴᗵᗶᗷᗸᗹᗺᗻᗼᗽᗾᗿᘀᘁᘂᘃᘄᘅᘆᘇᘈᘉᘊᘋᘌᘍᘎᘏᘐᘑᘒᘓᘔᘕᘖᘗᘘᘙᘚᘛᘜᘝᘞᘟᘠᘡᘢᘣᘤᘥᘦᘧᘨᘩᘪᘫᘬᘭᘮᘯᘰᘱᘲᘳᘴᘵᘶᘷᘸᘹᘺᘻᘼᘽᘾᘿᙀᙁᙂᙃᙄᙅᙆᙇᙈᙉᙊᙋᙌᙍᙎᙏᙐᙑᙒᙓᙔᙕᙖᙗᙘᙙᙚᙛᙜᙝᙞᙟᙠᙡᙢᙣᙤᙥᙦᙧᙨᙩᙪᙫᙬᙯᙰᙱᙲᙳᙴᙵᙶᙷᙸᙹᙺᙻᙼᙽᙾᙿᢰᢱᢲᢳᢴᢵᢶᢷᢸᢹᢺᢻᢼᢽᢾᢿᣀᣁᣂᣃᣄᣅᣆᣇᣈᣉᣊᣋᣌᣍᣎᣏᣐᣑᣒᣓᣔᣕᣖᣗᣘᣙᣚᣛᣜᣝᣞᣟᣠᣡᣢᣣᣤᣥᣦᣧᣨᣩᣪᣫᣬᣭᣮᣯᣰᣱᣲᣳᣴᣵ"�
+CherCherokee"�ᎠᎦᎭᎳᎹᎾᏆᏌᏓᏜᏣᏩᏯᏸᏹᏺᏻᏼꭰꭱꭲꭳꭴꭵꭶꭷꭸꭹꭺꭻꭼꭽꭾꭿꮀꮁꮂꮃꮄꮅꮆꮇꮈꮉꮊꮋꮌꮍꮎꮏꮐꮑꮒꮓꮔꮕꮖꮗꮘꮙꮚꮛꮜꮝꮞꮟꮠꮡꮢꮣꮤꮥꮦꮧꮨꮩꮪꮫꮬꮭꮮꮯꮰꮱꮲꮳꮴꮵꮶꮷꮸꮹꮺꮻꮼꮽꮾꮿ"�
+CyrlCyrillic"�ЁЂЃЄЅІЇЈЉЊЋЌЏАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяѐёђѓєѕіїјљњћќѝўџѣѫҐґҒғҔҕҖҗҚқҢңҤҥҮүҰұҲҳҶҷҺһӊӏӔӕӘәӢӣӨөӮӯ"�
 Deva
-Devanagari"
-EthiEthiopic"
-GeorGeorgian"
-GrekGreek"
-GujrGujarati"
-GuruGurmukhi"
-HaniHan"
-HanoHanunoo"
-HansHans*Hani"
-HantHant*Hani"
-HebrHebrew"
-JavaJavanese"
-JpanJpan*Hani*Hira*Kana"
-KanaKatakana"
-KhmrKhmer"
-KndaKannada"
-KoreKore*Hani*Hang"
-LanaTai_Tham"
-LaooLao"
-LatnLatin"
-LepcLepcha"
-LimbLimbu"
-LisuLisu"
-Mlym	Malayalam"
-Mong	Mongolian"
-MteiMeetei_Mayek"
-MymrMyanmar"
-NkooNko"
-OlckOl_Chiki"
-OryaOriya"
-PhagPhags_Pa"
-RjngRejang"
-RunrRunic"
-Saur
-Saurashtra"
-SinhSinhala"
-Sund	Sundanese"
-SyloSyloti_Nagri"
-SyrcSyriac"
-TagbTagbanwa"
-TaleTai_Le"
-TaluNew_Tai_Lue"
-TamlTamil"
-TeluTelugu"
-TfngTifinagh"
-TglgTagalog"
-ThaaThaana"
-ThaiThai"
-TibtTibetan"
-VaiiVai"
-
-YiiiYi
+Devanagari"�अआइईउऊऋऌऍएऐऑओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरऱलळवशषसहऽॐॠॡ"�	
+EthiEthiopic"�	ሀሁሂሃሄህሆሇለሉሊላሌልሎሏሐሑሒሓሔሕሖሗመሙሚማሜምሞሟሠሡሢሣሤሥሦሧረሩሪራሬርሮሯሰሱሲሳሴስሶሷሸሹሺሻሼሽሾሿቀቁቂቃቄቅቆቇቈቊቋቌቍቐቖቘቚቝበቡቢባቤብቦቧቨቩቪቫቬቭቮቯተቱቲታቴትቶቷቸቹቺቻቼችቾቿኀኁኂኃኄኅኆኇኈኊኋኌኍነኑኒናኔንኖኗኘኙኚኛኜኝኞኟአኡኢኣኤእኦኧከኩኪካኬክኮኯኰኲኳኴኵኸኹኺኻኼኽኾዀዂዅወዉዊዋዌውዎዏዐዑዒዓዔዕዖዘዙዚዛዜዝዞዟዠዡዢዣዤዥዦዧየዩዪያዬይዮዯደዱዲዳዴድዶዷዸዹዺዻዼዽዾዿጀጁጂጃጄጅጆጇገጉጊጋጌግጎጏጐጒጓጔጕጘጙጚጛጜጝጞጟጠጡጢጣጤጥጦጧጨጩጪጫጬጭጮጯጰጱጲጳጴጵጶጷጸጹጺጻጼጽጾጿፀፁፂፃፄፅፆፈፉፊፋፌፍፎፏፐፑፒፓፔፕፖፗፘፙፚᎀᎁᎂᎃᎄᎅᎆᎇᎈᎉᎊᎋᎌᎍᎎᎏⶀⶁⶂⶃⶄⶅⶆⶇⶈⶉⶊⶋⶌⶍⶎⶏⶐⶑⶒⶓⶔⶕⶖⶠⶡⶢⶣⶤⶥⶦⶨⶩⶪⶫⶬⶭⶮⶰⶱⶲⶳⶴⶵⶶⶸⶹⶺⶻⶼⶽⶾⷀⷁⷂⷃⷄⷅⷆⷈⷉⷊⷋⷌⷍⷎⷐⷑⷒⷓⷔⷕⷖⷘⷙⷚⷛⷜⷝⷞ"�
+GeorGeorgian"�აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰჱჲჳჴჵჶჷჸჹჺⴀⴁⴂⴃⴄⴅⴆⴇⴈⴉⴊⴋⴌⴍⴎⴏⴐⴑⴒⴓⴔⴕⴖⴗⴘⴙⴚⴛⴜⴝⴞⴟⴠⴡⴢⴣⴤⴥ"�
+GrekGreek"�ΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώἀἁἂἃἄἅἆἇἐἑἒἓἔἕἠἡἢἣἤἥἦἧἰἱἲἳἴἵἶἷὂὃὄὐὑὒὓὔὕὖὗὢὣὤὥὦὧὰὲὴὶὸὺὼᾶῆῒῖῗῢῦῧῶ"�
+GujrGujarati"�અઆઇઈઉઊઋઍએઐઑઓઔકખગઘઙચછજઝઞટઠડઢણતથદધનપફબભમયરલળવશષસહઽૐૠ"�
+GuruGurmukhi"�ਅਆਇਈਉਊਏਐਓਔਕਖਗਘਙਚਛਜਝਞਟਠਡਢਣਤਥਦਧਨਪਫਬਭਮਯਰਲਵਸਹੜੲੳੴ"�
+HansHans"�一丁七万三与丑专且世丘业东丝丢两严丧个中丰串临丸主丽举乃久么义之乐乒乓乔乖乘乙九也乡书买乱乳乾了予争事二于亏云互五井亚些亡交亨享京亮亲人亿仁仂仅仇今介仍从仓仔他付仙代以仪们仰仲件价任份仿企伊伍伏休众会伞伟传伤伦伪伯估伴伸似伽但位佑体何余佛作你佤佩佳使例供依侠侣侦侨侬侯侵便促俄俊俗保信俩修俱俾倍倒候倚借倦值倾假偌偏做停健偶偷傈傣储催傲傻像僧僳僵儒儿允元兆先光克免兑兔党入全八六兮兰共关兹养兽内冈册再冒写军农冠冥冬冰冲决况冷冻净准凉凌减凝几凡凤凭凯凰凸出击函刀分切刊刑划列创初判刨利别刮到制券刺刻剂剃前剑剧剩剪副割剽劈力劝务劣动劫励劳势勇勉勋勒勤勺勾勿包匆匈匕化北匙匠匮匹医十千升午半华协卑卒卓单南博卜卞占卢卦卫卯危即却卷厂厄历厉压厍厕厘厚原厦厨去县参又反发叔取叙口另只叭叮可台史右叶叹吃各合吊同后吐向吓吕吗君吝吟否吧含听启吴吵吸吹吻吾呀呆呈告呐呕员呜呢呣呦周味呵呼命和咒咖咦咨咪咬咯咱哀品哇哉响哎哟哥哦哨哩哪哭哲哺唇唉唐唤唬售唯唱唷商啊啡啤啥啦啪啮喀喂善喇喊喏喔喜喝喱喵喷喻嗅嗒嗨嗯嘉嘘嘛嘟嘴嘻嘿噘噜噢器嚏四回因团园困围固国图圆圈土圣在圭地圳场圾址均坎坏坐坑块坚坜坝坡坤坦坪垂垃型垒垫埃埋城埔域培基堂堆堕堡堤堪堵塑塔塞填境墅墓墙增墟墨壁壤士壬壮声壳壶处备复夏夕外多夜够夥大天夫央失头夷夺奇奉奋奎奏契奔奖套奥女奴奶奸她好如妆妇妈妖妙妥妨妮妹妻姆姊始姐姑姓委姜姿威娃娄娘娜娟娥娱婆婚婴媒媚嫁嫌嫩子孔孕字孙孜孝孟季孤学孩孪宁它宅宇安宋完宏宗实宠审室宪宫害宴家容宽宿寂寄寇富寒寝察寡寨寸对寺寻导寿封射将尊小少尔尖尘尚尝尤尬就尴尸尺尼尾局层居屈屋屎屏屑展属屠屡履山屿岁岂岗岘岚岛岩岳岸峡峰崇崩崴川州巡工巨巫差己巴巷巽巾币布帅帆师希帐帕帖帚帜帝带帧席帮常帽幅幕干年并幸幻幽广庆庇床序库底店庙庚府庞废度座庭庵康庸廉廖延廷建开异弄弊式弓引弗弘弟张弥弦弯弱弹强归当录彗彝形彩彬彭彰影彷役彻彼往征径待很律後徐徒得御循微徵德徽心必忆忌忍志忙忠忧快念忽怀态怎怒怕怖怜思怡急性怨怪总恋恐恒恢恤恨恩恭息恰恳恶恼悄悉悔悟悠患您悬悯悲情惊惑惜惠惧惨惫惯想惹愁愈愉意愚感愤愧慈慎慕慢慧慰憾懂懒戈戊戌戏戒或战戟截戴户房扁扇手才扎扑打扔托扣执扩扫扯扰扳批找技抄把抑抓投抖抗折抛抢护报披抬抱抵抹抽拄担拆拇拉拍拐拒拔拖拘招拜拟拥拦拨择括拳拷拼拾拿持挂指按挎挑挖挝挡挤挥挪振挺捂捉捏捐捕损捡换据捷授掉掌排掘掠探接控措掸描提插握揭援搏搜搞搬搭携摄摆摇摊摔摘摩摸撅撒撕撞撤播操擎擦攀支收改攻放政故*Hani"�
+HantHant"�一丁七丈三不丑且世丘丙丞丟並中串丸丹主乃久么之乍乎乏乖乘乙九也乳乾亂了予事二于云互五井些亞亡交亦亨享京亭亮人什仁仂仇今介仍仔他付仙代以仰仲件任份企伊伍伏伐休伙伯估伴伸似伽但佈佉位住佐佔何余佛作你佩佳使來例供依侯侵侶便係俄俊俏俗保俠信修俱俾倉個倍們倒候倚借倫值假偉偏做停健側偷偽傀傅傑傘備傢傣傲傳傷傻傾僅僎像僑僧僳僵價儀億儐儒儘償優儳儷儻允元充兆兇光克兌免兒兔入內兩八六兮共兵典兹兼冊再冒冠冬冰冷准凋凌凍凝凡凰凱凸出函刀分切刊划列初判別刨利刪别刮到制刷券刺刻剃則剌前剛剩剪副割創劃劇劉劍力功加助劫勁勇勉勒動務勝勞勢勤勳勵勸勾勿包匈匕化北匙匣匯匹區十千升午半卑卒協南博卜卞占卡卯危即卷卹卻厄厘厚原厭厲去參又叉及友反叔取受叢口另只叭可台史右叶司吃各合吊同后吐吒君吝吠否吧含吳吵吸吹吻吾呀呂呆告呢周味呵呼命和咖咦咧咪咬咱哀品哇哉哎員哥哦哩哪哭哲哺唇唉唐唔唬售唯唱唵唷唸商啊問啟啡啤啥啦啪喀喂善喇喊喔喜喝喪喬單喲喵嗎嗚嗨嗯嘆嘉嘗嘛嘟嘴嘻嘿噁噓噘器噴嚇嚏嚴囉囌囑四回因困固圈國圍園圓圖團圜土在圭地圾址均坎坐坑坡坤坦坪垂垃型埃城埔域執培基堂堅堆堡堤堪報場塊塔塗塞填塵境墅墎墓增墟墨墮墳壁壇壓壘壞壢壤壩士壬壯壺壽夏夕外多夜夠夢夥大天夫央失夷夸夾奇奉奎奏契奔套奥奧奪奮女奴奶她好如妖妙妝妥妨妮妳妹妻姆姊始姐姑姓委姿威娃娘娛婁婆婚婦媒媽嫌嫩嬰子孔孕字存孜孝孟季孤孩孫孵學它宅宇安宋完宏宗宜客室宮害家容宿寂寄密富寒寞察寢實審寫寬寮寵寶寺封射將專尊尋對小少尖尚尤就尺尼尾尿局屁居屆屋屍屏屑展屠層屬山岡岩岸峇峰島峽崇崙崴嵐嶺嶼川州巡工巨巫差己巴巷巽巾市布帆希帕帖帚帛帝帥師席帳帶常帽幅幕幟幣幫干年幸幹幻幾庇床序底店庚府度座庫庭康庸廁廈廉廖廚廟廠廢廣廳延廷建弄弋式弓引弗弘弟弦弱張強彈彊彌彎彝彞形彥彩彬彭彰影役彼往征待很律後徐徒得從復微徵德徹心必忌忍志忙忠忡快念忽怎怒怕怖思怡急性怨怪恆恐恢恥恨恩恭息恰悅悉悔悟悠您悲悶情惑惜惠惡惱想惹愁愈愉意愚愛感慈態慕慘慢慣慧慮慰慶慾憂憊憐憑憲憶憾懂應懨懶懷懸懼戀戈戊戌成戒或戟截戰戲戴戶房扁扇手才扎打托扣扥扭扮扯扳批找技抄把抓投抗折披抬抱抵抹抽拆拉拋拍拏拒拔拖招拜括拳拼拾拿持指按挑挖挪振挺捂捏捐捕捧捨捲捷掃授掉掌排掛掠採探接控推措掰描提插揚換握揮援揹損搏搖搜搞搬搭搶摀摔摘摩摸撐撒撕撞撣撥播撲撾撿擁擇擊擋操擎擔據擠擦擬擴擺擾攀攝攤支收改攻放政故效敍敏救敗教敝敞敢散敦敬整敵數文斐斑斗料斜斧斯新斷方於施旁旅旋族旗既日旦早旭旺昂昆昇昌明昏易*Hani"H
+HebrHebrew"8אבגדהוזחטיךכלםמןנסעףפץצקרשתײ"�
+JpanJpan"�ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶ一丁七万下不与丑且世丘丙両並中串丸丹主丼久乏乗乙九乞乱乳乾亀了予争事二互五井亜亡交亥亨享亭人仁今介仏仕他付仙代以仮仰仲件任企伎休会伝伯伴伸伺似但位佐体何余作佳併使例侍供依価侮侯侵侶便係促俊俗保信修俳俵俸俺倉個倍倒候借倣値倫倹偉偏停健側偶偽傍傑傘備催傲債傷傾僅働像僕僚僧儀億儒償優元兆先光克兌免兎児党入全八六共兵具典兼内円冊再冒冗写冠冥冬冶冷凄准凍凝凡処凧凶凸出刀刃分刈刊刑列初判別利到制刻剃則削前剖剛剣剥副剰割創劇力功加劣助努励労効劾勃勅勇勉動勘務勝募勢勤勧勲勾匂包化北匠匹医匿十千升午半卑協南単博占卯印危即卵卸厄厘厚原厳去参又及収叔取受叙口句叫召可右号司各合吉同向君吟否含吸吹呂呈告周呪味呼命和咲咽哀品員哲哺唄唆唇唐唯唱唾商問啓善喉喚喜喝喩喫営嗅嗣嘆嘉嘔嘘嘱嘲器噴嚇囚四回因団困囲図固国圏園土圧在地坂均坊坑坪垂型垣埋城域執培基埼堀堂堅堆堕堤堪報場塀塁塊塑塔塗塚塞塩填塾境墓増墜墨墳墾壁壇壊壌士壬壮声売壺変夏夕外多夜夢大天夫央失奇奉奏契奔奥奨奪奮女奴好如妄妊妖妙妥妨妬妹妻姉始姓委姫姻姿威娘娠娯婆婚婦婿媒媛嫁嫉嫌嫡嬉嬢子孔字存孝季孤学孫宅宇安完宗宝実客室宮宰害家容宿寂寄寅密富寒寛寝察寡寧審寮寸寺対寿封専射将尉尋導小少尚就尺局居屈届屋展属層履屯山岐岡岩岬岳岸峠峡峰島崇崎崖崩嵐川州巡巣工巨差己巳巻巾市布帆希帝帥師席帯帰帳常帽幅幕幣干年幸幹幻幾庁広床序底店庚府度座庫庭庵庶庸廃廉廊延廷建弁弄弊式弐弓引弘弟弥弧弱張強弾当彗彙形彩彫彰影役彼往征径待律後徐徒従得御復循微徳徴徹心必忌忍志忙応忠快念怒怖思怠急性怨怪恋恐恒恣恥恨恩恭息恵悔悟悠患悦悩悪悲悶悼情惑惜惧惨惰想愁愉意愕愚愛感慄慈態慌慎慕慢慣慨慮慰慶憂憎憤憧憩憬憲憶憾懇懐懲懸戊戌成戒戚戦戯戴戸戻房所扇扉手才打払扱扶批承技抄把抑投抗折抜択披抱抵抹押抽担拉拍拐拒拓拘拙招拝拠拡括拭拳拶拷拼拾持指挑挙挟挨挫振挿捉捕捗捜捨据捻掃授掌排掘掛採探接控推措掲揃描提揚換握揮援揺損搬搭携搾摂摘摩摯撃撤撮撲擁操擦擬支改攻放政故敏救敗教敢散敬数整敵敷文斉斎斑斗料斜斤斥斧斬断新方施旅*Hani*Hira*Kana"�
+KanaKatakana"�ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶヷヸヹヺヿㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ"�
+KhmrKhmer"�កខគឃងចឆជឈញដឋឌឍណតថទធនបផពភមយរលវឝឞសហឡអឥឦឧឩឪឫឬឭឮឯឰឱឲឳ"�
+KndaKannada"�ಅಆಇಈಉಊಋಌಎಏಐಒಓಔಕಖಗಘಙಚಛಜಝಞಟಠಡಢಣತಥದಧನಪಫಬಭಮಯರಱಲಳವಶಷಸಹಽೞೠೡ"�
+KoreKore"�ᄀ하ᅵᆨᇂㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ丘串乃久乖九乞乫乾亂亘交京仇今介件价企伋伎伽佳佶侃來侊供係俓俱個倞倦倨假偈健傀傑傾僅僑價儆儉儺光克兢內公共其具兼冀冠凱刊刮券刻剋剛劇劍劒功加劤劫勁勍勘勤勸勻勾匡匣區南卦却卵卷卿厥去及口句叩叫可各吉君告呱呵咎咬哥哭啓喀喇喝喫喬嗜嘉嘔器囊困固圈國圭圻均坎坑坤坰坵垢基埼堀堅堈堪堺塊塏境墾壙壞夔奇奈奎契奸妓妗姑姜姦娘娜嫁嬌孔季孤宏官客宮家寄寇寡寬尻局居屆屈岐岡岬崎崑崗嵌嵐嶇嶠工巧巨己巾干幹幾庚庫康廊廐廓廣建弓强彊徑忌急怪怯恐恝恪恭悸愆感愧愷愾慊慣慤慨慶慷憩憬憾懃懇懦懶懼戈戒戟戡扱技抉拉拏拐拒拘括拮拱拳拷拿捏据捲捺掘掛控揀揆揭擊擎擒據擧攪攷改攻故敎救敢敬敲斛斤旗旣昆昑景晷暇暖暠暻曠曲更曷朗朞期机杆杞杰枏果枯架枸柑柩柬柯校根格桀桂桔桿梏梗械梱棄棋棍棘棨棺楗楠極槁構槐槨槪槻槿樂橄橋橘機檄檎檢櫃欄權欺款歌歐歸殼毆毬氣求江汨汲決汽沂沽洛洸浪涇淃淇減渠渴湳溝溪滑滾漑潔潰澗激濫灌灸炅炚炬烙烱煖爛牽犬狂狗狡狼獗玖玘珂珏珖珙珞珪球琦琨琪琯琴瑾璂璟璣璥瓊瓘瓜甄甘甲男畇界畸畺畿疆疥疳痂痙痼癎癩癸皆皎皐盖監看眷睾瞰瞼瞿矜矩矯硅硬碁碣磎磬磯磵祁祇祈祛祺禁禽科稈稼稽稿穀究穹空窘窟窮窺竅竟竭競竿筋筐筠箇箕箝管簡粳糠系糾紀納紘級紺絅結絞給絳絹絿經綱綺緊繫繭繼缺罐罫羅羈羌羔群羹翹考耆耉耕耭耿肌肝股肩肯肱胛胱脚脛腔腱膈膏膠臘臼舅舊舡艮艱芎芥芩芹苛苟苦苽茄莖菅菊菌菓菫菰落葛葵蓋蕎蕨薑藁藍藿蘭蘿虔蚣蛟蝎螺蠟蠱街衢衲衾衿袈袞袴裙裸褐襁襟襤見規覡覲覺觀角計記訣訶詭誇誡誥課諫諾謙講謳謹譏警譴谷谿豈貢貫貴賈購赳起跏距跨踞蹇蹶躬軀車軌軍軻較輕轎轟辜近迦迲适逑逕逵過遣遽邏那邯邱郊郎郡郭酪醵金鈐鈞鉀鉅鉗鉤銶鋸鋼錡錤錦錮鍋鍵鎌鎧鏡鑑鑒鑛開間閘閣閨闕關降階隔隙雇難鞏鞠鞨鞫頃頸顆顧飢餃館饉饋饑駒駕駱騎騏騫驅驕驚驥骨高鬼魁鮫鯤鯨鱇鳩鵑鵠鷄鷗鸞麒麴黔鼓龕龜가힣*Hang*Kore"�
+LaooLao"uກຂຄງຈຊຍດຕຖທນບປຜຝພຟມຢຣລວສຫອຮຯະາຳຽເແໂໃໄໜໝ"�
+LatnLatin"�ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzªºÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĕĖėĘęěĜĝĞğĠġĢģĤĥĦħĨĩĪīĭĮįİıĳĴĵĶķĸĺĻļĽľŀŁłńŅņŇňŊŋōŏŐőœŕŗŘřŚśŜŝŞşŠšţŤťŦŧŨũŪūŬŭůŰűŲųŵŷŸŹźŻżŽžſƁƆƉƊƎƏƐƑƒƔƗƘƙƝƠơƯưƲƳƴǀǁǂǃǋǌǎǐǒǔǝǥǦǧǩǯǹǿȘșȚțȞȟɄɑɓɔɖɗəɛɣɨɲʉʋʒʔḃḋḌḍḟḤḥḷḿṁṅṗṚṛṡṢṣṫṬṭṽẁẃẄẅẒẓẞạảấầẩẫậắằẳẵặẹẻẼẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹꞋꞌ"�
+LisuLisu"xꓐꓑꓒꓓꓔꓕꓖꓗꓘꓙꓚꓛꓜꓝꓞꓟꓠꓡꓢꓣꓤꓥꓦꓧꓨꓩꓪꓫꓬꓭꓮꓯꓰꓱꓲꓳꓴꓵꓶꓷ"�
+Mlym	Malayalam"�അആഇഈഉഊഋഌഎഏഐഒഓഔകഖഗഘങചഛജഝഞടഠഡഢണതഥദധനപഫബഭമയരറലളഴവശഷസഹൠൡൺൻർൽൾൿ"�
+MymrMyanmar"�ကခဂဃငစဆဇဈဉညဋဌဍဎဏတထဒဓနပဖဗဘမယရလဝသဟဠအဢဣဤဥဦဧဨဩဪဿၐၑၒၓၔၕၚၥၵၽၾ"O
+NkooNko"Bߊߋߌߍߎߏߐߑߒߓߔߕߖߗߘߙߚߛߜߝߞߟߠߡߢߣߤߥߦߧߨߩߪ"l
+OlckOl_Chiki"Zᱚᱛᱜᱝᱞᱟᱠᱡᱢᱣᱤᱥᱦᱧᱨᱩᱪᱫᱬᱭᱮᱯᱰᱱᱲᱳᱴᱵᱶᱷ"�
+OryaOriya"�ଅଆଇଈଉଊଋଏଐଓଔକଖଗଘଙଚଛଜଝଞଟଠଡଢଣତଥଦଧନପଫବଭମଯରଲଳଵଶଷସହୟୱ"�
+SinhSinhala"�අආඇඈඉඊඋඌඍඎඏඐඑඒඓඔඕඖකඛගඝඞඟචඡජඣඤඥඦටඨඩඪණඬතථදධනඳපඵබභමඹයරලවශෂසහළෆ"u
+SyrcSyriac"eܐܒܓܔܕܖܗܘܙܚܛܜܝܞܟܠܡܢܣܤܥܦܧܨܩܪܫܬܭܮܯݍݎݏࡠࡡࡢࡣࡤࡥࡦࡧࡨࡩࡪ"y
+TaleTai_Le"iᥐᥑᥒᥓᥔᥕᥖᥗᥘᥙᥚᥛᥜᥝᥞᥟᥠᥡᥢᥣᥤᥥᥦᥧᥨᥩᥪᥫᥬᥭᥰᥱᥲᥳᥴ"�
+TaluNew_Tai_Lue"�ᦀᦁᦂᦃᦄᦅᦆᦇᦈᦉᦊᦋᦌᦍᦎᦏᦐᦑᦒᦓᦔᦕᦖᦗᦘᦙᦚᦛᦜᦝᦞᦟᦠᦡᦢᦣᦤᦥᦦᦧᦨᦩᦪᦫᦰᦱᦲᦳᦴᦵᦶᦷᦸᦹᦺᦻᦼᦽᦾᦿᧀᧁᧂᧃᧄᧅᧆᧇᧈᧉ"x
+TamlTamil"iஃஅஆஇஈஉஊஎஏஐஒஓஔகஙசஜஞடணதநனபமயரறலளழவஷஸஹ"�
+TeluTelugu"�అఆఇఈఉఊఋఌఎఏఐఒఓఔకఖగఘఙచఛజఝఞటఠడఢణతథదధనపఫబభమయరఱలళవశషసహౠౡ"o
+TfngTifinagh"]ⴰⴱⴳⴷⴹⴻⴼⴽⵀⵃⵄⵅⵇⵉⵊⵍⵎⵏⵓⵔⵕⵖⵙⵚⵛⵜⵟⵡⵢⵣⵥ"^
+ThaaThaana"Nހށނރބޅކއވމފދތލގޏސޑޒޓޔޕޖޗޘޙޚޛޜޝޞޟޠޡޢޣޤޥޱ"�
+ThaiThai"�กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรฤลฦวศษสหฬอฮฯะาำเแโใไๅ"�
+TibtTibetan"oༀཀཁགངཅཆཇཉཊཋཌཎཏཐདནཔཕབམཙཚཛཝཞཟའཡརལཤཥསཧཨཪ"�
+VaiiVai"�ꔀꔁꔂꔃꔄꔅꔆꔇꔈꔉꔊꔋꔌꔍꔎꔏꔐꔑꔒꔓꔔꔕꔖꔗꔘꔙꔚꔛꔜꔝꔞꔟꔠꔡꔢꔣꔤꔥꔦꔧꔨꔩꔪꔫꔬꔭꔮꔯꔰꔱꔲꔳꔴꔵꔶꔷꔸꔹꔺꔻꔼꔽꔾꔿꕀꕁꕂꕃꕄꕅꕆꕇꕈꕉꕊꕋꕌꕍꕎꕏꕐꕑꕒꕓꕔꕕꕖꕗꕘꕙꕚꕛꕜꕝꕞꕟꕠꕡꕢꕣꕤꕥꕦꕧꕨꕩꕪꕫꕬꕭꕮꕯꕰꕱꕲꕳꕴꕵꕶꕷꕸꕹꕺꕻꕼꕽꕾꕿꖀꖁꖂꖃꖄꖅꖆꖇꖈꖉꖊꖋꖌꖍꖎꖏꖐꖑꖒꖓꖔꖕꖖꖗꖘꖙꖚꖛꖜꖝꖞꖟꖠꖡꖢꖣꖤꖥꖦꖧꖨꖩꖪꖫꖬꖭꖮꖯꖰꖱꖲꖳꖴꖵꖶꖷꖸꖹꖺꖻꖼꖽꖾꖿꗀꗁꗂꗃꗄꗅꗆꗇꗈꗉꗊꗋꗌꗍꗎꗏꗐꗑꗒꗓꗔꗕꗖꗗꗘꗙꗚꗛꗜꗝꗞꗟꗠꗡꗢꗣꗤꗥꗦꗧꗨꗩꗪꗫꗬꗭꗮꗯꗰꗱꗲꗳꗴꗵꗶꗷꗸꗹꗺꗻꗼꗽꗾꗿꘀꘁꘂꘃꘄꘅꘆꘇꘈꘉꘊꘋꘐꘑꘒꘓꘔꘕꘖꘗꘘꘙꘚꘛꘜꘝꘞꘟꘪꘫ"�
+YiiiYi"�ꀀꀋꀗꀣꀯꀺꁆꁒꁞꁩꁵꂁꂍꂘꂤꂰꂼꃇꃓꃟꃫꃶꄂꄎꄚꄥꄱꄽꅉꅔꅠꅬꅸꆃꆏꆛꆧꆳꆾꇊꇖꇢꇭꇹꈅꈑꈜꈨꈴꉀꉋꉗꉣꉯꉺꊆꊒꊞꊩꊵꋁꋍꋘꋤꋰꋼꌇꌓꌟꌫꌷꍂꍎꍚꍦꍱꍽꎉꎕꎠꎬꎸꏄꏏꏛꏧꏳꏾꐊꐖꐢꐭꐹꑅꑑꑜꑨꑴꒀꒋꒌ
