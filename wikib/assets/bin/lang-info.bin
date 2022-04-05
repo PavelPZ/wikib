@@ -37,17 +37,17 @@ Micronesia"FM"GU"KI"MH"MP"NR"PW"UM8
 achAcoliJLatn
 adaAdangmeJLatn
 adyAdygheJCyrl
-aebTunisian ArabicJArab
-af	AfrikaansJLatn
+aebTunisian ArabicJArab
+af	AfrikaansJLatnRaf
 agqAghemJLatn
 akAkanJLatn
 alnGheg AlbanianJLatn
-altSouthern AltaiJCyrl
-amAmharicJEthi
+altSouthern AltaiJCyrl
+amAmharicJEthiRam
 amoAmoJLatn
 an	AragoneseJLatn
-aozUab MetoJLatn
-arArabicJArab
+aozUab MetoJLatn
+arArabicJArabRar
 arnMapucheJLatn
 aroAraonaJLatn
 arqAlgerian ArabicJArab
@@ -60,8 +60,8 @@ Micronesia"FM"GU"KI"MH"MP"NR"PW"UM8
 atj	AtikamekwJLatn
 avAvaricJCyrl
 awaAwadhiJDeva
-ayAymaraJLatn
-azAzerbaijaniJLatn
+ayAymaraJLatn
+azAzerbaijaniJLatnRaz
 baBashkirJCyrl
 balBaluchiJArab
 banBalineseJLatn
@@ -71,9 +71,9 @@ Micronesia"FM"GU"KI"MH"MP"NR"PW"UM8
 bbc
 Batak TobaJLatn
 bbjGhomalaJLatn
-bciBaouléJLatn
+bciBaouléJLatn
 be
-BelarusianJCyrl
+BelarusianJCyrlRbe
 bejBejaJArab
 bemBembaJLatn
 bewBetawiJLatn
@@ -81,8 +81,8 @@ BelarusianJCyrl
 bfdBafutJLatn
 bfqBadagaJTaml
 bftBaltiJArab
-bfyBagheliJDeva
-bg	BulgarianJCyrl
+bfyBagheliJDeva
+bg	BulgarianJCyrlRbg
 bgcHaryanviJDeva
 bgnWestern BalochiJArab"
 bgxBalkan Gagauz TurkishJGrek
@@ -98,8 +98,8 @@ BelarusianJCyrl
 bkmKomJLatn
 bkuBuhidJLatn
 bmBambaraJLatn
-bmqBomuJLatn
-bnBanglaJBeng
+bmqBomuJLatn
+bnBanglaJBengRbn
 boTibetanJTibt
 bpyBishnupriyaJBeng
 bqi	BakhtiariJArab
@@ -108,8 +108,8 @@ Koro WachiJLatn
 brBretonBchJLatn
 braBrajJDeva
 brhBrahuiJArab
-brxBodoJDeva
-bsBosnianJLatn
+brxBodoJDeva
+bsBosnianJLatnRbs
 bssAkooseJLatn
 btoRinconada BikolJLatn
 btvBateriJDeva
@@ -120,12 +120,12 @@ Koro WachiJLatn
 bvbBubeJLatn
 bynBlinJEthi
 byvMedumbaJLatn
-bzeJenaama BozoJLatn
-caCatalanBchBllJLatn
+bzeJenaama BozoJLatn
+caCatalanBchBllJLatnRca
 cchAtsamJLatn
 ccpChakmaJLatn
-ceChechenJCyrl
-cebCebuanoBngJLatn
+ceChechenJCyrl
+cebCebuanoBngJLatnRceb
 cggChigaJLatn
 chChamorroJLatn
 chkChuukeseJLatn
@@ -134,8 +134,8 @@ Koro WachiJLatn
 chp	ChipewyanJLatn
 chrCherokeeJCher
 cjaWestern ChamJArab
-ckbCentral KurdishJArab
-coCorsicanJLatn
+ckbCentral KurdishJArab
+coCorsicanJLatnRco
 cpsCapiznonJLatn
 crCreeJCans
 crhCrimean TurkishJCyrl
@@ -144,18 +144,18 @@ Koro WachiJLatn
 crlNorthern East CreeJCans
 crm
 Moose CreeJCans"
-crsSeselwa Creole FrenchJLatn
-csCzechBchJLatn
+crsSeselwa Creole FrenchJLatn
+csCzechBchJLatnRcs
 csb	KashubianJLatn
 cswSwampy CreeJCans
-cvChuvashJCyrl1
-cyWelshBchBddBffBngBllBphBrhBthJLatn
-daDanishBaaJLatn
+cvChuvashJCyrl5
+cyWelshBchBddBffBngBllBphBrhBthJLatnRcy
+daDanishBaaJLatnRda
 dakDakotaJLatn
 darDargwaJCyrl
 davTaitaJLatn
-dccDeccanJArab
-deGermanJLatn
+dccDeccanJArab
+deGermanJLatnRde
 denSlaveJLatn
 dgrDogribJLatn
 djeZarmaJLatn
@@ -174,28 +174,28 @@ Jola-FonyiJLatn
 ebuEmbuJLatn#
 eeEweBdzBgbBkpBnyBtsJLatn
 efiEfikJLatn
-eglEmilianJLatn
-elGreekJGrek
-enEnglishJLatn
-eo	EsperantoJLatn
-esSpanishBchBllJLatn
-esuCentral YupikJLatn
-etEstonianJLatn
-euBasqueJLatn
+eglEmilianJLatn
+elGreekJGrekRel
+enEnglishJLatnRen
+eo	EsperantoJLatnReo
+esSpanishBchBllJLatnRes
+esuCentral YupikJLatn
+etEstonianJLatnRet
+euBasqueJLatnReu
 ewoEwondoJLatn
-extExtremaduranJLatn
-faPersianJArab
+extExtremaduranJLatn
+faPersianJArabRfa
 fanFangJLatn
 ffFulahJLatn
-ffmMaasina FulfuldeJLatn
-fiFinnishJLatn
-fiaNobiinJArab
-filFilipinoBngJLatn
+ffmMaasina FulfuldeJLatn
+fiFinnishJLatnRfi
+fiaNobiinJArab
+filFilipinoBngJLatnRtl
 fitTornedalen FinnishJLatn
 fjFijianJLatn
 foFaroeseBaaJLatn
-fonFonJLatn
-frFrenchJLatn
+fonFonJLatn
+frFrenchJLatnRfr
 frcCajun FrenchJLatn
 frpArpitanJLatn
 frrNorthern FrisianJLatn
@@ -204,23 +204,23 @@ Jola-FonyiJLatn
 fuqCentral-Eastern Niger FulfuldeJLatn
 furFriulianJLatn
 fuvNigerian FulfuldeJLatn
-fvrFurJLatn
-fyWestern FrisianJLatn
-gaIrishJLatn
+fvrFurJLatn
+fyWestern FrisianJLatnRfy
+gaIrishJLatnRga
 gaaGaJLatn
 gagGagauzJLatn
 ganGan ChineseJHans
 gayGayoJLatn
 gbmGarhwaliJDeva
 gbzZoroastrian DariJArab#
-gcrGuianese Creole FrenchJLatn
-gdScottish GaelicJLatn
+gcrGuianese Creole FrenchJLatn
+gdScottish GaelicJLatnRgd
 gil
 GilberteseJLatn
 gjk
 Kachi KoliJArab
-gjuGujariJArab
-glGalicianJLatn
+gjuGujariJArab
+glGalicianJLatnRgl
 glkGilakiJArab
 gnGuaraniJLatn
 gomGoan KonkaniJDeva
@@ -228,8 +228,8 @@ Kachi KoliJArab
 gor	GorontaloJLatn
 gosGroningsJLatn
 grtGaroJBeng
-gswSwiss GermanJLatn
-guGujaratiJGujr
+gswSwiss GermanJLatn
+guGujaratiJGujrRgu
 gub
 GuajajáraJLatn
 gucWayuuJLatn
@@ -237,13 +237,13 @@ GuajajáraJLatn
 guzGusiiJLatn
 gvManxJLatn
 gvrGurungJDeva
-gwi	GwichʼinJLatn
-haHausaBshBtsJLatn
-hakHakka ChineseJHans
-hawHawaiianJLatn
-hazHazaragiJArab
-heHebrewJHebr
-hiHindiJDeva
+gwi	GwichʼinJLatn
+haHausaBshBtsJLatnRha
+hakHakka ChineseJHans
+hawHawaiianJLatnRhaw
+hazHazaragiJArab
+heHebrewJHebrRhe
+hiHindiJDevaRhi
 hif
 Fiji HindiJLatn
 hil
@@ -254,38 +254,38 @@ HiligaynonJLatn
 hnoNorthern HindkoJArab
 ho	Hiri MotuJLatn
 hocHoJDeva
-hojHadothiJDeva
-hrCroatianBljBnjJLatn
+hojHadothiJDeva 
+hrCroatianBljBnjJLatnRhr
 hsbUpper SorbianBchJLatn
-hsnXiang ChineseJHans
-htHaitian CreoleJLatn:
-hu	HungarianBcsBdzBdzsBgyBlyBnyBszBtyBzsJLatn
-hyArmenianJArmn
+hsnXiang ChineseJHans
+htHaitian CreoleJLatnRht>
+hu	HungarianBcsBdzBdzsBgyBlyBnyBszBtyBzsJLatnRhu
+hyArmenianJArmnRhy
 hzHereroJLatn
 iaInterlinguaJLatn
 ibaIbanJLatn
-ibbIbibioJLatn
+ibbIbibioJLatn
 id
-IndonesianJLatn
-ifeIfèJLatn4
-igIgboBchBgbBghBgwBkpBkwBnwBnyBshJLatn
+IndonesianJLatnRid
+ifeIfèJLatn8
+igIgboBchBgbBghBgwBkpBkwBnwBnyBshJLatnRig
 ii
 Sichuan YiJYiii
 ikInupiaqJLatn
 iktInuinnaqtunJLatn
 iloIlokoJLatn
-inhIngushJCyrl
-is	IcelandicJLatn
-itItalianJLatn
+inhIngushJCyrl
+is	IcelandicJLatnRis
+itItalianJLatnRit
 iu	InuktitutJCans
-izhIngrianJLatn
-jaJapaneseJJpan$
+izhIngrianJLatn
+jaJapaneseJJpanRja$
 jamJamaican Creole EnglishJLatn
 jgoNgombaJLatn
 jmcMachameJLatn
-jmlJumliJDeva
-jvJavaneseJLatn
-kaGeorgianJGeor
+jmlJumliJDeva
+jvJavaneseJLatnRjw
+kaGeorgianJGeorRka
 kaaKara-KalpakJCyrl
 kabKabyleJLatn
 kacKachinJLatn
@@ -313,16 +313,16 @@ Sichuan YiJYiii
 kiKikuyuJLatn
 kiu	KirmanjkiJLatn
 kjKuanyamaJLatn
-kjgKhmuJLaoo
-kkKazakhJCyrl
+kjgKhmuJLaoo
+kkKazakhJCyrlRkk
 kkjKakoJLatn
 klKalaallisutJLatn
-klnKalenjinJLatn
-kmKhmerJKhmr
-kmbKimbunduJLatn
-knKannadaJKnda
-knfMankanyaJLatn
-koKoreanJKore
+klnKalenjinJLatn
+kmKhmerJKhmrRkm
+kmbKimbunduJLatn
+knKannadaJKndaRkn
+knfMankanyaJLatn
+koKoreanJKoreRko
 koiKomi-PermyakJCyrl
 kokKonkaniJDeva
 kosKosraeanJLatn
@@ -335,22 +335,22 @@ Sichuan YiJYiii
 ksKashmiriJArab
 ksbShambalaJLatn
 ksfBafiaJLatn
-ksh	ColognianJLatn
-kuKurdishJLatn
+ksh	ColognianJLatn
+kuKurdishJLatnRku
 kumKumykJCyrl
 kvKomiJCyrl
 kvrKerinciJLatn
 kvxParkari KoliJArab
 kwCornishJLatn
 kxmNorthern KhmerJThai
-kxpWadiyara KoliJArab
-kyKyrgyzJCyrl
-laLatinJLatn
+kxpWadiyara KoliJArab
+kyKyrgyzJCyrlRky
+laLatinJLatnRla
 ladLadinoJHebr
 lagLangiJLatn
 lahLahndaJArab
-lajLango (Uganda)JLatn
-lbLuxembourgishJLatn
+lajLango (Uganda)JLatn
+lbLuxembourgishJLatnRlb
 lbeLakJCyrl
 lbwTolakiJLatn
 lcpWestern LawaJThai
@@ -366,21 +366,21 @@ LimburgishJLatn
 lktLakotaJLatn
 lmnLambadiJTelu
 lmoLombardJLatnT
-lnLingalaBgbBkpBmbBmfBmpBmvBndBngBngbBnkBnsBntBnyBnzBshBtsJLatn
-loLaoJLaoo
+lnLingalaBgbBkpBmbBmfBmpBmvBndBngBngbBnkBnsBntBnyBnzBshBtsJLatn
+loLaoJLaooRlo
 lolMongoJLatn
 lozLoziJLatn
-lrcNorthern LuriJArab
+lrcNorthern LuriJArab
 lt
-LithuanianJLatn
+LithuanianJLatnRlt
 ltg	LatgalianJLatn
 luLuba-KatangaJLatn
 lua
 Luba-LuluaJLatn
 luoLuoJLatn
 luyLuyiaJLatn
-luzSouthern LuriJArab
-lvLatvianJLatn
+luzSouthern LuriJArab
+lvLatvianJLatnRlv
 lwlEastern LawaJThai
 lzzLazJLatn
 madMadureseJLatn
@@ -397,31 +397,31 @@ Luba-LuluaJLatn
 menMendeJLatn
 merMeruJLatn
 mfaPattani MalayJArab
-mfeMorisyenJLatn
-mgMalagasyJLatn
+mfeMorisyenJLatn
+mgMalagasyJLatnRmg
 mghMakhuwa-MeettoJLatn
 mgoMetaʼJLatn
 mgpEastern MagarJDeva
 mgyMbungaJLatn
-mhMarshalleseJLatn
-miMaoriJLatn
-minMinangkabauJLatn
+mhMarshalleseJLatn
+miMaoriJLatnRmi
+minMinangkabauJLatn
 mk
-MacedonianJCyrl
-ml	MalayalamJMlym
-mlsMasalitJLatn
-mn	MongolianJCyrl
+MacedonianJCyrlRmk
+ml	MalayalamJMlymRml
+mlsMasalitJLatn
+mn	MongolianJCyrlRmn
 mniManipuriJBeng
 mnwMonJMymr
 moeInnuJLatn
 mohMohawkJLatn
-mosMossiJLatn
-mrMarathiJDeva
+mosMossiJLatn
+mrMarathiJDevaRmr
 mrdWestern MagarJDeva
 mrjWestern MariJCyrl
-mroMruJLatn
-msMalayJLatn
-mtMalteseJLatn
+mroMruJLatn
+msMalayJLatnRms
+mtMalteseJLatnRmt
 mtrMewariJDeva
 muaMundangJLatn
 musMuscogeeJLatn
@@ -429,8 +429,8 @@ MacedonianJCyrl
 mwkKita ManinkakanJLatn
 mwrMarwariJDeva
 mwvMentawaiJLatn
-mxcManyikaJLatn
-myBurmeseJMymr
+mxcManyikaJLatn
+myBurmeseJMymrRmy
 myvErzyaJCyrl
 myxMasaabaJLatn
 mznMazanderaniJArab
@@ -438,14 +438,14 @@ MacedonianJCyrl
 nanMin Nan ChineseJHans
 nap
 NeapolitanJLatn
-naqNamaJLatn!
-nbNorwegian BokmålBaaJLatn%
+naqNamaJLatn%
+nbNorwegian BokmålBaaJLatnRno%
 nchCentral Huasteca NahuatlJLatn
 ndNorth NdebeleJLatn
 ndcNdauJLatn
 nds
-Low GermanJLatn
-neNepaliJDeva
+Low GermanJLatn
+neNepaliJDevaRne
 newNewariJDeva
 ngNdongaJLatn
 nglLomweJLatn%
@@ -453,8 +453,8 @@ Low GermanJLatn
 nhwWestern Huasteca NahuatlJLatn
 nijNgajuJLatn
 niuNiueanJLatn
-njoAo NagaJLatn
-nlDutchJLatn
+njoAo NagaJLatn
+nlDutchJLatnRnl
 nmgKwasioJLatn
 nnNorwegian NynorskJLatn
 nnh	NgiemboonJLatn
@@ -465,16 +465,16 @@ Low GermanJLatn
 nsoNorthern SothoJLatn
 nusNuerJLatn
 nvNavajoJLatn
-nxqNaxiJLatn
-nyNyanjaJLatn
+nxqNaxiJLatn
+nyNyanjaJLatnRny
 nymNyamweziJLatn
 nynNyankoleJLatn
 nziNzimaJLatn
 ocOccitanJLatn%
 omOromoBchBdhBkhBnyBphJLatn
 orOdiaJOrya
-osOsseticJCyrl
-paPunjabiJGuru
+osOsseticJCyrl
+paPunjabiJGuruRpa
 pag
 PangasinanJLatn
 pamPampangaJLatn
@@ -485,16 +485,16 @@ PapiamentoJLatn
 pcmNigerian PidginJLatn 
 pdcPennsylvania GermanJLatn
 pdtPlautdietschJLatn
-pkoPökootJLatn
-plPolishJLatn
+pkoPökootJLatn
+plPolishJLatnRpl
 pmsPiedmonteseJLatn
 pntPonticJGrek
 pon	PohnpeianJLatn
 prd
-Parsi-DariJArab
-psPashtoJArab
+Parsi-DariJArab
+psPashtoJArabRps
 pt
-PortugueseJLatn
+PortugueseJLatnRpt
 puuPunuJLatn
 quQuechuaJLatn
 quc	KʼicheʼJLatn(
@@ -513,12 +513,12 @@ RajasthaniJDeva#
 rmtDomariJArab
 rmuTavringer RomaniJLatn
 rnRundiJLatn
-rngRongaJLatn
-roRomanianJLatn
+rngRongaJLatn
+roRomanianJLatnRro
 robTae'JLatn
 rofRomboJLatn
-rtmRotumanJLatn
-ruRussianJCyrl
+rtmRotumanJLatn
+ruRussianJCyrlRru
 rueRusynJCyrl
 rugRovianaJLatn
 rwKinyarwandaJLatn
@@ -536,8 +536,8 @@ RajasthaniJDeva#
 sckSadriJDeva
 scnSicilianJLatn
 scoScotsJLatn
-scsNorth SlaveyJLatn
-sdSindhiJArab 
+scsNorth SlaveyJLatn
+sdSindhiJArabRsd 
 sdcSassarese SardinianJLatn
 sdhSouthern KurdishJArab
 seNorthern SamiJLatn
@@ -547,39 +547,39 @@ RajasthaniJDeva#
 sesKoyraboro SenniJLatn
 sgSangoJLatn
 shi	TachelhitJTfng
-shnShanJMymr
-siSinhalaJSinh
-sidSidamoJLatn
-skSlovakBchJLatn
-skrSaraikiJArab
-sl	SlovenianJLatn
+shnShanJMymr
+siSinhalaJSinhRsi
+sidSidamoJLatn
+skSlovakBchJLatnRsk
+skrSaraikiJArab
+sl	SlovenianJLatnRsl
 sliLower SilesianJLatn
-slySelayarJLatn
-smSamoanJLatn
+slySelayarJLatn
+smSamoanJLatnRsm
 smaSouthern SamiJLatn
 smj	Lule SamiJLatn
 smn
 Inari SamiJLatn
 sms
-Skolt SamiJLatn
-snShonaJLatn
-snkSoninkeJLatn
-soSomaliJLatn
-souSouthern ThaiJThai8
-sqAlbanianBdhBgjBllBnjBrrBshBthBxhBzhJLatn
-srSerbianJCyrl
+Skolt SamiJLatn
+snShonaJLatnRsn
+snkSoninkeJLatn
+soSomaliJLatnRso
+souSouthern ThaiJThai<
+sqAlbanianBdhBgjBllBnjBrrBshBthBxhBzhJLatnRsq
+srSerbianJCyrlRsr
 srnSranan TongoJLatn
 srrSererJLatn
 srxSirmauriJDeva
 ssSwatiJLatn
-ssySahoJLatn
-stSouthern SothoJLatn
-stqSaterland FrisianJLatn
-su	SundaneseJLatn
+ssySahoJLatn
+stSouthern SothoJLatnRst
+stqSaterland FrisianJLatn
+su	SundaneseJLatnRsu
 sukSukumaJLatn
-susSusuJLatn
-svSwedishJLatn
-swSwahiliJLatn
+susSusuJLatn
+svSwedishJLatnRsv
+swSwahiliJLatnRsw
 swbComorianJArab
 swgSwabianJLatn
 swv
@@ -587,20 +587,20 @@ ShekhawatiJDeva
 sxnSangirJLatn
 sylSylhetiJBeng
 syrSyriacJSyrc
-szlSilesianJLatn
-taTamilJTaml
+szlSilesianJLatn
+taTamilJTamlRta
 tajEastern TamangJDeva
 tbwTagbanwaJLatn
 tcyTuluJKnda
 tddTai NüaJTale
 tdgWestern TamangJDeva
-tdhThulungJDeva
-teTeluguJTelu
+tdhThulungJDeva
+teTeluguJTeluRte
 temTimneJLatn
 teoTesoJLatn
-tetTetumJLatn
-tgTajikJCyrl
-thThaiJThai
+tetTetumJLatn
+tgTajikJCyrlRtg
+thThaiJThaiRth
 thlDangaura TharuJDeva
 thqKochila TharuJDeva
 thr
@@ -617,8 +617,8 @@ Rana TharuJDeva
 tnTswanaJLatn
 toTonganBngJLatn
 togNyasa TongaJLatn
-tpi	Tok PisinJLatn
-trTurkishJLatn
+tpi	Tok PisinJLatn
+trTurkishJLatnRtr
 truTuroyoJLatn
 trvTarokoJLatn
 trwTorwaliJArab
@@ -638,20 +638,20 @@ Muslim TatJLatn
 tyvTuvinianJCyrl$
 tzmCentral Atlas TamazightJLatn
 udmUdmurtJCyrl
-ugUyghurJArab
-uk	UkrainianJCyrl
+ugUyghurJArab
+uk	UkrainianJCyrlRuk
 uliUlithianJLatn
 umbUmbunduJLatn
 unrMundariJBeng
-unxMundaJBeng
-urUrduJArab
-uzUzbekBshBchJLatn
+unxMundaJBeng
+urUrduJArabRur
+uzUzbekBshBchJLatnRuz
 vaiVaiJVaii
 veVendaJLatn
 vecVenetianJLatn
-vepVepsJLatnC
+vepVepsJLatnG
 vi
-VietnameseBchBghBgiBkhBnhBngBnghBphBquBthBtrJLatn*
+VietnameseBchBghBgiBkhBnhBngBnghBphBquBthBtrJLatnRvi*
 vicVirgin Islands Creole EnglishJLatn
 vlsWest FlemishJLatn
 vmfMain-FranconianJLatn
@@ -671,8 +671,8 @@ VietnameseBchBghBgiBkhBnhBngBnghBphBquBthBtrJLatn*
 wtmMewatiJDeva
 wuu
 Wu ChineseJHans
-xavXavánteJLatn
-xhXhosaJLatn
+xavXavánteJLatn
+xhXhosaJLatnRxh
 xmf
 MingrelianJGeor
 xnrKangriJDeva
@@ -681,9 +681,9 @@ MingrelianJGeor
 yaoYaoJLatn
 yapYapeseJLatn
 yavYangbenJLatn
-ybbYembaJLatn
-yiYiddishJHebr
-yoYorubaBgbJLatn
+ybbYembaJLatn
+yiYiddishJHebrRyi
+yoYorubaBgbJLatnRyo
 yrl	NheengatuJLatn
 yuaYucatecoJLatn
 yue	CantoneseJHant
@@ -691,21 +691,21 @@ MingrelianJGeor
 zagZaghawaJLatn
 zdjNgazidja ComorianJArab
 zea	ZeelandicJLatn(
-zghStandard Moroccan TamazightJTfng
-zhChineseJHans"
-zmiNegeri Sembilan MalayJLatn
-zuZuluJLatn
+zghStandard Moroccan TamazightJTfng
+zhChineseJHansRzh-CN"
+zmiNegeri Sembilan MalayJLatn
+zuZuluJLatnRzu
 zzaZazaJLatn
 zxxJLatn
 bscBassariJLatn
-fblWest Albay BikolJLatn
-hmnJLatn
+fblWest Albay BikolJLatn
+hmnJLatnRhmn
 mey
 HassaniyyaJLatn
 mfvMandjakJLatn
 snfNoonJLatn
-tnrMénikJLatn
-zh-TWChineseJHant"
+tnrMénikJLatn
+zh-TWChineseJHantRzh-TW"
 ACAscension Island�"
 en�.
 ADAndorra��"

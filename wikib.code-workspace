@@ -11,6 +11,12 @@
 		},
 		{
 			"path": "localization"
+		},
+		{
+			"path": "packages\\azure"
+		},
+		{
+			"path": "packages\\utils"
 		}
 	],
 	"settings": {
