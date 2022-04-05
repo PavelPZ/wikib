@@ -1,22 +1,32 @@
 {
 	"folders": [
 		{
+			"name": "wikib",
 			"path": "wikib"
 		},
 		{
+			"name": "riverpod_navigator",
 			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator"
 		},
 		{
+			"name": "riverpod_navigator_core",
 			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator_core"
 		},
 		{
-			"path": "localization"
+			"name": "localization",
+			"path": "packages\\localization"
 		},
 		{
+			"name": "utils",
+			"path": "packages\\utils"
+		},
+		{
+			"name": "azure",
 			"path": "packages\\azure"
 		},
 		{
-			"path": "packages\\utils"
+			"name": "rewise_storage",
+			"path": "packages\\rewise_storage"
 		}
 	],
 	"settings": {

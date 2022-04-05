@@ -8,6 +8,8 @@ environment:
 
 dependencies:
   crypto:
+  flutter:
+    sdk: flutter
   http:
   tuple:
   utils:

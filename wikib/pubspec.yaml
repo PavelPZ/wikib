@@ -9,19 +9,23 @@ environment:
   sdk: ">=2.16.1 <3.0.0"
 
 dependencies:
+  azure:
+    path: ../packages/azure  
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
   flutter_spinkit:
   functional_widget_annotation:
   hooks_riverpod: ^1.0.0
+  localization:     
+    path: ../packages/localization
   protobuf:
   protobuf_for_dart:
   meta: ^1.7.0
   riverpod_navigator: 
     path: ../../riverpod_navigator/packages/riverpod_navigator 
-  localization:     
-    path: ../localization
+  utils:
+    path: ../packages/utils 
 
 dev_dependencies:
   # flutter_test:
