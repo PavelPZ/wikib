@@ -18,3 +18,5 @@ Future<bool> connectedByOne4() async {
     client.close();
   }
 }
+
+const maxInt = (1 << 53) - 1;

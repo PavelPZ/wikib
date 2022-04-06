@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:localization/localization_meta.dart';
+import 'package:rewise_storage/rewise_storage.dart';
 import 'package:riverpod_navigator/riverpod_navigator.dart';
 
 import 'localize.dart';
@@ -15,9 +17,14 @@ part 'main.g.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await initRewiseStorage();
   runApp(
     ProviderScope(
-      overrides: providerOverrides([RegionSegment()], AppNavigator.new),
+      overrides: [
+        ...providerOverrides([RegionSegment()], AppNavigator.new),
+        ...scopeRewiseStorage,
+      ],
       child: const MyApp(),
     ),
   );

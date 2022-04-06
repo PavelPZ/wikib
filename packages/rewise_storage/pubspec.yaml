@@ -12,8 +12,14 @@ dependencies:
     path: ../azure  
   flutter:
     sdk: flutter
+  hive:
+  protobuf:
+  protobuf_for_dart:
+    path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
+  riverpod:
   utils:
     path: ../utils 
 
 dev_dependencies:
-  lints: ^1.0.0
+  hive_generator:
+  build_runner: 

@@ -13,6 +13,10 @@
 			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator_core"
 		},
 		{
+			"name": "protobuf_for_dart",
+			"path": "..\\wikibulary\\shared\\protobufs\\protobuf_for_dart"
+		},
+		{
 			"name": "localization",
 			"path": "packages\\localization"
 		},
