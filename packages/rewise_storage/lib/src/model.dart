@@ -156,26 +156,6 @@ class BoxFact extends BoxMsg<dom.Fact> {
 
   @override
   void setId(int id) => msg!.id = id;
-
-  @override
-  @HiveField(0, defaultValue: 0)
-  int key = 0;
-
-  @HiveField(1, defaultValue: null)
-  @override
-  Uint8List? value;
-
-  @HiveField(2, defaultValue: 0)
-  @override
-  int version = 0;
-
-  @HiveField(3, defaultValue: false)
-  @override
-  bool isDeleted = false;
-
-  @HiveField(4, defaultValue: false)
-  @override
-  bool isDefered = false;
 }
 
 @HiveType(typeId: 11)
@@ -185,26 +165,6 @@ class BoxDaily extends BoxMsg<dom.Daily> {
 
   @override
   void setId(int id) => msg!.id = id;
-
-  @override
-  @HiveField(0, defaultValue: 0)
-  int key = 0;
-
-  @HiveField(1, defaultValue: null)
-  @override
-  Uint8List? value;
-
-  @HiveField(2, defaultValue: 0)
-  @override
-  int version = 0;
-
-  @HiveField(3, defaultValue: false)
-  @override
-  bool isDeleted = false;
-
-  @HiveField(4, defaultValue: false)
-  @override
-  bool isDefered = false;
 }
 
 @HiveType(typeId: 12)
@@ -214,26 +174,6 @@ class BoxBook extends BoxMsg<dom.Book> {
 
   @override
   void setId(int id) => msg!.id = id;
-
-  @override
-  @HiveField(0, defaultValue: 0)
-  int key = 0;
-
-  @HiveField(1, defaultValue: null)
-  @override
-  Uint8List? value;
-
-  @HiveField(2, defaultValue: 0)
-  @override
-  int version = 0;
-
-  @HiveField(3, defaultValue: false)
-  @override
-  bool isDeleted = false;
-
-  @HiveField(4, defaultValue: false)
-  @override
-  bool isDefered = false;
 }
 
 @HiveType(typeId: 13)
@@ -243,24 +183,4 @@ class BoxConfig extends BoxMsg<dom.Config> {
 
   @override
   void setId(int id) => msg!.id = id;
-
-  @override
-  @HiveField(0, defaultValue: 0)
-  int key = 0;
-
-  @HiveField(1, defaultValue: null)
-  @override
-  Uint8List? value;
-
-  @HiveField(3, defaultValue: 0)
-  @override
-  int version = 0;
-
-  @HiveField(4, defaultValue: false)
-  @override
-  bool isDeleted = false;
-
-  @HiveField(5, defaultValue: false)
-  @override
-  bool isDefered = false;
 }

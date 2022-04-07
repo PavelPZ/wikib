@@ -95,20 +95,20 @@ abstract class Storage {
 }
 
 abstract class BoxItem<T> extends HiveObject {
-  int get key;
-  set key(int v);
+  @HiveField(0, defaultValue: 0)
+  int key = 0;
 
   T get value;
   set value(T v);
 
-  int get version;
-  set version(int v);
+  @HiveField(2, defaultValue: 0)
+  int version = 0;
 
-  bool get isDeleted;
-  set isDeleted(bool v);
+  @HiveField(3, defaultValue: false)
+  bool isDeleted = false;
 
-  bool get isDefered;
-  set isDefered(bool v);
+  @HiveField(4, defaultValue: false)
+  bool isDefered = false;
 
   String get rowKey => BoxKey.getRowKey(key);
   String get rowPropId => BoxKey.getRowPropId(key);
@@ -117,47 +117,15 @@ abstract class BoxItem<T> extends HiveObject {
 @HiveType(typeId: 1)
 class BoxInt extends BoxItem<int> {
   @override
-  @HiveField(0, defaultValue: 0)
-  int key = 0;
-
-  @override
   @HiveField(1, defaultValue: 0)
   int value = 0;
-
-  @HiveField(2, defaultValue: 0)
-  @override
-  int version = 0;
-
-  @HiveField(3, defaultValue: false)
-  @override
-  bool isDeleted = false;
-
-  @HiveField(4, defaultValue: false)
-  @override
-  bool isDefered = false;
 }
 
 @HiveType(typeId: 2)
 class BoxString extends BoxItem<String> {
   @override
-  @HiveField(0, defaultValue: 0)
-  int key = 0;
-
   @HiveField(1, defaultValue: '')
-  @override
   String value = '';
-
-  @HiveField(2, defaultValue: 0)
-  @override
-  int version = 0;
-
-  @HiveField(3, defaultValue: false)
-  @override
-  bool isDeleted = false;
-
-  @HiveField(4, defaultValue: false)
-  @override
-  bool isDefered = false;
 }
 
 abstract class BoxMsg<T extends $pb.GeneratedMessage> extends BoxItem<Uint8List?> {
@@ -180,6 +148,10 @@ abstract class BoxMsg<T extends $pb.GeneratedMessage> extends BoxItem<Uint8List?
   }
 
   T? _msg;
+
+  @override
+  @HiveField(1, defaultValue: null)
+  Uint8List? value;
 }
 
 abstract class Place {
