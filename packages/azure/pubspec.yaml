@@ -10,10 +10,17 @@ dependencies:
   crypto:
   flutter:
     sdk: flutter
+  hive:
   http:
+  protobuf:
+  protobuf_for_dart:
+    path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
+  riverpod:
   tuple:
   utils:
     path: ../utils 
 
 dev_dependencies:
+  hive_generator:
+  build_runner: 
   test: 

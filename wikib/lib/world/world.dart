@@ -5,10 +5,9 @@ import 'package:riverpod_navigator/riverpod_navigator.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:localization/localization_meta.dart';
+import 'package:utils/utils.dart';
 
 import '../localize.dart';
-import '../utils/protobuf.dart';
-import '../utils/lowutils.dart';
 
 part 'world.g.dart';
 part 'data.dart';

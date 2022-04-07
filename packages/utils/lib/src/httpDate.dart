@@ -198,6 +198,7 @@ class Day {
   static int get nowSec => dateNow(null).difference(epoch).inSeconds;
   static int get nowSecUtc => dateNow(null).toUtc().difference(epoch).inSeconds;
   static int get nowMilisec => dateNow(null).difference(epoch).inMilliseconds;
+  static int get nowMilisecUtc => dateNow(null).toUtc().difference(epoch).inMilliseconds;
   static Duration tillMidnight() {
     final nowDate = dateNow(null);
     final nextDay = DateTime(nowDate.year, nowDate.month, nowDate.day + 1);

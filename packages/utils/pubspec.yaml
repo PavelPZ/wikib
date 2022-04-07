@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   http:
   path:
+  protobuf:
   tuple:
 
 dev_dependencies:

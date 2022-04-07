@@ -4,4 +4,6 @@ export 'src/httpDate.dart';
 //     // ignore: uri_does_not_exist
 //     if (dart.library.io) 'src/platform/io.dart';
 // export 'src/platform/common.dart_';
+export 'src/lowutils.dart';
+export 'src/protobuf.dart';
 export 'src/utils.dart';
