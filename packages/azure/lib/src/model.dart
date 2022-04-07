@@ -1,23 +1,5 @@
 part of 'azure.dart';
 
-// https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.cosmos.table.tablebatchoperation?view=azure-dotnet
-// max 100 rows, max 4 MByte of HTTP message size
-class BatchRow {
-  BatchRow({required this.rowId, required this.data, required this.method});
-  final String rowId;
-  final Map<String, dynamic> data;
-  String? eTag;
-  final BatchMethod method;
-}
-
-class AzureDataUpload {
-  AzureDataUpload({required this.rows, required this.versions});
-  final List<BatchRow> rows;
-  final Map<int, int> versions;
-}
-
-typedef AzureDataDownload = Map<String, Map<String, dynamic>>;
-
 class Key {
   Key(String? partition, String? row)
       : partition = Encoder.keys.encode(partition),
@@ -25,17 +7,6 @@ class Key {
   final String? partition;
   final String? row;
 }
-
-enum BatchMethod {
-  merge,
-  put,
-  delete,
-}
-const batchMethodName = <BatchMethod, String>{
-  BatchMethod.merge: 'MERGE',
-  BatchMethod.put: 'PUT',
-  BatchMethod.delete: 'DELETE',
-};
 
 // https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-the-table-service-data-model
 class RowData {

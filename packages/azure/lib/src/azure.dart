@@ -7,6 +7,8 @@ import 'package:http/http.dart';
 import 'package:tuple/tuple.dart';
 import 'package:utils/utils.dart';
 
+import 'forStorage.dart';
+
 // import 'lib.dart';
 
 part 'azure_tables.dart';
