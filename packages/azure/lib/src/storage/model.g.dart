@@ -17,21 +17,27 @@ class BoxIntAdapter extends TypeAdapter<BoxInt> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BoxInt()
-      ..value = fields[0] == null ? 0 : fields[0] as int
-      ..version = fields[1] == null ? 0 : fields[1] as int
-      ..isDeleted = fields[2] == null ? false : fields[2] as bool;
+      ..key = fields[0] == null ? 0 : fields[0] as int
+      ..value = fields[1] == null ? 0 : fields[1] as int
+      ..version = fields[2] == null ? 0 : fields[2] as int
+      ..isDeleted = fields[3] == null ? false : fields[3] as bool
+      ..isDefered = fields[4] == null ? false : fields[4] as bool;
   }
 
   @override
   void write(BinaryWriter writer, BoxInt obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.value)
+      ..write(obj.key)
       ..writeByte(1)
-      ..write(obj.version)
+      ..write(obj.value)
       ..writeByte(2)
-      ..write(obj.isDeleted);
+      ..write(obj.version)
+      ..writeByte(3)
+      ..write(obj.isDeleted)
+      ..writeByte(4)
+      ..write(obj.isDefered);
   }
 
   @override
@@ -56,21 +62,27 @@ class BoxStringAdapter extends TypeAdapter<BoxString> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BoxString()
-      ..value = fields[0] == null ? '' : fields[0] as String
-      ..version = fields[1] == null ? 0 : fields[1] as int
-      ..isDeleted = fields[2] == null ? false : fields[2] as bool;
+      ..key = fields[0] == null ? 0 : fields[0] as int
+      ..value = fields[1] == null ? '' : fields[1] as String
+      ..version = fields[2] == null ? 0 : fields[2] as int
+      ..isDeleted = fields[3] == null ? false : fields[3] as bool
+      ..isDefered = fields[4] == null ? false : fields[4] as bool;
   }
 
   @override
   void write(BinaryWriter writer, BoxString obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.value)
+      ..write(obj.key)
       ..writeByte(1)
-      ..write(obj.version)
+      ..write(obj.value)
       ..writeByte(2)
-      ..write(obj.isDeleted);
+      ..write(obj.version)
+      ..writeByte(3)
+      ..write(obj.isDeleted)
+      ..writeByte(4)
+      ..write(obj.isDefered);
   }
 
   @override

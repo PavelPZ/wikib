@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:azure/azure.dart';
 import 'package:hive/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:protobuf/protobuf.dart' as $pb;
@@ -17,8 +18,6 @@ Future initStorage(String name) async {
 }
 
 List<Override> scopeStorage(Box box) => <Override>[storageBoxProvider.overrideWithValue(box)];
-
-typedef AzureData = Map<String, Map<String, dynamic>>;
 
 abstract class Storage {
   Storage(this.box);
@@ -45,18 +44,59 @@ abstract class Storage {
   late Map<int, ItemGroup> row2Group;
   late List<ItemGroup> allGroups;
 
-  Future fromAzure(AzureData rows) async {
+  Future fromAzureDownload(AzureDataDownload rows) async {
     await box.clear();
+    final puts = <MapEntry<dynamic, dynamic>>[];
     for (var row in rows.entries)
       for (var prop in rows.entries) {
         final key = BoxKey.azure(row.key, prop.key);
         final messageGroup = row2Group[key.rowId]!;
-        box.put(key.boxKey, messageGroup.createBoxItem(key, prop.value));
+        puts.add(MapEntry(key.boxKey, messageGroup.createBoxItem(key, prop.value)));
       }
+    final entries = Map.fromEntries(puts);
+    await box.putAll(entries);
+  }
+
+  AzureDataUpload? toAzureUpload() {
+    final rowGroups = <String, List<BoxItem>>{};
+    final versions = <int, int>{};
+    for (var item in box.values.cast<BoxItem>().where((b) => b.isDefered)) {
+      rowGroups.update(item.rowKey, (value) => value..add(item), ifAbsent: () => <BoxItem>[item]);
+      versions[item.key] = item.version;
+    }
+    if (versions.length == 0) return null;
+    // finish rows
+    final rows = <BatchRow>[];
+    for (var r in rowGroups.entries) {
+      if (r.value.every((b) => b.isDeleted)) {
+        rows.add(BatchRow(rowId: r.key, data: <String, dynamic>{}, method: BatchMethod.delete));
+      } else {
+        final notDeletedMap = Map.fromEntries(r.value.where((b) => !b.isDeleted).map((e) => MapEntry(e.rowPropId, e.value)));
+        rows.add(BatchRow(rowId: r.key, data: notDeletedMap, method: r.value.any((b) => b.isDeleted) ? BatchMethod.put : BatchMethod.merge));
+      }
+    }
+    return AzureDataUpload(rows: rows, versions: versions);
+  }
+
+  Future fromAzureUpload(Map<int, int> versions) {
+    final futures = <Future>[];
+    for (var kv in versions.entries) {
+      final item = box.get(kv.key) as BoxItem?;
+      if (item == null || item.version != kv.value) continue;
+      assert(item.isDefered);
+      if (item.isDeleted)
+        futures.add(item.delete());
+      else
+        item.isDefered = false;
+    }
+    return futures.length > 0 ? Future.wait(futures) : Future.value();
   }
 }
 
 abstract class BoxItem<T> extends HiveObject {
+  int get key;
+  set key(int v);
+
   T get value;
   set value(T v);
 
@@ -65,42 +105,66 @@ abstract class BoxItem<T> extends HiveObject {
 
   bool get isDeleted;
   set isDeleted(bool v);
+
+  bool get isDefered;
+  set isDefered(bool v);
+
+  String get rowKey => BoxKey.getRowKey(key);
+  String get rowPropId => BoxKey.getRowPropId(key);
 }
 
 @HiveType(typeId: 1)
 class BoxInt extends BoxItem<int> {
   @override
   @HiveField(0, defaultValue: 0)
+  int key = 0;
+
+  @override
+  @HiveField(1, defaultValue: 0)
   int value = 0;
 
-  @HiveField(1, defaultValue: 0)
+  @HiveField(2, defaultValue: 0)
   @override
   int version = 0;
 
-  @HiveField(2, defaultValue: false)
+  @HiveField(3, defaultValue: false)
   @override
   bool isDeleted = false;
+
+  @HiveField(4, defaultValue: false)
+  @override
+  bool isDefered = false;
 }
 
 @HiveType(typeId: 2)
 class BoxString extends BoxItem<String> {
-  @HiveField(0, defaultValue: '')
+  @override
+  @HiveField(0, defaultValue: 0)
+  int key = 0;
+
+  @HiveField(1, defaultValue: '')
   @override
   String value = '';
 
-  @HiveField(1, defaultValue: 0)
+  @HiveField(2, defaultValue: 0)
   @override
   int version = 0;
 
-  @HiveField(2, defaultValue: false)
+  @HiveField(3, defaultValue: false)
   @override
   bool isDeleted = false;
+
+  @HiveField(4, defaultValue: false)
+  @override
+  bool isDefered = false;
 }
 
 abstract class BoxMsg<T extends $pb.GeneratedMessage> extends BoxItem<Uint8List?> {
   T msgCreator();
   void setId(int id);
+
   T? get msg {
+    rAssert(!isDeleted);
     if (_msg != null) return _msg!;
     assert(value != null);
     _msg = Protobuf.fromBytes(value!, msgCreator);
@@ -108,6 +172,7 @@ abstract class BoxMsg<T extends $pb.GeneratedMessage> extends BoxItem<Uint8List?
   }
 
   set msg(T? v) {
+    rAssert(!isDeleted);
     _msg = v;
     assert(_msg != null);
     value = Protobuf.toBytes(_msg!);
@@ -123,10 +188,21 @@ abstract class Place {
 
   BoxItem createBoxItem(BoxKey key, dynamic value);
 
-  Future saveBoxItem(BoxItem boxItem) async {
+  BoxItem? getBox(BoxKey key) => storage.box.get(key);
+
+  Future delete(BoxKey key) {
+    final boxItem = getBox(key);
+    rAssert(boxItem != null);
+    boxItem!.isDeleted = true;
+    return saveBoxItem(boxItem);
+  }
+
+  Future saveBoxItem(BoxItem boxItem) {
     boxItem.version = Day.nowMilisecUtc;
-    await boxItem.save();
+    boxItem.isDefered = true;
+    final future = boxItem.save();
     storage._onChanged();
+    return future;
   }
 }
 
@@ -141,7 +217,7 @@ abstract class SinglePlaceValue<T> extends SinglePlace<T> {
   SinglePlaceValue(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   T? getValue([BoxKey? key]) {
-    final BoxItem<T>? boxItem = storage.box.get(key ?? BoxKey.idx(rowId, propId).boxKey);
+    final boxItem = getBox(key ?? BoxKey.idx(rowId, propId)) as BoxItem<T>?;
     return boxItem == null || boxItem.isDeleted ? null : boxItem.value;
   }
 
@@ -163,11 +239,12 @@ abstract class SinglePlaceMsg<T extends $pb.GeneratedMessage> extends SinglePlac
   SinglePlaceMsg(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   T? getValue([BoxKey? key]) {
-    final BoxMsg<T>? boxItem = storage.box.get(key ?? BoxKey.idx(rowId, propId).boxKey);
+    // final BoxMsg<T>? boxItem = storage.box.get(key ?? BoxKey.idx(rowId, propId));
+    final boxItem = getBox(key ?? BoxKey.idx(rowId, propId)) as BoxMsg<T>?;
     return boxItem == null || boxItem.isDeleted ? null : boxItem.msg!;
   }
 
-  Future saveValue(T value, [BoxKey? key]) async {
+  Future saveValue(T value, [BoxKey? key]) {
     final BoxMsg<T> boxItem = storage.box.get(key ?? BoxKey.idx(rowId, propId).boxKey);
     boxItem.msg = value;
     return saveBoxItem(boxItem);
@@ -213,8 +290,8 @@ abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemGroup {
 
   Future addNewGroupItem(T msg) {
     final nextKey = BoxKey(uniqueCounter.getValue()!).next();
-    rassert(nextKey.rowId >= rowStart && nextKey.rowId <= rowStart);
-    rassert(nextKey.propId <= 252);
+    rAssert(nextKey.rowId >= rowStart && nextKey.rowId <= rowStart);
+    rAssert(nextKey.propId <= 252);
     final boxItem = itemsPlace.createBoxItem(nextKey, null) as BoxMsg<T>;
     boxItem.msg = msg;
     boxItem.setId(nextKey.boxKey);
@@ -236,11 +313,16 @@ class BoxKey {
 
   BoxKey next() => propId < 252 ? BoxKey(boxKey + 1) : BoxKey.idx(rowId + 1, 0);
 
+  //-------- statics
+
   static int nextKey(int key) {
     final rowId = key >> 8;
     final propId = key & 0xff;
     return propId < 252 ? key + 1 : (rowId + 1) << 8;
   }
+
+  static String getRowKey(int key) => _byte2Hex(key >> 8);
+  static String getRowPropId(int key) => _byte2Hex(key & 0xff);
 
   //-------- RowData
   String get rowKey => _byte2Hex(rowId);

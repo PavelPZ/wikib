@@ -66,7 +66,7 @@ Future createDB(WidgetRef ref, void done(String msg)) async {
   assert(file.lengthSync() == 0);
   final rnd = Random();
   final bytes = Uint8List.fromList(List<int>.generate(400, (i) => rnd.nextInt(256)));
-  final entries = Map<int, Uint8List>.fromEntries(List<MapEntry<int, Uint8List>>.generate(25000, (i) => MapEntry(i, bytes)));
+  final entries = Map.fromEntries(List<MapEntry<int, Uint8List>>.generate(25000, (i) => MapEntry(i, bytes)));
   await box.putAll(entries);
   assert(file.existsSync());
   done('... db created, len=${file.lengthSync()}');
