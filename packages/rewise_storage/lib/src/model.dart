@@ -8,7 +8,9 @@ import 'package:protobuf_for_dart/algorithm.dart' as dom;
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'model.g.dart';
 
-final storageBoxProvider = Provider<Box>((_) => throw UnimplementedError());
+final rewiseStorageProvider = Provider<Box>((_) => throw UnimplementedError());
+List<Override> get rewiseStorageOverrides => <Override>[rewiseStorageProvider.overrideWithValue(getDB())];
+Box getDB() => Hive.box('rewise_storage');
 
 Future initRewiseStorage() async {
   await initStorage('rewise_storage');
@@ -17,9 +19,6 @@ Future initRewiseStorage() async {
   Hive.registerAdapter(BoxBookAdapter());
   Hive.registerAdapter(BoxConfigAdapter());
 }
-
-Box getDB() => Hive.box('rewise_storage');
-List<Override> get scopeRewiseStorage => scopeStorage(getDB());
 
 // DEVICEID = 0; // 1 rows (max 1*252 items)
 // CONFIGS = 1; // 1 rows (max 1*252 items)

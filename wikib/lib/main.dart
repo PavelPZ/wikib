@@ -22,8 +22,8 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        ...providerOverrides([RegionSegment()], AppNavigator.new),
-        ...scopeRewiseStorage,
+        ...riverpodNavigatorOverrides([RegionSegment()], AppNavigator.new),
+        ...rewiseStorageOverrides,
       ],
       child: const MyApp(),
     ),

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
-import 'package:riverpod/riverpod.dart';
+// import 'package:riverpod/riverpod.dart';
 import 'package:protobuf/protobuf.dart' as $pb;
 import 'package:utils/utils.dart';
 
@@ -10,15 +10,14 @@ import '../forStorage.dart';
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'model.g.dart';
 
-final storageBoxProvider = Provider<Box>((_) => throw UnimplementedError());
+// final storageBoxProvider = Provider<Box>((_) => throw UnimplementedError());
+// List<Override> scopeStorageProvider(Box box) => <Override>[storageBoxProvider.overrideWithValue(box)];
 
 Future initStorage(String name) async {
   await Hive.openBox(name);
   Hive.registerAdapter(BoxIntAdapter());
   Hive.registerAdapter(BoxStringAdapter());
 }
-
-List<Override> scopeStorage(Box box) => <Override>[storageBoxProvider.overrideWithValue(box)];
 
 abstract class Storage {
   Storage(this.box);

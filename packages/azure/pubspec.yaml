@@ -8,8 +8,8 @@ environment:
 
 dependencies:
   crypto:
-  flutter:
-    sdk: flutter
+  # flutter:
+  #  sdk: flutter
   hive:
   http:
   protobuf:
