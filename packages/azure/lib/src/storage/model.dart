@@ -13,8 +13,7 @@ part 'model.g.dart';
 // final storageBoxProvider = Provider<Box>((_) => throw UnimplementedError());
 // List<Override> scopeStorageProvider(Box box) => <Override>[storageBoxProvider.overrideWithValue(box)];
 
-Future initStorage(String name) async {
-  await Hive.openBox(name);
+void initStorage() {
   Hive.registerAdapter(BoxIntAdapter());
   Hive.registerAdapter(BoxStringAdapter());
 }
@@ -40,9 +39,11 @@ abstract class Storage {
 
   Future? _onChangedRunning;
 
-  final Box box;
+  Box box;
   late Map<int, ItemGroup> row2Group;
   late List<ItemGroup> allGroups;
+
+  Future seed() => Future.wait(allGroups.map((e) => e.seed()));
 
   Future fromAzureDownload(AzureDataDownload rows) async {
     await box.clear();
@@ -51,7 +52,7 @@ abstract class Storage {
       for (var prop in rows.entries) {
         final key = BoxKey.azure(row.key, prop.key);
         final messageGroup = row2Group[key.rowId]!;
-        puts.add(MapEntry(key.boxKey, messageGroup.createBoxItem(key, prop.value)));
+        puts.add(MapEntry(key.boxKey, messageGroup.create(key, prop.value)));
       }
     final entries = Map.fromEntries(puts);
     await box.putAll(entries);
@@ -91,6 +92,11 @@ abstract class Storage {
     }
     return futures.length > 0 ? Future.wait(futures) : Future.value();
   }
+
+  Future debugReopen() async {
+    await box.close();
+    box = await Hive.openBox(box.name, path: box.path!.split('\\${box.name}.hive')[0]);
+  }
 }
 
 abstract class BoxItem<T> extends HiveObject {
@@ -129,7 +135,7 @@ class BoxString extends BoxItem<String> {
 
 abstract class BoxMsg<T extends $pb.GeneratedMessage> extends BoxItem<Uint8List?> {
   T msgCreator();
-  void setId(int id);
+  void setMsgId(T msg, int id);
 
   T? get msg {
     rAssert(!isDeleted);
@@ -158,24 +164,28 @@ abstract class Place {
 
   final Storage storage;
 
+  BoxKey get defaultKey;
+
   BoxItem createBoxItem(BoxKey key, dynamic value);
 
-  BoxItem? getBox(BoxKey key) => storage.box.get(key);
-
-  Future delete(BoxKey key) {
-    final boxItem = getBox(key);
-    rAssert(boxItem != null);
-    boxItem!.isDeleted = true;
-    return saveBoxItem(boxItem);
-  }
-
-  Future saveBoxItem(BoxItem boxItem) {
+  Future saveBoxItem(BoxItem boxItem) async {
     boxItem.version = Day.nowMilisecUtc;
     boxItem.isDefered = true;
-    final future = boxItem.save();
+    await storage.box.put(boxItem.key, boxItem);
     storage._onChanged();
-    return future;
   }
+
+  Future saveBoxItems(List<BoxItem> boxItems) async {
+    final futures = boxItems.map((boxItem) {
+      boxItem.version = Day.nowMilisecUtc;
+      boxItem.isDefered = true;
+      return storage.box.put(boxItem.key, boxItem);
+    });
+    await Future.wait(futures);
+    storage._onChanged();
+  }
+
+  Future seed() => Future.value();
 }
 
 abstract class SinglePlace<T> extends Place {
@@ -183,18 +193,40 @@ abstract class SinglePlace<T> extends Place {
 
   final int rowId;
   final int propId;
+
+  BoxKey getKey([BoxKey? key]) => key ?? defaultKey;
+  int getBoxKey([BoxKey? key]) => getKey(key).boxKey;
+
+  BoxItem create(BoxKey? key, dynamic value) {
+    key ??= getKey(key);
+    return createBoxItem(key, value)..key = key.boxKey;
+  }
+
+  BoxItem? getBox([BoxKey? key]) {
+    final boxItem = storage.box.get(getBoxKey(key));
+    return boxItem == null || boxItem.isDeleted ? null : boxItem;
+  }
+
+  bool exists([BoxKey? key]) => storage.box.containsKey(getBoxKey(key));
+
+  Future delete([BoxKey? key]) {
+    final boxItem = getBox(key);
+    rAssert(boxItem != null);
+    boxItem!.isDeleted = true;
+    return saveBoxItem(boxItem);
+  }
+
+  @override
+  BoxKey get defaultKey => BoxKey.idx(rowId, propId);
 }
 
 abstract class SinglePlaceValue<T> extends SinglePlace<T> {
   SinglePlaceValue(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
-  T? getValue([BoxKey? key]) {
-    final boxItem = getBox(key ?? BoxKey.idx(rowId, propId)) as BoxItem<T>?;
-    return boxItem == null || boxItem.isDeleted ? null : boxItem.value;
-  }
+  T? getValue([BoxKey? key]) => getBox()?.value;
 
   Future saveValue(T value, [BoxKey? key]) {
-    final BoxItem<T> boxItem = storage.box.get(key ?? BoxKey.idx(rowId, propId).boxKey);
+    final BoxItem boxItem = getBox(key) ?? create(key, 0);
     boxItem.value = value;
     return saveBoxItem(boxItem);
   }
@@ -211,15 +243,30 @@ abstract class SinglePlaceMsg<T extends $pb.GeneratedMessage> extends SinglePlac
   SinglePlaceMsg(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   T? getValue([BoxKey? key]) {
-    // final BoxMsg<T>? boxItem = storage.box.get(key ?? BoxKey.idx(rowId, propId));
-    final boxItem = getBox(key ?? BoxKey.idx(rowId, propId)) as BoxMsg<T>?;
+    final boxItem = getBox(key) as BoxMsg<T>?;
     return boxItem == null || boxItem.isDeleted ? null : boxItem.msg!;
   }
 
   Future saveValue(T value, [BoxKey? key]) {
-    final BoxMsg<T> boxItem = storage.box.get(key ?? BoxKey.idx(rowId, propId).boxKey);
+    final boxItem = (getBox(key) ?? create(key, null)) as BoxMsg<T>;
     boxItem.msg = value;
     return saveBoxItem(boxItem);
+  }
+
+  Future updateValue(BoxKey? key, void proc(T t)) {
+    final boxItem = getBox(key) as BoxMsg<T>;
+    proc(boxItem.msg!);
+    return saveBoxItem(boxItem);
+  }
+
+  @override
+  BoxItem create(BoxKey? key, dynamic value) {
+    assert(value is T);
+    key ??= getKey(key);
+    final res = (createBoxItem(key, null) as BoxMsg<T>)..key = key.boxKey;
+    final msg = value as T;
+    res.setMsgId(msg, key.boxKey);
+    return res..msg = msg;
   }
 }
 
@@ -228,6 +275,11 @@ abstract class ItemGroup extends Place {
 
   final int rowStart;
   final int rowEnd;
+
+  @override
+  BoxKey get defaultKey => throw UnimplementedError();
+
+  BoxItem create(BoxKey key, dynamic value) => createBoxItem(key, value)..key = key.boxKey;
 }
 
 class SinglesGroup extends ItemGroup {
@@ -247,50 +299,82 @@ abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemGroup {
     Storage storage, {
     required int rowStart,
     required int rowEnd,
-    required this.uniqueCounter,
     required this.itemsPlace,
   }) : super(storage, rowStart: rowStart, rowEnd: rowEnd);
 
-  final SinglePlaceValue<int> uniqueCounter;
   final SinglePlaceMsg<T> itemsPlace;
+
+  @override
+  BoxItem createBoxItem(BoxKey key, dynamic value) => itemsPlace.createBoxItem(key, value);
+
+  Iterable<BoxMsg<T>> getItems() => storage.box
+      .valuesBetween(
+        startKey: BoxKey.idx(itemsPlace.rowId, itemsPlace.propId).boxKey,
+        endKey: BoxKey.idx(rowEnd, BoxKey.maxPropId),
+      )
+      .cast<BoxMsg<T>>()
+      .where((f) => !f.isDeleted);
+}
+
+abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends MessagesGroup<T> {
+  MessagesGroupWithCounter(
+    Storage storage, {
+    required int rowStart,
+    required int rowEnd,
+    required this.uniqueCounter,
+    required SinglePlaceMsg<T> itemsPlace,
+  }) : super(storage, rowStart: rowStart, rowEnd: rowEnd, itemsPlace: itemsPlace);
+
+  final SinglePlaceValue<int> uniqueCounter;
 
   @override
   BoxItem createBoxItem(BoxKey key, dynamic value) {
     if (key.rowId == rowStart && key.propId == 0) return uniqueCounter.createBoxItem(key, value);
-    return itemsPlace.createBoxItem(key, value);
+    return super.createBoxItem(key, value);
   }
 
-  Future addNewGroupItem(T msg) {
-    final nextKey = BoxKey(uniqueCounter.getValue()!).next();
-    rAssert(nextKey.rowId >= rowStart && nextKey.rowId <= rowStart);
-    rAssert(nextKey.propId <= 252);
-    final boxItem = itemsPlace.createBoxItem(nextKey, null) as BoxMsg<T>;
-    boxItem.msg = msg;
-    boxItem.setId(nextKey.boxKey);
-    return saveBoxItem(boxItem);
+  Future addNewGroupItems(List<T> msgs) async {
+    final uniqueBox = uniqueCounter.getBox() as BoxInt;
+    var nextKey = BoxKey(uniqueBox.value);
+    final futures = msgs.map((msg) {
+      nextKey = BoxKey(uniqueBox.value).next();
+      uniqueBox.value = nextKey.boxKey;
+      rAssert(nextKey.rowId >= rowStart && nextKey.rowId <= rowStart);
+      rAssert(nextKey.propId <= 252);
+      final boxItem = itemsPlace.create(nextKey, msg) as BoxMsg<T>;
+      return saveBoxItem(boxItem);
+    }).toList();
+    futures.add(uniqueCounter.saveValue(nextKey.boxKey));
+    await Future.wait(futures);
+    storage.onChanged();
+  }
+
+  @override
+  Future seed() async {
+    await super.seed();
+    if (!uniqueCounter.exists()) await uniqueCounter.saveValue(itemsPlace.defaultKey.boxKey - 1);
   }
 }
 
 class BoxKey {
   const BoxKey(this.boxKey);
   const BoxKey.idx(int rowId, int propId)
-      : assert(propId <= 252),
-        assert(propId <= 255),
-        boxKey = rowId << 8 + propId;
+      : assert(propId <= maxPropId),
+        boxKey = (rowId << 8) + propId;
   factory BoxKey.azure(String rowId, String propId) => BoxKey.idx(_hex2Byte(rowId), _hex2Byte(propId));
 
   final int boxKey;
   int get rowId => boxKey >> 8;
   int get propId => boxKey & 0xff;
 
-  BoxKey next() => propId < 252 ? BoxKey(boxKey + 1) : BoxKey.idx(rowId + 1, 0);
+  BoxKey next() => propId < maxPropId ? BoxKey(boxKey + 1) : BoxKey.idx(rowId + 1, 0);
 
   //-------- statics
 
   static int nextKey(int key) {
     final rowId = key >> 8;
     final propId = key & 0xff;
-    return propId < 252 ? key + 1 : (rowId + 1) << 8;
+    return propId < maxPropId ? key + 1 : (rowId + 1) << 8;
   }
 
   static String getRowKey(int key) => _byte2Hex(key >> 8);
@@ -300,6 +384,7 @@ class BoxKey {
   String get rowKey => _byte2Hex(rowId);
   String get rowPropId => _byte2Hex(propId);
 
+  static const maxPropId = 252;
   static const hexMap = <String>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'];
   static String _byte2Hex(int b) => hexMap[(b >> 8) & 0xf] + hexMap[b & 0xf];
   static int _hex2Byte(String hex) => (byteMap[hex[0]]! << 8) + byteMap[hex[1]]!;

@@ -4,16 +4,16 @@ import 'package:azure/azure.dart';
 import 'package:hive/hive.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:protobuf_for_dart/algorithm.dart' as dom;
+import 'package:utils/utils.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'model.g.dart';
 
-final rewiseStorageProvider = Provider<Box>((_) => throw UnimplementedError());
-List<Override> get rewiseStorageOverrides => <Override>[rewiseStorageProvider.overrideWithValue(getDB())];
-Box getDB() => Hive.box('rewise_storage');
+final rewiseStorageProvider = Provider<RewiseStorage>((_) => throw UnimplementedError());
+List<Override> rewiseStorageOverrides(RewiseStorage storage) => <Override>[rewiseStorageProvider.overrideWithValue(storage)];
 
-Future initRewiseStorage() async {
-  await initStorage('rewise_storage');
+void initRewiseStorage() {
+  initStorage();
   Hive.registerAdapter(BoxFactAdapter());
   Hive.registerAdapter(BoxDailyAdapter());
   Hive.registerAdapter(BoxBookAdapter());
@@ -47,7 +47,7 @@ class RewiseStorage extends Storage {
         rowStart: 2,
         rowEnd: 3,
         uniqueCounter: SinglePlaceInt(this, rowId: 2, propId: 0),
-        itemsPlace: SinglePlaceBook(this, rowId: -1, propId: -1),
+        itemsPlace: SinglePlaceBook(this, rowId: 2, propId: 1),
       ),
       daylies = MessagesGroupDaily(
         this,
@@ -55,14 +55,14 @@ class RewiseStorage extends Storage {
         rowEnd: 7,
         uniqueCounter: SinglePlaceInt(this, rowId: 4, propId: 0),
         actDay: SinglePlaceInt(this, rowId: 4, propId: 1),
-        itemsPlace: SinglePlaceDaily(this, rowId: -1, propId: -1),
+        itemsPlace: SinglePlaceDaily(this, rowId: 4, propId: 2),
       ),
       facts = MessagesGroupFact(
         this,
         rowStart: 8,
         rowEnd: 99,
         uniqueCounter: SinglePlaceInt(this, rowId: 8, propId: 0),
-        itemsPlace: SinglePlaceFact(this, rowId: -1, propId: -1),
+        itemsPlace: SinglePlaceFact(this, rowId: 8, propId: 1),
       ),
     ]);
   }
@@ -77,7 +77,7 @@ class RewiseStorage extends Storage {
   void onChanged() {}
 }
 
-class MessagesGroupDaily extends MessagesGroup<dom.Daily> {
+class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   MessagesGroupDaily(
     Storage storage, {
     required int rowStart,
@@ -94,9 +94,15 @@ class MessagesGroupDaily extends MessagesGroup<dom.Daily> {
     if (key.rowId == rowStart && key.propId == 1) return actDay.createBoxItem(key, value);
     return super.createBoxItem(key, value);
   }
+
+  @override
+  Future seed() async {
+    await super.seed();
+    if (actDay.getValue() == null) await actDay.saveValue(Day.now);
+  }
 }
 
-class MessagesGroupFact extends MessagesGroup<dom.Fact> {
+class MessagesGroupFact extends MessagesGroupWithCounter<dom.Fact> {
   MessagesGroupFact(
     Storage storage, {
     required int rowStart,
@@ -106,7 +112,7 @@ class MessagesGroupFact extends MessagesGroup<dom.Fact> {
   }) : super(storage, rowStart: rowStart, rowEnd: rowEnd, itemsPlace: itemsPlace, uniqueCounter: uniqueCounter);
 }
 
-class MessagesGroupBook extends MessagesGroup<dom.Book> {
+class MessagesGroupBook extends MessagesGroupWithCounter<dom.Book> {
   MessagesGroupBook(
     Storage storage, {
     required int rowStart,
@@ -154,7 +160,7 @@ class BoxFact extends BoxMsg<dom.Fact> {
   dom.Fact msgCreator() => dom.Fact();
 
   @override
-  void setId(int id) => msg!.id = id;
+  void setMsgId(dom.Fact f, int id) => f.id = id;
 }
 
 @HiveType(typeId: 11)
@@ -163,7 +169,7 @@ class BoxDaily extends BoxMsg<dom.Daily> {
   dom.Daily msgCreator() => dom.Daily();
 
   @override
-  void setId(int id) => msg!.id = id;
+  void setMsgId(dom.Daily d, int id) => d.id = id;
 }
 
 @HiveType(typeId: 12)
@@ -172,7 +178,7 @@ class BoxBook extends BoxMsg<dom.Book> {
   dom.Book msgCreator() => dom.Book();
 
   @override
-  void setId(int id) => msg!.id = id;
+  void setMsgId(dom.Book b, int id) => b.id = id;
 }
 
 @HiveType(typeId: 13)
@@ -181,5 +187,5 @@ class BoxConfig extends BoxMsg<dom.Config> {
   dom.Config msgCreator() => dom.Config();
 
   @override
-  void setId(int id) => msg!.id = id;
+  void setMsgId(dom.Config c, int id) => c.id = id;
 }

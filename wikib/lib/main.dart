@@ -18,12 +18,14 @@ part 'main.g.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await initRewiseStorage();
+  initRewiseStorage();
+  final storage = RewiseStorage(await Hive.openBox('rewise_storage'));
+  await storage.seed();
   runApp(
     ProviderScope(
       overrides: [
         ...riverpodNavigatorOverrides([RegionSegment()], AppNavigator.new),
-        ...rewiseStorageOverrides,
+        ...rewiseStorageOverrides(storage),
       ],
       child: const MyApp(),
     ),
