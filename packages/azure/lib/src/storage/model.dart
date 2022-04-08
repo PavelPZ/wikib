@@ -52,7 +52,7 @@ abstract class Storage {
       for (var prop in rows.entries) {
         final key = BoxKey.azure(row.key, prop.key);
         final messageGroup = row2Group[key.rowId]!;
-        puts.add(MapEntry(key.boxKey, messageGroup.create(key, prop.value)));
+        puts.add(MapEntry(key.boxKey, messageGroup.create(key.boxKey, prop.value)));
       }
     final entries = Map.fromEntries(puts);
     await box.putAll(entries);
@@ -164,9 +164,9 @@ abstract class Place {
 
   final Storage storage;
 
-  BoxKey get defaultKey;
+  int get defaultKey;
 
-  BoxItem createBoxItem(BoxKey key, dynamic value);
+  BoxItem createBoxItem(int boxKey, dynamic value);
 
   Future saveBoxItem(BoxItem boxItem) async {
     boxItem.version = Day.nowMilisecUtc;
@@ -189,27 +189,28 @@ abstract class Place {
 }
 
 abstract class SinglePlace<T> extends Place {
-  SinglePlace(Storage storage, {required this.rowId, required this.propId}) : super(storage);
+  SinglePlace(Storage storage, {required int rowId, required int propId})
+      : boxKey = (rowId << 8) + propId,
+        super(storage);
 
-  final int rowId;
-  final int propId;
+  final int boxKey;
 
-  BoxKey getKey([BoxKey? key]) => key ?? defaultKey;
-  int getBoxKey([BoxKey? key]) => getKey(key).boxKey;
+  int getKey([int? key]) => key ?? defaultKey;
+  int getBoxKey([int? key]) => getKey(key);
 
-  BoxItem create(BoxKey? key, dynamic value) {
+  BoxItem create(int? key, dynamic value) {
     key ??= getKey(key);
-    return createBoxItem(key, value)..key = key.boxKey;
+    return createBoxItem(key, value)..key = key;
   }
 
-  BoxItem? getBox([BoxKey? key]) {
+  BoxItem? getBox([int? key]) {
     final boxItem = storage.box.get(getBoxKey(key));
     return boxItem == null || boxItem.isDeleted ? null : boxItem;
   }
 
-  bool exists([BoxKey? key]) => storage.box.containsKey(getBoxKey(key));
+  bool exists([int? key]) => storage.box.containsKey(getBoxKey(key));
 
-  Future delete([BoxKey? key]) {
+  Future delete([int? key]) {
     final boxItem = getBox(key);
     rAssert(boxItem != null);
     boxItem!.isDeleted = true;
@@ -217,55 +218,51 @@ abstract class SinglePlace<T> extends Place {
   }
 
   @override
-  BoxKey get defaultKey => BoxKey.idx(rowId, propId);
+  int get defaultKey => boxKey;
 }
 
 abstract class SinglePlaceValue<T> extends SinglePlace<T> {
   SinglePlaceValue(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
-  T? getValue([BoxKey? key]) => getBox()?.value;
+  T? getValue([int? key]) => getBox(key)?.value;
 
-  Future saveValue(T value, [BoxKey? key]) {
-    final BoxItem boxItem = getBox(key) ?? create(key, 0);
-    boxItem.value = value;
-    return saveBoxItem(boxItem);
-  }
+  Future saveValue(T value, [int? key]) => saveBoxItem(getBox(key) ?? create(key, value));
 }
 
 class SinglePlaceInt extends SinglePlaceValue<int> {
   SinglePlaceInt(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) => BoxInt()..value = value;
+  BoxItem createBoxItem(int boxKey, dynamic value) => BoxInt()..value = value;
 }
 
 abstract class SinglePlaceMsg<T extends $pb.GeneratedMessage> extends SinglePlace<T> {
   SinglePlaceMsg(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
-  T? getValue([BoxKey? key]) {
+  T? getValue([int? key]) {
     final boxItem = getBox(key) as BoxMsg<T>?;
     return boxItem == null || boxItem.isDeleted ? null : boxItem.msg!;
   }
 
-  Future saveValue(T value, [BoxKey? key]) {
+  Future saveValue(T value, [int? key]) {
     final boxItem = (getBox(key) ?? create(key, null)) as BoxMsg<T>;
     boxItem.msg = value;
     return saveBoxItem(boxItem);
   }
 
-  Future updateValue(BoxKey? key, void proc(T t)) {
+  Future updateValue(int? key, void proc(T t)) {
     final boxItem = getBox(key) as BoxMsg<T>;
     proc(boxItem.msg!);
     return saveBoxItem(boxItem);
   }
 
   @override
-  BoxItem create(BoxKey? key, dynamic value) {
+  BoxItem create(int? key, dynamic value) {
     assert(value is T);
     key ??= getKey(key);
-    final res = (createBoxItem(key, null) as BoxMsg<T>)..key = key.boxKey;
+    final res = (createBoxItem(key, null) as BoxMsg<T>)..key = key;
     final msg = value as T;
-    res.setMsgId(msg, key.boxKey);
+    res.setMsgId(msg, key);
     return res..msg = msg;
   }
 }
@@ -277,9 +274,9 @@ abstract class ItemGroup extends Place {
   final int rowEnd;
 
   @override
-  BoxKey get defaultKey => throw UnimplementedError();
+  int get defaultKey => throw UnimplementedError();
 
-  BoxItem create(BoxKey key, dynamic value) => createBoxItem(key, value)..key = key.boxKey;
+  BoxItem create(int key, dynamic value) => createBoxItem(key, value)..key = key;
 }
 
 class SinglesGroup extends ItemGroup {
@@ -288,9 +285,10 @@ class SinglesGroup extends ItemGroup {
   final List<SinglePlace> singles;
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) {
-    assert(key.propId < singles.length);
-    return singles[key.propId].createBoxItem(key, value);
+  BoxItem createBoxItem(int key, dynamic value) {
+    final boxKey = BoxKey(key);
+    assert(boxKey.propId < singles.length);
+    return singles[boxKey.propId].createBoxItem(key, value);
   }
 }
 
@@ -305,11 +303,11 @@ abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemGroup {
   final SinglePlaceMsg<T> itemsPlace;
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) => itemsPlace.createBoxItem(key, value);
+  BoxItem createBoxItem(int key, dynamic value) => itemsPlace.createBoxItem(key, value);
 
   Iterable<BoxMsg<T>> getItems() => storage.box
       .valuesBetween(
-        startKey: BoxKey.idx(itemsPlace.rowId, itemsPlace.propId).boxKey,
+        startKey: itemsPlace.boxKey,
         endKey: BoxKey.idx(rowEnd, BoxKey.maxPropId),
       )
       .cast<BoxMsg<T>>()
@@ -328,23 +326,24 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
   final SinglePlaceValue<int> uniqueCounter;
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) {
-    if (key.rowId == rowStart && key.propId == 0) return uniqueCounter.createBoxItem(key, value);
+  BoxItem createBoxItem(int key, dynamic value) {
+    final boxKey = BoxKey(key);
+    if (boxKey.rowId == rowStart && boxKey.propId == 0) return uniqueCounter.createBoxItem(key, value);
     return super.createBoxItem(key, value);
   }
 
   Future addNewGroupItems(List<T> msgs) async {
     final uniqueBox = uniqueCounter.getBox() as BoxInt;
-    var nextKey = BoxKey(uniqueBox.value);
+    var nextKey = uniqueBox.value;
     final futures = msgs.map((msg) {
-      nextKey = BoxKey(uniqueBox.value).next();
-      uniqueBox.value = nextKey.boxKey;
-      rAssert(nextKey.rowId >= rowStart && nextKey.rowId <= rowStart);
-      rAssert(nextKey.propId <= 252);
+      nextKey = BoxKey.nextKey(nextKey);
+      uniqueBox.value = nextKey;
+      // rAssert(nextKey.rowId >= rowStart && nextKey.rowId <= rowStart);
+      // rAssert(nextKey.propId <= 252);
       final boxItem = itemsPlace.create(nextKey, msg) as BoxMsg<T>;
       return saveBoxItem(boxItem);
     }).toList();
-    futures.add(uniqueCounter.saveValue(nextKey.boxKey));
+    futures.add(uniqueCounter.saveValue(nextKey));
     await Future.wait(futures);
     storage.onChanged();
   }
@@ -352,7 +351,7 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
   @override
   Future seed() async {
     await super.seed();
-    if (!uniqueCounter.exists()) await uniqueCounter.saveValue(itemsPlace.defaultKey.boxKey - 1);
+    if (!uniqueCounter.exists()) await uniqueCounter.saveValue(itemsPlace.defaultKey - 1);
   }
 }
 

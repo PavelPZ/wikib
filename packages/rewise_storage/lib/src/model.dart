@@ -90,8 +90,9 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   final SinglePlaceValue<int> actDay;
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) {
-    if (key.rowId == rowStart && key.propId == 1) return actDay.createBoxItem(key, value);
+  BoxItem createBoxItem(int key, dynamic value) {
+    final boxKey = BoxKey(key);
+    if (boxKey.rowId == rowStart && boxKey.propId == 1) return actDay.createBoxItem(key, value);
     return super.createBoxItem(key, value);
   }
 
@@ -126,7 +127,7 @@ class SinglePlaceFact extends SinglePlaceMsg<dom.Fact> {
   SinglePlaceFact(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) => value == null ? BoxFact() : BoxFact()
+  BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxFact() : BoxFact()
     ..value = value;
 }
 
@@ -134,7 +135,7 @@ class SinglePlaceDaily extends SinglePlaceMsg<dom.Daily> {
   SinglePlaceDaily(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) => value == null ? BoxDaily() : BoxDaily()
+  BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxDaily() : BoxDaily()
     ..value = value;
 }
 
@@ -142,7 +143,7 @@ class SinglePlaceBook extends SinglePlaceMsg<dom.Book> {
   SinglePlaceBook(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) => value == null ? BoxBook() : BoxBook()
+  BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxBook() : BoxBook()
     ..value = value;
 }
 
@@ -150,7 +151,7 @@ class SinglePlaceConfig extends SinglePlaceMsg<dom.Config> {
   SinglePlaceConfig(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(BoxKey key, dynamic value) => value == null ? BoxConfig() : BoxConfig()
+  BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxConfig() : BoxConfig()
     ..value = value;
 }
 

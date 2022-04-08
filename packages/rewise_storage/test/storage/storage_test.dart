@@ -50,15 +50,15 @@ void main() {
       // =====================
       await db.debugReopen();
 
-      await db.facts.itemsPlace.updateValue(BoxKey(2050), (fact) => fact.nextInterval = 4);
+      await db.facts.itemsPlace.updateValue(2050, (fact) => fact.nextInterval = 4);
       expect(db.facts.getItems().map((f) => f.msg!.nextInterval).join(','), '1,4,3');
 
       await db.facts.itemsPlace.updateValue(null, (fact) => fact.nextInterval = 5);
       expect(db.facts.getItems().map((f) => f.msg!.nextInterval).join(','), '5,4,3');
 
-      final f3 = db.facts.itemsPlace.getValue(BoxKey(2051));
+      final f3 = db.facts.itemsPlace.getValue(2051);
       f3!.nextInterval = 6;
-      db.facts.itemsPlace.saveValue(f3, BoxKey(f3.id));
+      db.facts.itemsPlace.saveValue(f3, f3.id);
       expect(db.facts.getItems().map((f) => f.msg!.nextInterval).join(','), '5,4,6');
 
       return;
