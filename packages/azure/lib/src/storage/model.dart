@@ -22,7 +22,7 @@ void initStorage() {
 abstract class Storage {
   Storage(this.box);
 
-  void setAllGroups(List<ItemsGroup> groups) {
+  void initializeGroups(List<ItemsGroup> groups) {
     allGroups = groups;
     row2Group = <int, ItemsGroup>{};
     for (var grp in allGroups)
@@ -69,7 +69,7 @@ abstract class Storage {
     if (versions.length == 0) return null;
     // finish rows
     final rows = <BatchRow>[];
-    for (var r in rowGroups.entries) {
+    for (final r in rowGroups.entries) {
       if (r.value.every((b) => b.isDeleted)) {
         rows.add(BatchRow(rowId: r.key, data: <String, dynamic>{}, method: BatchMethod.delete));
       } else {
@@ -81,22 +81,58 @@ abstract class Storage {
   }
 
   Future fromAzureUpload(Map<int, int> versions) {
-    final futures = <Future>[];
+    final modified = <BoxItem>[];
     for (var kv in versions.entries) {
       final item = box.get(kv.key) as BoxItem?;
       if (item == null || item.version != kv.value) continue;
       assert(item.isDefered);
       if (item.isDeleted)
-        futures.add(item.delete());
+        item.delete();
       else
-        item.isDefered = false;
+        modified.add(item..isDefered = false);
     }
-    return futures.length > 0 ? Future.wait(futures) : Future.value();
+    if (modified.isNotEmpty) box.putAll(Map.fromEntries(modified.map((e) => MapEntry(e.key, e))));
+    return box.flush();
+  }
+
+  Future saveBoxItem(BoxItem boxItem) async {
+    boxItem.version = Day.nowMilisecUtc;
+    boxItem.isDefered = true;
+    await box.put(boxItem.key, boxItem);
+    _onChanged();
+  }
+
+  Future saveBoxItems(Iterable<BoxItem> boxItems) async {
+    await box.putAll(Map.fromEntries(boxItems.map((boxItem) {
+      boxItem.version = Day.nowMilisecUtc;
+      boxItem.isDefered = true;
+      return MapEntry(boxItem.key, boxItem);
+    })));
+    _onChanged();
   }
 
   Future debugReopen() async {
     await box.close();
     box = await Hive.openBox(box.name, path: box.path!.split('\\${box.name}.hive')[0]);
+  }
+
+  String debugDump([bool filter(BoxItem item)?]) {
+    var all = box.values.cast<BoxItem>();
+    if (filter != null) all = all.where(filter);
+    return all
+        .map((e) => '${e.isDeleted ? '-' : ''}${e.isDefered ? '*' : ''}${e.key}${e.value is Uint8List ? '' : '=' + e.value.toString()}')
+        .join(',');
+  }
+
+  String debugDeletedAndDefered([bool filter(BoxItem item)?]) {
+    var all = box.values.cast<BoxItem>();
+    if (filter != null) all = all.where(filter);
+    var deleted = 0, defered = 0;
+    all.forEach((e) {
+      if (e.isDeleted) deleted++;
+      if (e.isDefered) defered++;
+    });
+    return 'deleted=$deleted, defered=$defered';
   }
 }
 
@@ -176,7 +212,7 @@ abstract class Place<T> {
 
   BoxItem createBoxItem();
   BoxItem fromValueOrMsg(int? key, T value);
-  T? getValueOrMsg([int? key]);
+  T getValueOrMsg([int? key]);
 
   int getKey([int? key]) => key ?? boxKey;
   int getBoxKey([int? key]) => getKey(key);
@@ -185,45 +221,28 @@ abstract class Place<T> {
     ..key = key
     ..value = value;
 
-  Future saveBoxItem(BoxItem boxItem) async {
-    boxItem.version = Day.nowMilisecUtc;
-    boxItem.isDefered = true;
-    await storage.box.put(boxItem.key, boxItem);
-    storage._onChanged();
-  }
-
-  Future saveBoxItems(List<BoxItem> boxItems) async {
-    final futures = boxItems.map((boxItem) {
-      boxItem.version = Day.nowMilisecUtc;
-      boxItem.isDefered = true;
-      return storage.box.put(boxItem.key, boxItem);
-    });
-    await Future.wait(futures);
-    storage._onChanged();
-  }
-
   BoxItem? getBox([int? key]) {
     final boxItem = storage.box.get(getBoxKey(key));
     return boxItem == null || boxItem.isDeleted ? null : boxItem;
   }
 
-  bool exists([int? key]) => storage.box.containsKey(getBoxKey(key));
+  bool exists([int? key]) => getBox(key) != null;
 
   Future delete([int? key]) {
     final boxItem = getBox(key);
     rAssert(boxItem != null);
     boxItem!.isDeleted = true;
-    return saveBoxItem(boxItem);
+    return storage.saveBoxItem(boxItem);
   }
 
-  Future saveValue(T valueOrMsg, [int? key]) => saveBoxItem(getBox(key) ?? fromValueOrMsg(key, valueOrMsg));
+  Future saveValue(T valueOrMsg, [int? key]) => storage.saveBoxItem(getBox(key) ?? fromValueOrMsg(key, valueOrMsg));
 }
 
 abstract class PlaceValue<T> extends Place<T> {
   PlaceValue(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  T? getValueOrMsg([int? key]) => getBox(key)?.value;
+  T getValueOrMsg([int? key]) => (getBox(key)?.value)!;
   @override
   BoxItem fromValueOrMsg(int? key, T value) => fromKeyValue(getKey(key), value);
 }
@@ -249,7 +268,7 @@ abstract class PlaceMsg<T extends $pb.GeneratedMessage> extends Place<T> {
     final boxItem = getBox(key) as BoxMsg<T>;
     rAssert(!boxItem.isDeleted);
     proc(boxItem.msg!);
-    return saveBoxItem(boxItem);
+    return storage.saveBoxItem(boxItem);
   }
 
   @override
@@ -262,7 +281,7 @@ abstract class PlaceMsg<T extends $pb.GeneratedMessage> extends Place<T> {
   }
 
   @override
-  T? getValueOrMsg([int? key]) => (getBox(key) as BoxMsg<T>?)?.msg;
+  T getValueOrMsg([int? key]) => ((getBox(key) as BoxMsg<T>?)?.msg)!;
 }
 
 // ***************************************
@@ -307,13 +326,21 @@ abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemsGroup 
   @override
   BoxItem fromAzureDownload(int key, dynamic value) => itemsPlace.fromKeyValue(key, value);
 
-  Iterable<BoxMsg<T>> getItems() => storage.box
-      .valuesBetween(
-        startKey: itemsPlace.boxKey,
-        endKey: BoxKey.idx(rowEnd, BoxKey.maxPropId),
-      )
-      .cast<BoxMsg<T>>()
-      .where((f) => !f.isDeleted);
+  Iterable<BoxItem> getItems() {
+    final endKey = BoxKey.getBoxKey(rowEnd, BoxKey.maxPropId);
+    return storage.box
+        .valuesBetween(
+          startKey: BoxKey.getBoxKey(rowStart, 0),
+        )
+        .cast<BoxItem>()
+        .where((f) => !f.isDeleted && f.key <= endKey);
+  }
+
+  Iterable<BoxMsg<T>> getMsgs() => getItems().whereType<BoxMsg<T>>();
+
+  Future clear([bool startItemsIncluded = false]) =>
+      // final items = (startItemsIncluded ? getItems() : getMsgs()).toList();
+      storage.saveBoxItems((startItemsIncluded ? getItems() : getMsgs()).map((e) => e..isDeleted = true));
 }
 
 abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends MessagesGroup<T> {
@@ -334,26 +361,20 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
     return super.fromAzureDownload(key, value);
   }
 
-  Future addNewGroupItems(List<T> msgs) async {
+  Future addItems(Iterable<T> msgs) {
     final uniqueBox = uniqueCounter.getBox() as BoxInt;
     var nextKey = uniqueBox.value;
-    final futures = msgs.map((msg) {
-      nextKey = BoxKey.nextKey(nextKey);
-      uniqueBox.value = nextKey;
-      // rAssert(nextKey.rowId >= rowStart && nextKey.rowId <= rowStart);
-      // rAssert(nextKey.propId <= 252);
-      final boxItem = itemsPlace.fromValueOrMsg(nextKey, msg) as BoxMsg<T>;
-      return itemsPlace.saveBoxItem(boxItem);
-    }).toList();
-    futures.add(uniqueCounter.saveValue(nextKey));
-    await Future.wait(futures);
-    storage.onChanged();
+    final items = msgs.map((msg) => itemsPlace.fromValueOrMsg(nextKey = BoxKey.nextKey(nextKey), msg)).toList();
+    items.add(uniqueBox..value = nextKey);
+    storage.saveBoxItems(items);
+    return storage.box.flush();
   }
 
   @override
-  Future seed() async {
-    await super.seed();
-    if (!uniqueCounter.exists()) await uniqueCounter.saveValue(itemsPlace.boxKey - 1);
+  Future seed() {
+    super.seed();
+    if (!uniqueCounter.exists()) uniqueCounter.saveValue(itemsPlace.boxKey - 1);
+    return storage.box.flush();
   }
 }
 
@@ -384,6 +405,7 @@ class BoxKey {
 
   static String getRowKey(int key) => _byte2Hex(key >> 8);
   static String getRowPropId(int key) => _byte2Hex(key & 0xff);
+  static int getBoxKey(int rowId, int propId) => (rowId << 8) + propId;
 
   //-------- RowData
   String get rowKey => _byte2Hex(rowId);

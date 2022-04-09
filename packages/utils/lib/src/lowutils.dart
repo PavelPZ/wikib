@@ -6,3 +6,7 @@ void rAssert(bool cond, [String? msg]) {
   if (cond) return;
   throw Exception(msg);
 }
+
+Iterable<int> range(int start, int len) sync* {
+  for (var i = 0; i < start + len; i++) yield i;
+}

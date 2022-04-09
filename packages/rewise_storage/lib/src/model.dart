@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:typed_data';
 
 import 'package:azure/azure.dart';
@@ -37,7 +39,7 @@ typedef TRows = Map<String, Map<String, dynamic>>;
 
 class RewiseStorage extends Storage {
   RewiseStorage(Box storage) : super(storage) {
-    setAllGroups([
+    initializeGroups([
       row0 = SinglesGroup(this, row: 0, singles: []),
       row1 = SinglesGroup(this, row: 1, singles: [
         config = PlaceConfig(this, rowId: 1, propId: 0),
@@ -97,9 +99,25 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   }
 
   @override
-  Future seed() async {
-    await super.seed();
-    if (!actDay.exists()) await actDay.saveValue(Day.now);
+  Future seed() {
+    super.seed();
+    if (!actDay.exists()) actDay.saveValue(Day.now);
+    return storage.box.flush();
+  }
+
+  int get actDayValue => actDay.getValueOrMsg();
+
+  Future addDaylies(int actDatValue, Iterable<dom.Daily> msgs) async {
+    clear(true);
+    // final a1 = storage.debugDump();
+    seed();
+    // final a2 = storage.debugDump();
+    // final c = uniqueCounter.getValueOrMsg();
+    actDay.saveValue(actDatValue);
+    // final a3 = storage.debugDump();
+    addItems(msgs.map((e) => e..day = actDatValue));
+    // final a4 = storage.debugDump();
+    return storage.box.flush();
   }
 }
 
