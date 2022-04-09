@@ -40,35 +40,35 @@ class RewiseStorage extends Storage {
     setAllGroups([
       row0 = SinglesGroup(this, row: 0, singles: []),
       row1 = SinglesGroup(this, row: 1, singles: [
-        config = SinglePlaceConfig(this, rowId: 1, propId: 0),
+        config = PlaceConfig(this, rowId: 1, propId: 0),
       ]),
       books = MessagesGroupBook(
         this,
         rowStart: 2,
         rowEnd: 3,
-        uniqueCounter: SinglePlaceInt(this, rowId: 2, propId: 0),
-        itemsPlace: SinglePlaceBook(this, rowId: 2, propId: 1),
+        uniqueCounter: PlaceInt(this, rowId: 2, propId: 0),
+        itemsPlace: PlaceBook(this, rowId: 2, propId: 1),
       ),
       daylies = MessagesGroupDaily(
         this,
         rowStart: 4,
         rowEnd: 7,
-        uniqueCounter: SinglePlaceInt(this, rowId: 4, propId: 0),
-        actDay: SinglePlaceInt(this, rowId: 4, propId: 1),
-        itemsPlace: SinglePlaceDaily(this, rowId: 4, propId: 2),
+        uniqueCounter: PlaceInt(this, rowId: 4, propId: 0),
+        actDay: PlaceInt(this, rowId: 4, propId: 1),
+        itemsPlace: PlaceDaily(this, rowId: 4, propId: 2),
       ),
       facts = MessagesGroupFact(
         this,
         rowStart: 8,
         rowEnd: 99,
-        uniqueCounter: SinglePlaceInt(this, rowId: 8, propId: 0),
-        itemsPlace: SinglePlaceFact(this, rowId: 8, propId: 1),
+        uniqueCounter: PlaceInt(this, rowId: 8, propId: 0),
+        itemsPlace: PlaceFact(this, rowId: 8, propId: 1),
       ),
     ]);
   }
   late SinglesGroup row0;
   late SinglesGroup row1;
-  late SinglePlaceConfig config;
+  late PlaceConfig config;
   late MessagesGroupDaily daylies;
   late MessagesGroupBook books;
   late MessagesGroupFact facts;
@@ -82,18 +82,18 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
     Storage storage, {
     required int rowStart,
     required int rowEnd,
-    required SinglePlaceValue<int> uniqueCounter,
+    required PlaceValue<int> uniqueCounter,
     required this.actDay,
-    required SinglePlaceMsg<dom.Daily> itemsPlace,
+    required PlaceMsg<dom.Daily> itemsPlace,
   }) : super(storage, rowStart: rowStart, rowEnd: rowEnd, itemsPlace: itemsPlace, uniqueCounter: uniqueCounter);
 
-  final SinglePlaceValue<int> actDay;
+  final PlaceValue<int> actDay;
 
   @override
-  BoxItem createBoxItem(int key, dynamic value) {
+  BoxItem fromAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
     if (boxKey.rowId == rowStart && boxKey.propId == 1) return actDay.createBoxItem(key, value);
-    return super.createBoxItem(key, value);
+    return super.fromAzureDownload(key, value);
   }
 
   @override
@@ -108,8 +108,8 @@ class MessagesGroupFact extends MessagesGroupWithCounter<dom.Fact> {
     Storage storage, {
     required int rowStart,
     required int rowEnd,
-    required SinglePlaceValue<int> uniqueCounter,
-    required SinglePlaceMsg<dom.Fact> itemsPlace,
+    required PlaceValue<int> uniqueCounter,
+    required PlaceMsg<dom.Fact> itemsPlace,
   }) : super(storage, rowStart: rowStart, rowEnd: rowEnd, itemsPlace: itemsPlace, uniqueCounter: uniqueCounter);
 }
 
@@ -118,37 +118,37 @@ class MessagesGroupBook extends MessagesGroupWithCounter<dom.Book> {
     Storage storage, {
     required int rowStart,
     required int rowEnd,
-    required SinglePlaceValue<int> uniqueCounter,
-    required SinglePlaceMsg<dom.Book> itemsPlace,
+    required PlaceValue<int> uniqueCounter,
+    required PlaceMsg<dom.Book> itemsPlace,
   }) : super(storage, rowStart: rowStart, rowEnd: rowEnd, itemsPlace: itemsPlace, uniqueCounter: uniqueCounter);
 }
 
-class SinglePlaceFact extends SinglePlaceMsg<dom.Fact> {
-  SinglePlaceFact(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
+class PlaceFact extends PlaceMsg<dom.Fact> {
+  PlaceFact(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
   BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxFact() : BoxFact()
     ..value = value;
 }
 
-class SinglePlaceDaily extends SinglePlaceMsg<dom.Daily> {
-  SinglePlaceDaily(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
+class PlaceDaily extends PlaceMsg<dom.Daily> {
+  PlaceDaily(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
   BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxDaily() : BoxDaily()
     ..value = value;
 }
 
-class SinglePlaceBook extends SinglePlaceMsg<dom.Book> {
-  SinglePlaceBook(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
+class PlaceBook extends PlaceMsg<dom.Book> {
+  PlaceBook(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
   BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxBook() : BoxBook()
     ..value = value;
 }
 
-class SinglePlaceConfig extends SinglePlaceMsg<dom.Config> {
-  SinglePlaceConfig(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
+class PlaceConfig extends PlaceMsg<dom.Config> {
+  PlaceConfig(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
   BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxConfig() : BoxConfig()

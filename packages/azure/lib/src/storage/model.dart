@@ -21,9 +21,9 @@ void initStorage() {
 abstract class Storage {
   Storage(this.box);
 
-  void setAllGroups(List<ItemGroup> groups) {
+  void setAllGroups(List<ItemsGroup> groups) {
     allGroups = groups;
-    row2Group = <int, ItemGroup>{};
+    row2Group = <int, ItemsGroup>{};
     for (var grp in allGroups)
       for (var i = grp.rowStart; i <= grp.rowEnd; i++) {
         assert(row2Group[i] == null);
@@ -40,8 +40,8 @@ abstract class Storage {
   Future? _onChangedRunning;
 
   Box box;
-  late Map<int, ItemGroup> row2Group;
-  late List<ItemGroup> allGroups;
+  late Map<int, ItemsGroup> row2Group;
+  late List<ItemsGroup> allGroups;
 
   Future seed() => Future.wait(allGroups.map((e) => e.seed()));
 
@@ -52,7 +52,7 @@ abstract class Storage {
       for (var prop in rows.entries) {
         final key = BoxKey.azure(row.key, prop.key);
         final messageGroup = row2Group[key.rowId]!;
-        puts.add(MapEntry(key.boxKey, messageGroup.create(key.boxKey, prop.value)));
+        puts.add(MapEntry(key.boxKey, messageGroup.fromAzureDownload(key.boxKey, prop.value)));
       }
     final entries = Map.fromEntries(puts);
     await box.putAll(entries);
@@ -98,6 +98,8 @@ abstract class Storage {
     box = await Hive.openBox(box.name, path: box.path!.split('\\${box.name}.hive')[0]);
   }
 }
+
+// ************************ BOX ITEMS
 
 abstract class BoxItem<T> extends HiveObject {
   @HiveField(0, defaultValue: 0)
@@ -159,12 +161,16 @@ abstract class BoxMsg<T extends $pb.GeneratedMessage> extends BoxItem<Uint8List?
   Uint8List? value;
 }
 
-abstract class Place {
-  const Place(this.storage);
+// ************************ PLACES
 
+abstract class Place<T> {
+  Place(this.storage, {required int rowId, required int propId}) : boxKey = (rowId << 8) + propId;
+
+  final int boxKey;
   final Storage storage;
 
-  int get defaultKey;
+  int getKey([int? key]) => key ?? boxKey;
+  int getBoxKey([int? key]) => getKey(key);
 
   BoxItem createBoxItem(int boxKey, dynamic value);
 
@@ -185,19 +191,6 @@ abstract class Place {
     storage._onChanged();
   }
 
-  Future seed() => Future.value();
-}
-
-abstract class SinglePlace<T> extends Place {
-  SinglePlace(Storage storage, {required int rowId, required int propId})
-      : boxKey = (rowId << 8) + propId,
-        super(storage);
-
-  final int boxKey;
-
-  int getKey([int? key]) => key ?? defaultKey;
-  int getBoxKey([int? key]) => getKey(key);
-
   BoxItem create(int? key, dynamic value) {
     key ??= getKey(key);
     return createBoxItem(key, value)..key = key;
@@ -216,28 +209,25 @@ abstract class SinglePlace<T> extends Place {
     boxItem!.isDeleted = true;
     return saveBoxItem(boxItem);
   }
-
-  @override
-  int get defaultKey => boxKey;
 }
 
-abstract class SinglePlaceValue<T> extends SinglePlace<T> {
-  SinglePlaceValue(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
+abstract class PlaceValue<T> extends Place<T> {
+  PlaceValue(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   T? getValue([int? key]) => getBox(key)?.value;
 
   Future saveValue(T value, [int? key]) => saveBoxItem(getBox(key) ?? create(key, value));
 }
 
-class SinglePlaceInt extends SinglePlaceValue<int> {
-  SinglePlaceInt(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
+class PlaceInt extends PlaceValue<int> {
+  PlaceInt(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
   BoxItem createBoxItem(int boxKey, dynamic value) => BoxInt()..value = value;
 }
 
-abstract class SinglePlaceMsg<T extends $pb.GeneratedMessage> extends SinglePlace<T> {
-  SinglePlaceMsg(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
+abstract class PlaceMsg<T extends $pb.GeneratedMessage> extends Place<T> {
+  PlaceMsg(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   T? getValue([int? key]) {
     final boxItem = getBox(key) as BoxMsg<T>?;
@@ -267,32 +257,34 @@ abstract class SinglePlaceMsg<T extends $pb.GeneratedMessage> extends SinglePlac
   }
 }
 
-abstract class ItemGroup extends Place {
-  ItemGroup(Storage storage, {required this.rowStart, required this.rowEnd}) : super(storage);
+// ************************ GROUPS
+
+abstract class ItemsGroup {
+  ItemsGroup(this.storage, {required this.rowStart, required this.rowEnd});
+
+  final Storage storage;
 
   final int rowStart;
   final int rowEnd;
 
-  @override
-  int get defaultKey => throw UnimplementedError();
-
-  BoxItem create(int key, dynamic value) => createBoxItem(key, value)..key = key;
+  BoxItem fromAzureDownload(int key, dynamic value);
+  Future seed() => Future.value();
 }
 
-class SinglesGroup extends ItemGroup {
+class SinglesGroup extends ItemsGroup {
   SinglesGroup(Storage storage, {required int row, required this.singles}) : super(storage, rowStart: row, rowEnd: row);
 
-  final List<SinglePlace> singles;
+  final List<Place> singles;
 
   @override
-  BoxItem createBoxItem(int key, dynamic value) {
+  BoxItem fromAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
     assert(boxKey.propId < singles.length);
     return singles[boxKey.propId].createBoxItem(key, value);
   }
 }
 
-abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemGroup {
+abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemsGroup {
   MessagesGroup(
     Storage storage, {
     required int rowStart,
@@ -300,10 +292,10 @@ abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemGroup {
     required this.itemsPlace,
   }) : super(storage, rowStart: rowStart, rowEnd: rowEnd);
 
-  final SinglePlaceMsg<T> itemsPlace;
+  final PlaceMsg<T> itemsPlace;
 
   @override
-  BoxItem createBoxItem(int key, dynamic value) => itemsPlace.createBoxItem(key, value);
+  BoxItem fromAzureDownload(int key, dynamic value) => itemsPlace.createBoxItem(key, value);
 
   Iterable<BoxMsg<T>> getItems() => storage.box
       .valuesBetween(
@@ -320,16 +312,16 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
     required int rowStart,
     required int rowEnd,
     required this.uniqueCounter,
-    required SinglePlaceMsg<T> itemsPlace,
+    required PlaceMsg<T> itemsPlace,
   }) : super(storage, rowStart: rowStart, rowEnd: rowEnd, itemsPlace: itemsPlace);
 
-  final SinglePlaceValue<int> uniqueCounter;
+  final PlaceValue<int> uniqueCounter;
 
   @override
-  BoxItem createBoxItem(int key, dynamic value) {
+  BoxItem fromAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
     if (boxKey.rowId == rowStart && boxKey.propId == 0) return uniqueCounter.createBoxItem(key, value);
-    return super.createBoxItem(key, value);
+    return super.fromAzureDownload(key, value);
   }
 
   Future addNewGroupItems(List<T> msgs) async {
@@ -341,7 +333,7 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
       // rAssert(nextKey.rowId >= rowStart && nextKey.rowId <= rowStart);
       // rAssert(nextKey.propId <= 252);
       final boxItem = itemsPlace.create(nextKey, msg) as BoxMsg<T>;
-      return saveBoxItem(boxItem);
+      return itemsPlace.saveBoxItem(boxItem);
     }).toList();
     futures.add(uniqueCounter.saveValue(nextKey));
     await Future.wait(futures);
@@ -351,7 +343,7 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
   @override
   Future seed() async {
     await super.seed();
-    if (!uniqueCounter.exists()) await uniqueCounter.saveValue(itemsPlace.defaultKey - 1);
+    if (!uniqueCounter.exists()) await uniqueCounter.saveValue(itemsPlace.boxKey - 1);
   }
 }
 
