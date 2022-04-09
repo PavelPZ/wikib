@@ -20,6 +20,7 @@ void main() async {
   await Hive.initFlutter();
   initRewiseStorage();
   final storage = RewiseStorage(await Hive.openBox('rewise_storage'));
+  // TODO(pz): will be modified by download from azure etc.
   await storage.seed();
   runApp(
     ProviderScope(

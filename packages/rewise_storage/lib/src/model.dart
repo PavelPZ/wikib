@@ -92,14 +92,14 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   @override
   BoxItem fromAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
-    if (boxKey.rowId == rowStart && boxKey.propId == 1) return actDay.createBoxItem(key, value);
+    if (boxKey.rowId == rowStart && boxKey.propId == 1) return actDay.fromKeyValue(key, value);
     return super.fromAzureDownload(key, value);
   }
 
   @override
   Future seed() async {
     await super.seed();
-    if (actDay.getValue() == null) await actDay.saveValue(Day.now);
+    if (!actDay.exists()) await actDay.saveValue(Day.now);
   }
 }
 
@@ -127,32 +127,28 @@ class PlaceFact extends PlaceMsg<dom.Fact> {
   PlaceFact(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxFact() : BoxFact()
-    ..value = value;
+  BoxItem createBoxItem() => BoxFact();
 }
 
 class PlaceDaily extends PlaceMsg<dom.Daily> {
   PlaceDaily(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxDaily() : BoxDaily()
-    ..value = value;
+  BoxItem createBoxItem() => BoxDaily();
 }
 
 class PlaceBook extends PlaceMsg<dom.Book> {
   PlaceBook(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxBook() : BoxBook()
-    ..value = value;
+  BoxItem createBoxItem() => BoxBook();
 }
 
 class PlaceConfig extends PlaceMsg<dom.Config> {
   PlaceConfig(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  BoxItem createBoxItem(int key, dynamic value) => value == null ? BoxConfig() : BoxConfig()
-    ..value = value;
+  BoxItem createBoxItem() => BoxConfig();
 }
 
 @HiveType(typeId: 10)
