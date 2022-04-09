@@ -43,7 +43,7 @@ void main() {
       // =====================
       await db.debugReopen();
 
-      await db.fromAzureUpload(azureUpload!.versions);
+      db.fromAzureUpload(azureUpload!.versions);
 
       final upload2 = db.toAzureUpload();
       expect(upload2, null);
@@ -53,10 +53,10 @@ void main() {
       // =====================
       await db.debugReopen();
 
-      await db.facts.itemsPlace.updateMsg(2050, (fact) => fact.nextInterval = 4);
+      db.facts.itemsPlace.updateMsg(2050, (fact) => fact.nextInterval = 4);
       expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '1,4,3');
 
-      await db.facts.itemsPlace.updateMsg(null, (fact) => fact.nextInterval = 5);
+      db.facts.itemsPlace.updateMsg(null, (fact) => fact.nextInterval = 5);
       expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '5,4,3');
 
       final f3 = db.facts.itemsPlace.getValueOrMsg(2051);
@@ -64,9 +64,9 @@ void main() {
       db.facts.itemsPlace.saveValue(f3, f3.id);
       expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '5,4,6');
 
-      await db.facts.clear();
+      db.facts.clear();
       expect(db.facts.getItems().length, 1);
-      await db.facts.clear(true);
+      db.facts.clear(true);
       expect(db.facts.getItems().length, 0);
 
       return;
@@ -84,7 +84,7 @@ void main() {
       expect(def01.length, 4);
 
       // save to azure
-      await db.fromAzureUpload(db.toAzureUpload()!.versions);
+      db.fromAzureUpload(db.toAzureUpload()!.versions);
       // after save to azure
       await db.debugReopen();
       final values = db.box.values.toList();
@@ -95,18 +95,18 @@ void main() {
       expect(def0.length, 0);
 
       // addDaylies
-      await db.daylies.addDaylies(Day.now, range(0, 2).map((e) => dom.Daily()));
+      db.daylies.addDaylies(Day.now, range(0, 2).map((e) => dom.Daily()));
       await db.debugReopen();
       final def1 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
       final d1 = db.debugDump();
       expect(def1.length, 4);
 
-      await db.fromAzureUpload(db.toAzureUpload()!.versions);
+      db.fromAzureUpload(db.toAzureUpload()!.versions);
       final d11 = db.debugDump();
       await db.debugReopen();
       expect(db.box.values.cast<BoxItem>().where((f) => f.isDefered).length, 0);
 
-      await db.daylies.addDaylies(Day.now + 1, range(0, 510).map((e) => dom.Daily()));
+      db.daylies.addDaylies(Day.now + 1, range(0, 510).map((e) => dom.Daily()));
       await db.debugReopen();
       final def2 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
       final d2 = db.debugDump(); // 512 new & defered
@@ -114,15 +114,15 @@ void main() {
       expect(def2.length, 512);
 
       final toAzure = db.toAzureUpload();
-      await db.daylies.addDaylies(Day.now + 1, range(0, 10).map((e) => dom.Daily()));
+      db.daylies.addDaylies(Day.now + 1, range(0, 10).map((e) => dom.Daily()));
       expect(db.debugDeletedAndDefered(), 'deleted=500, defered=512');
-      await db.fromAzureUpload(toAzure!.versions);
+      db.fromAzureUpload(toAzure!.versions);
       expect(db.debugDeletedAndDefered(), 'deleted=500, defered=512'); // no statistics change, only 12 items are modified
       final d5 = db.debugDump();
 
       // save to azure
       final toAzure2 = db.toAzureUpload(); // 1 row is "put", 2 rows are "delete"
-      await db.fromAzureUpload(toAzure2!.versions);
+      db.fromAzureUpload(toAzure2!.versions);
       expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
 
       return;

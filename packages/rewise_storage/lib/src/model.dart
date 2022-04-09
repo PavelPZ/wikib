@@ -107,7 +107,7 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
 
   int get actDayValue => actDay.getValueOrMsg();
 
-  Future addDaylies(int actDatValue, Iterable<dom.Daily> msgs) async {
+  void addDaylies(int actDatValue, Iterable<dom.Daily> msgs) {
     clear(true);
     // final a1 = storage.debugDump();
     seed();
@@ -117,7 +117,6 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
     // final a3 = storage.debugDump();
     addItems(msgs.map((e) => e..day = actDatValue));
     // final a4 = storage.debugDump();
-    return storage.box.flush();
   }
 }
 
