@@ -117,15 +117,13 @@ void main() {
       await db.daylies.addDaylies(Day.now + 1, range(0, 10).map((e) => dom.Daily()));
       expect(db.debugDeletedAndDefered(), 'deleted=500, defered=512');
       await db.fromAzureUpload(toAzure!.versions);
+      expect(db.debugDeletedAndDefered(), 'deleted=500, defered=512'); // no statistics change, only 12 items are modified
       final d5 = db.debugDump();
 
       // save to azure
-      final toAzure2 = db.toAzureUpload();
+      final toAzure2 = db.toAzureUpload(); // 1 row is "put", 2 rows are "delete"
       await db.fromAzureUpload(toAzure2!.versions);
-      final d6 = db.debugDump();
-
-      final def3 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
-      expect(def3.length, 0);
+      expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
 
       return;
     });
