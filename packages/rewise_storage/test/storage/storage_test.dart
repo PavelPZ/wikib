@@ -1,4 +1,3 @@
-import 'package:azure/azure.dart';
 import 'package:hive/hive.dart';
 import 'package:protobuf_for_dart/algorithm.dart' as dom;
 import 'package:rewise_storage/rewise_storage.dart';
@@ -65,6 +64,7 @@ void main() {
     });
     test('t2', () async {
       final container = await createContainer('t2');
+      // ignore: unused_local_variable
       final db = container.read(rewiseStorageProvider);
 
       return;
@@ -72,6 +72,7 @@ void main() {
   });
   group('test', () {
     test('t3', () async {
+      // ignore: unused_local_variable
       final container = await createContainer('t3');
     });
   });

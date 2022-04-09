@@ -8,6 +8,7 @@ Widget regionScreen(RegionSegment segment) => WorldScreen(
 
 @cwidget
 Widget worldScreen(BuildContext context, WidgetRef ref, {required Widget child}) {
+  // ignore: unused_local_variable
   final navigator = ref.read(navigatorProvider) as RNavigator;
   return BackButtonHandler(
     child: DefaultTextStyle(style: Theme.of(context).textTheme.titleMedium!, child: child),
