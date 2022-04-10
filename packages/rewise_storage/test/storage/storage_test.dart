@@ -11,21 +11,19 @@ import 'package:utils/utils.dart';
 Future<ProviderContainer> createContainer(
   String name, {
   bool isLogged = false,
-  bool clear = true,
+  bool debugClear = true,
 }) async {
   final storage = RewiseStorage(await Hive.openBox(name, path: r'd:\temp\hive'));
-  if (clear) await storage.box.clear();
+  if (debugClear) await storage.box.clear();
   storage.seed(name);
-  final res = ProviderContainer(overrides: [
-    rewiseStorageProvider.overrideWithValue(storage),
-  ]);
+  final res = ProviderContainer(overrides: debugRewiseStorageOverrides(storage));
   addTearDown(res.dispose);
   return res;
 }
 
 void main() {
   Hive.init('');
-  initRewiseStorage();
+  hiveRewiseStorageAdapters();
   group('rewise_storage', () {
     test('basic', () async {
       final container = await createContainer('user1');
@@ -142,7 +140,7 @@ void main() {
       container.dispose();
       await db.debugReopen();
 
-      final container2 = await createContainer('user3', clear: false);
+      final container2 = await createContainer('user3', debugClear: false);
       final db2 = container2.read(rewiseStorageProvider);
       return;
     });

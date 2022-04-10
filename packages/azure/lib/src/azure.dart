@@ -6,17 +6,12 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
 import 'package:utils/utils.dart';
 
-import 'forStorage.dart';
+import 'for_storage.dart';
+import 'lib.dart';
 
-// import 'lib.dart';
-
-// part 'azure_tables.dart';
-// part 'azure_table.dart';
-// part 'azure_batch.dart';
 part 'azure_storage.dart';
-part 'lib.dart';
-part 'model.dart';
-part 'sender.dart';
+part 'azure_model.dart';
+part 'azure_sender.dart';
 
 class Account {
   factory Account({bool? isEmulator}) => isEmulator == true ? _emulatorAccount : _debugCloudAccount;

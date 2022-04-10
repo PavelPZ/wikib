@@ -4,8 +4,8 @@ import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:localization/localization_meta.dart';
-import 'package:rewise_storage/rewise_storage.dart';
 import 'package:riverpod_navigator/riverpod_navigator.dart';
+import 'package:wikib_providers/wikb_providers.dart';
 
 import 'localize.dart';
 import 'utils/media_query.dart';
@@ -18,15 +18,13 @@ part 'main.g.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  initRewiseStorage();
-  final storage = RewiseStorage(await Hive.openBox('rewise_storage'));
+  final wikibProvidersConfig = await appInit();
   // TODO(pz): will be modified by download from azure etc.
-  storage.seed(null);
   runApp(
     ProviderScope(
       overrides: [
         ...riverpodNavigatorOverrides([RegionSegment()], AppNavigator.new),
-        ...rewiseStorageOverrides(storage),
+        ...wikibOverrides(wikibProvidersConfig),
       ],
       child: const MyApp(),
     ),

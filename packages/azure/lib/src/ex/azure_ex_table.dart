@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:azure/azure.dart';
-import 'package:tuple/tuple.dart';
+part of 'azure_ex.dart';
 
 typedef CreateFromMap<T extends RowData> = T Function(Map<String, dynamic> map);
 

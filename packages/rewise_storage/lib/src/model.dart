@@ -12,9 +12,9 @@ import 'package:utils/utils.dart';
 part 'model.g.dart';
 
 final rewiseStorageProvider = Provider<RewiseStorage>((_) => throw UnimplementedError());
-List<Override> rewiseStorageOverrides(RewiseStorage storage) => <Override>[rewiseStorageProvider.overrideWithValue(storage)];
+List<Override> debugRewiseStorageOverrides(RewiseStorage storage) => <Override>[rewiseStorageProvider.overrideWithValue(storage)];
 
-void initRewiseStorage() {
+void hiveRewiseStorageAdapters() {
   initStorage();
   Hive.registerAdapter(BoxFactAdapter());
   Hive.registerAdapter(BoxDailyAdapter());

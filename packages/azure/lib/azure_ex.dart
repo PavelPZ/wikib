@@ -1,3 +1,1 @@
-export 'src/azure_tables.dart';
-export 'src/azure_table.dart';
-export 'src/azure_batch.dart';
+export 'src/ex/azure_ex.dart';

@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
-import 'package:azure/azure.dart';
+part of 'azure_ex.dart';
 
 class TableBatch extends Azure {
   TableBatch(String table, {bool? isEmulator}) : super(table, isEmulator: isEmulator);

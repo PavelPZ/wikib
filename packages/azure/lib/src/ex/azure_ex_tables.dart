@@ -1,6 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:azure/azure.dart';
+part of 'azure_ex.dart';
 
 class Tables extends Azure {
   Tables({bool? isEmulator}) : super('tables', isEmulator: isEmulator);

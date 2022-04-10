@@ -1,4 +1,4 @@
-name: azure_storage
+name: wikib_providers
 description: A simple command-line application.
 version: 1.0.0
 publish_to: 'none'
@@ -8,14 +8,12 @@ environment:
 
 
 dependencies:
-  azure:
-    path: ../azure 
   hive:
+  rewise_storage:
+    path: ../rewise_storage
   riverpod:
   utils:
     path: ../utils 
 
 dev_dependencies:
   test:
-  hive_generator:
-  build_runner: 

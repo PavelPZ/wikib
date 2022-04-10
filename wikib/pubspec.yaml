@@ -32,6 +32,8 @@ dependencies:
     path: ../../riverpod_navigator/packages/riverpod_navigator 
   utils:
     path: ../packages/utils 
+  wikib_providers:
+    path: ../packages/wikib_providers 
 
 dev_dependencies:
   # flutter_test:

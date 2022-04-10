@@ -33,6 +33,10 @@
 			"path": "packages\\rewise_storage"
 		},
 		{
+			"name": "wikib_providers",
+			"path": "packages\\wikib_providers"
+		},
+		{
 			"name": "wikib",
 			"path": "wikib"
 		}
