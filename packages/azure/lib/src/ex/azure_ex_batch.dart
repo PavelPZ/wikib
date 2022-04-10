@@ -1,7 +1,7 @@
 part of 'azure_ex.dart';
 
 class TableBatch extends Azure {
-  TableBatch(String table, {bool? isEmulator}) : super(table, isEmulator: isEmulator);
+  TableBatch({required String table, required Account account}) : super(table: table, account: account);
 
   // rethrowExceptionDuringSend=true => response.statusCode == 500 or 503 raises exception
   // used in Defers._flush

@@ -6,7 +6,6 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
 import 'package:utils/utils.dart';
 
-import 'for_storage.dart';
 import 'lib.dart';
 
 part 'azure_storage.dart';
@@ -27,25 +26,25 @@ class Account {
       Account._('devstoreaccount1', 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==');
   static final _debugCloudAccount =
       Account._('wikibularydata', 'm8so0vlCxtzpPMIu3IeQox+mtlqw4m/a0OALvXkvdgH1/zi5ZJHfmicIfwFAZXbOsZxlb2eDdlLREWKdjh4UWg==');
-  static Account azureAccount([bool? isEmulator]) => isEmulator == true ? _emulatorAccount : _debugCloudAccount;
+  static Account debugAzureAccount([bool? isEmulator]) => isEmulator == true ? _emulatorAccount : _debugCloudAccount;
 }
 
 class Azure extends Sender {
-  Azure(String table, {bool? isEmulator}) {
-    _account = Account(isEmulator: isEmulator);
+  Azure({required String table, required this.account}) {
+    //account = Account.azureAccount(isEmulator);
 
-    final host = _account.isEmulator ? 'http://127.0.0.1:10002' : 'https://${_account.name}.table.core.windows.net';
-    batchInnerUri = host + (_account.isEmulator ? '/${_account.name}/$table' : '/$table');
+    final host = account.isEmulator ? 'http://127.0.0.1:10002' : 'https://${account.name}.table.core.windows.net';
+    batchInnerUri = host + (account.isEmulator ? '/${account.name}/$table' : '/$table');
 
     for (var idx = 0; idx < 2; idx++) {
       final signatureTable = idx == 1 ? '\$batch' : table;
-      final slashAcountTable = '/${_account.name}/$signatureTable';
-      _signaturePart[idx] = (_account.isEmulator ? '/${_account.name}' : '') + slashAcountTable; // second part of signature
-      uriConfig[idx] = host + (_account.isEmulator ? slashAcountTable : '/$signatureTable');
+      final slashAcountTable = '/${account.name}/$signatureTable';
+      _signaturePart[idx] = (account.isEmulator ? '/${account.name}' : '') + slashAcountTable; // second part of signature
+      uriConfig[idx] = host + (account.isEmulator ? slashAcountTable : '/$signatureTable');
     }
   }
 
-  late Account _account;
+  final Account account;
   // 1..for entity batch, 0..others
   final _signaturePart = ['', ''];
   final uriConfig = ['', ''];
@@ -58,10 +57,10 @@ class Azure extends Sender {
     final String dateStr = HttpDate.format(DateTime.now());
     final String signature = '$dateStr\n${_signaturePart[isBatch == true ? 1 : 0]}${uriAppend ?? ''}';
     final toHash = utf8.encode(signature);
-    final hmacSha256 = Hmac(sha256, _account.key); // HMAC-SHA256
+    final hmacSha256 = Hmac(sha256, account.key); // HMAC-SHA256
     final token = base64.encode(hmacSha256.convert(toHash).bytes);
     // Authorization header
-    final String strAuthorization = 'SharedKeyLite ${_account.name}:$token';
+    final String strAuthorization = 'SharedKeyLite ${account.name}:$token';
 
     headers['Authorization'] = strAuthorization;
     headers['x-ms-date'] = dateStr;

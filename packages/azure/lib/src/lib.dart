@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:tuple/tuple.dart';
 
@@ -8,6 +10,37 @@ class Key {
   final String? partition;
   final String? row;
 }
+
+class BatchRow {
+  BatchRow({required this.data, required this.method});
+  final Map<String, dynamic> data;
+  String? eTag;
+  final BatchMethod method;
+  // for azure store code
+  int batchDataId = 0;
+  ResponsePart? batchResponse;
+  String toJson() => jsonEncode(data);
+}
+
+class AzureDataUpload {
+  AzureDataUpload({required this.rows, required this.versions});
+  final List<BatchRow> rows;
+  final Map<int, int> versions;
+  String? newETag;
+}
+
+typedef AzureDataDownload = Map<String, Map<String, dynamic>>;
+
+enum BatchMethod {
+  merge,
+  put,
+  delete,
+}
+const batchMethodName = <BatchMethod, String>{
+  BatchMethod.merge: 'MERGE',
+  BatchMethod.put: 'PUT',
+  BatchMethod.delete: 'DELETE',
+};
 
 Request copyRequest(Request request) => Request(request.method, request.url)
   ..encoding = request.encoding
