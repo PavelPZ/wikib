@@ -8,8 +8,8 @@ environment:
 
 
 dependencies:
-  azure:
-    path: ../azure  
+  azure_storage:
+    path: ../azure_storage  
   # flutter:
   #  sdk: flutter
   hive:

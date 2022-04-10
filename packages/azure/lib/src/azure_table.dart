@@ -1,9 +1,12 @@
-part of 'azure.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:azure/azure.dart';
+import 'package:tuple/tuple.dart';
 
 typedef CreateFromMap<T extends RowData> = T Function(Map<String, dynamic> map);
 
 class Table<T extends RowData> extends Azure {
-  Table(String table, {bool? isEmulator, this.createFromMap = RowData.create}) : super._(table, isEmulator: isEmulator); // azure server
+  Table(String table, {bool? isEmulator, this.createFromMap = RowData.create}) : super(table, isEmulator: isEmulator); // azure server
 
   Future<List<T>> query(Query query, {SendPar? sendPar}) async {
     final res = await queryLow(query, sendPar: sendPar);
@@ -19,7 +22,7 @@ class Table<T extends RowData> extends Azure {
   }
 
   Future<Tuple2<Map<String, dynamic>, String>?> readLow(Key key, {SendPar? sendPar}) async {
-    final request = _queryRequest(key: key);
+    final request = queryRequest(key: key);
 
     final res = await send<Tuple2<Map<String, dynamic>, String>>(
         request: request,
@@ -36,11 +39,11 @@ class Table<T extends RowData> extends Azure {
   }
 
   Future insert(T data) async =>
-      data.eTag = await _writeBytesRequest(data.toJsonBytes(), 'POST', finishHttpRequest: (req) => req.headers['Prefer'] = 'return-no-content');
+      data.eTag = await writeBytesRequest(data.toJsonBytes(), 'POST', finishHttpRequest: (req) => req.headers['Prefer'] = 'return-no-content');
 
-  Future insertOrReplace(T data) => _writeRowRequest(data, 'PUT');
-  Future insertOrMerge(T data) => _writeRowRequest(data, 'MERGE');
-  Future update(T data) => _writeRowRequest(data, 'PUT');
-  Future merge(T data) => _writeRowRequest(data, 'MERGE');
-  Future delete(T data) => _writeRowRequest(data, 'DELETE');
+  Future insertOrReplace(T data) => writeRowRequest(data, 'PUT');
+  Future insertOrMerge(T data) => writeRowRequest(data, 'MERGE');
+  Future update(T data) => writeRowRequest(data, 'PUT');
+  Future merge(T data) => writeRowRequest(data, 'MERGE');
+  Future delete(T data) => writeRowRequest(data, 'DELETE');
 }

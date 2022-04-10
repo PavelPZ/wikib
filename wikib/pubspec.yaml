@@ -9,8 +9,8 @@ environment:
   sdk: ">=2.16.1 <3.0.0"
 
 dependencies:
-  azure:
-    path: ../packages/azure  
+  azure_storage:
+    path: ../packages/azure_storage  
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
@@ -24,6 +24,7 @@ dependencies:
     path: ../packages/localization
   protobuf:
   protobuf_for_dart:
+    path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
   meta: ^1.7.0
   rewise_storage:
     path: ../packages/rewise_storage

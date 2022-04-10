@@ -4,16 +4,15 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
-import 'package:tuple/tuple.dart';
 import 'package:utils/utils.dart';
 
 import 'forStorage.dart';
 
 // import 'lib.dart';
 
-part 'azure_tables.dart';
-part 'azure_table.dart';
-part 'azure_batch.dart';
+// part 'azure_tables.dart';
+// part 'azure_table.dart';
+// part 'azure_batch.dart';
 part 'azure_storage.dart';
 part 'lib.dart';
 part 'model.dart';
@@ -38,7 +37,7 @@ class Account {
 }
 
 class Azure extends Sender {
-  Azure._(String table, {bool? isEmulator}) {
+  Azure(String table, {bool? isEmulator}) {
     _account = Account(isEmulator: isEmulator);
 
     final host = _account.isEmulator ? 'http://127.0.0.1:10002' : 'https://${_account.name}.table.core.windows.net';
@@ -48,19 +47,19 @@ class Azure extends Sender {
       final signatureTable = idx == 1 ? '\$batch' : table;
       final slashAcountTable = '/${_account.name}/$signatureTable';
       _signaturePart[idx] = (_account.isEmulator ? '/${_account.name}' : '') + slashAcountTable; // second part of signature
-      _uri[idx] = host + (_account.isEmulator ? slashAcountTable : '/$signatureTable');
+      uriConfig[idx] = host + (_account.isEmulator ? slashAcountTable : '/$signatureTable');
     }
   }
 
   late Account _account;
   // 1..for entity batch, 0..others
   final _signaturePart = ['', ''];
-  final _uri = ['', ''];
+  final uriConfig = ['', ''];
   String? batchInnerUri;
 
   // https://stackoverflow.com/questions/26066640/windows-azure-rest-api-sharedkeylite-authentication-storage-emulator
   // https://docs.microsoft.com/cs-cz/rest/api/storageservices/authorize-with-shared-key
-  void _sign(Map<String, String> headers, {String? uriAppend, bool? isBatch}) {
+  void sign(Map<String, String> headers, {String? uriAppend, bool? isBatch}) {
     // RFC1123 format
     final String dateStr = HttpDate.format(DateTime.now());
     final String signature = '$dateStr\n${_signaturePart[isBatch == true ? 1 : 0]}${uriAppend ?? ''}';
@@ -77,17 +76,17 @@ class Azure extends Sender {
   }
 
   // entity Insert x Update x Delete, ...
-  Future _writeRowRequest(RowData data, String method, {SendPar? sendPar}) async {
-    final res = await _writeBytesRequest(data.toJsonBytes(), method, eTag: data.eTag, sendPar: sendPar, uriAppend: data.keyUrlPart());
+  Future writeRowRequest(RowData data, String method, {SendPar? sendPar}) async {
+    final res = await writeBytesRequest(data.toJsonBytes(), method, eTag: data.eTag, sendPar: sendPar, uriAppend: data.keyUrlPart());
     data.eTag = res;
   }
 
-  Future<String?> _writeBytesRequest(List<int>? bytes, String method,
+  Future<String?> writeBytesRequest(List<int>? bytes, String method,
       {String? eTag, SendPar? sendPar, String? uriAppend, void finishHttpRequest(AzureRequest req)?}) async {
-    final String uri = _uri[0] + (uriAppend ?? '');
+    final String uri = uriConfig[0] + (uriAppend ?? '');
     // Web request
     final request = AzureRequest(method, Uri.parse(uri));
-    _sign(request.headers, uriAppend: uriAppend);
+    sign(request.headers, uriAppend: uriAppend);
     request.headers['Accept'] = 'application/json;odata=nometadata';
     request.headers['Content-type'] = 'application/json';
     if (eTag != null) request.headers['If-Match'] = eTag;
@@ -112,7 +111,7 @@ class Azure extends Sender {
   static final nextRowPar = msContinuation + nextRowName.toLowerCase();
 
   Future<List<dynamic>> queryLow<T>(Query? query, {SendPar? sendPar}) async {
-    final request = _queryRequest(query: query);
+    final request = queryRequest(query: query);
     var nextPartition = '';
     var nextRow = '';
     final oldUrl = request.uri.toString();
@@ -144,13 +143,13 @@ class Azure extends Sender {
   }
 
   // entity x table query
-  AzureRequest _queryRequest({Query? query, Key? key /*, SendPar? sendPar*/}) {
+  AzureRequest queryRequest({Query? query, Key? key /*, SendPar? sendPar*/}) {
     final uriAppend = key == null ? '()' : '(PartitionKey=\'${key.partition}\',RowKey=\'${key.row}\')';
     final queryString = key == null ? (query ?? Query()).queryString() : '';
-    var uri = _uri[0] + uriAppend;
+    var uri = uriConfig[0] + uriAppend;
     if (queryString.isNotEmpty) uri += '?$queryString';
     final request = AzureRequest('GET', Uri.parse(uri));
-    _sign(request.headers, uriAppend: uriAppend);
+    sign(request.headers, uriAppend: uriAppend);
     request.headers['Accept'] = 'application/json;odata=nometadata';
     return request;
   }

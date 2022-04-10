@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:azure/azure.dart';
+import 'package:azure/azure_ex.dart';
 import 'package:test/test.dart';
 
 const isEmulator = false;

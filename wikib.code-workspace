@@ -1,8 +1,12 @@
 {
 	"folders": [
 		{
-			"name": "wikib",
-			"path": "wikib"
+			"name": "utils",
+			"path": "packages\\utils"
+		},
+		{
+			"name": "protobuf_for_dart",
+			"path": "..\\wikibulary\\shared\\protobufs\\protobuf_for_dart"
 		},
 		{
 			"name": "riverpod_navigator",
@@ -13,24 +17,24 @@
 			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator_core"
 		},
 		{
-			"name": "protobuf_for_dart",
-			"path": "..\\wikibulary\\shared\\protobufs\\protobuf_for_dart"
-		},
-		{
 			"name": "localization",
 			"path": "packages\\localization"
-		},
-		{
-			"name": "utils",
-			"path": "packages\\utils"
 		},
 		{
 			"name": "azure",
 			"path": "packages\\azure"
 		},
 		{
+			"name": "azure_storage",
+			"path": "packages\\azure_storage"
+		},
+		{
 			"name": "rewise_storage",
 			"path": "packages\\rewise_storage"
+		},
+		{
+			"name": "wikib",
+			"path": "wikib"
 		}
 	],
 	"settings": {

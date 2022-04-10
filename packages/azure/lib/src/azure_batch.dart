@@ -1,7 +1,10 @@
-part of 'azure.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+import 'package:azure/azure.dart';
 
 class TableBatch extends Azure {
-  TableBatch(String table, {bool? isEmulator}) : super._(table, isEmulator: isEmulator);
+  TableBatch(String table, {bool? isEmulator}) : super(table, isEmulator: isEmulator);
 
   // rethrowExceptionDuringSend=true => response.statusCode == 500 or 503 raises exception
   // used in Defers._flush
@@ -20,8 +23,8 @@ class TableBatch extends Azure {
 
   //************* BATCH */
   AzureRequest getBatchRequest(String partitionKey, List<RowData> data, BatchMethod defaultMethod) {
-    final request = AzureRequest('POST', Uri.parse(_uri[1]));
-    _sign(request.headers, isBatch: true);
+    final request = AzureRequest('POST', Uri.parse(uriConfig[1]));
+    sign(request.headers, isBatch: true);
 
     final batch = Batch(partitionKey, request, batchInnerUri!, defaultMethod);
     for (var i = 0; i < data.length; i++) {
@@ -50,6 +53,7 @@ class TableBatch extends Azure {
         List<RowData>.from(data.skip(i).take(100)),
         defaultMethod,
       );
+      // for test: 412 exception is OK
       final sendRes = await send<String>(
           request: request,
           sendPar: sendPar,

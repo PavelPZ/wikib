@@ -1,6 +1,6 @@
 // ignore_for_file: unused_local_variable
 
-import 'package:azure/azure.dart';
+import 'package:azure_storage/azure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:protobuf_for_dart/algorithm.dart' as dom;
 import 'package:rewise_storage/rewise_storage.dart';

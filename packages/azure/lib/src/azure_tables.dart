@@ -1,7 +1,9 @@
-part of 'azure.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:azure/azure.dart';
 
 class Tables extends Azure {
-  Tables({bool? isEmulator}) : super._('tables', isEmulator: isEmulator);
+  Tables({bool? isEmulator}) : super('tables', isEmulator: isEmulator);
 
   Future<List<String>> query(Query? query) async {
     final res = await queryLow(query);
@@ -12,7 +14,7 @@ class Tables extends Azure {
   // Note that deleting a table is likely to take at least 40 seconds to complete.
   // If an operation is attempted against the table while it was being deleted, the service returns status code 409 (Conflict),
   Future delete(String tableName) {
-    return _writeBytesRequest(null, 'DELETE', uriAppend: '(\'$tableName\')');
+    return writeBytesRequest(null, 'DELETE', uriAppend: '(\'$tableName\')');
     // final now = DateTime.now();
     // while (true) {
     //   await Future.delayed(Duration(seconds: 5));
@@ -35,7 +37,7 @@ class Tables extends Azure {
     await forceInsert(tableName);
   }
 
-  Future<String?> insert(String tableName) => _writeBytesRequest(utf8.encode(jsonEncode({'TableName': tableName})), 'POST',
+  Future<String?> insert(String tableName) => writeBytesRequest(utf8.encode(jsonEncode({'TableName': tableName})), 'POST',
       finishHttpRequest: (req) => req.headers['Prefer'] = 'return-no-content');
 
   Future forceInsert(String tableName) async {
