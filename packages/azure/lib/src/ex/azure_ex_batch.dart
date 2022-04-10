@@ -1,7 +1,7 @@
 part of 'azure_ex.dart';
 
 class TableBatch extends Azure {
-  TableBatch({required String table, required Account account}) : super(table: table, account: account);
+  TableBatch({required String table, required IAccount account}) : super(table: table, account: account);
 
   // rethrowExceptionDuringSend=true => response.statusCode == 500 or 503 raises exception
   // used in Defers._flush
@@ -20,10 +20,10 @@ class TableBatch extends Azure {
 
   //************* BATCH */
   AzureRequest getBatchRequest(String partitionKey, List<RowData> data, BatchMethod defaultMethod) {
-    final request = AzureRequest('POST', Uri.parse(uriConfig[1]));
+    final request = AzureRequest('POST', Uri.parse(account.uriConfig[1]));
     sign(request.headers, isBatch: true);
 
-    final batch = Batch(partitionKey, request, batchInnerUri!, defaultMethod);
+    final batch = Batch(partitionKey, request, account.batchInnerUri!, defaultMethod);
     for (var i = 0; i < data.length; i++) {
       batch.appendData(data[i]..batchDataId = i);
     }

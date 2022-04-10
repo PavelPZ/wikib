@@ -1,16 +1,16 @@
 part of 'azure.dart';
 
 class TableStorage extends Azure {
-  TableStorage({required String table, required Account account}) : super(table: table, account: account);
+  TableStorage({required String table, required IAccount account}) : super(table: table, account: account);
 
   Future batch(AzureDataUpload data, {SendPar? sendPar}) => runBatch(data, sendPar);
 
   //************* BATCH */
   AzureRequest getBatchRequest(List<BatchRow> data) {
-    final request = AzureRequest('POST', Uri.parse(uriConfig[1]));
+    final request = AzureRequest('POST', Uri.parse(account.uriConfig[1]));
     sign(request.headers, isBatch: true);
 
-    final batch = BatchStorage(request, batchInnerUri!);
+    final batch = BatchStorage(request, account.batchInnerUri!);
     for (var i = 0; i < data.length; i++) {
       batch.appendData(data[i]..batchDataId = i);
     }

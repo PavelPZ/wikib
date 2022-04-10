@@ -11,14 +11,14 @@ const isEmulator = false;
 const tableName = 'users';
 
 Table<T> _create<T extends RowData>(CreateFromMap<T> createFromMap) =>
-    Table<T>(table: tableName, account: Account.debugAzureAccount(isEmulator), createFromMap: createFromMap);
-TableBatch _createBatch() => TableBatch(table: tableName, account: Account.debugAzureAccount(isEmulator));
+    Table<T>(table: tableName, account: DebugAccount.getAccount(isEmulator), createFromMap: createFromMap);
+TableBatch _createBatch() => TableBatch(table: tableName, account: DebugAccount.getAccount(isEmulator));
 
 final tableBatch = _createBatch();
 final table = _create<RowData>(RowData.create);
 final customTable = _create<CustomModel>(CustomModel.create);
 // final deferHelper = _create<DeferRowData>(DeferRowData.create);
-final tables = Tables(account: Account.debugAzureAccount(isEmulator));
+final tables = Tables(account: DebugAccount.getAccount(isEmulator));
 
 final random = Random();
 

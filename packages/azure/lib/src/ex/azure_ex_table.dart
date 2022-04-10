@@ -3,7 +3,7 @@ part of 'azure_ex.dart';
 typedef CreateFromMap<T extends RowData> = T Function(Map<String, dynamic> map);
 
 class Table<T extends RowData> extends Azure {
-  Table({required String table, required Account account, this.createFromMap = RowData.create}) : super(table: table, account: account);
+  Table({required String table, required IAccount account, this.createFromMap = RowData.create}) : super(table: table, account: account);
 
   Future<List<T>> query(Query query, {SendPar? sendPar}) async {
     final res = await queryLow(query, sendPar: sendPar);
