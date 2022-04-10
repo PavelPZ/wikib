@@ -1,7 +1,7 @@
 part of 'azure.dart';
 
 class TableStorage extends Azure {
-  TableStorage({required String table, required IAccount account}) : super(table: table, account: account);
+  TableStorage({required IAccount account}) : super(account: account);
 
   Future batch(AzureDataUpload data, {SendPar? sendPar}) => runBatch(data, sendPar);
 

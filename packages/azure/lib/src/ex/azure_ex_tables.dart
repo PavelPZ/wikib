@@ -1,7 +1,7 @@
 part of 'azure_ex.dart';
 
 class Tables extends Azure {
-  Tables({required IAccount account}) : super(table: 'tables', account: account);
+  Tables({required IAccount account}) : super(/*table: 'tables',*/ account: account);
 
   Future<List<String>> query(Query? query) async {
     final res = await queryLow(query);

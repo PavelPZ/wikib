@@ -12,78 +12,70 @@ part 'azure_storage.dart';
 part 'azure_sender.dart';
 
 abstract class IAccount {
-  List<String> get signaturePart;
+  List<String> get _signaturePart;
   List<String> get uriConfig;
   String? get batchInnerUri;
   Uint8List get key;
-  String get name;
+  String get _accountName;
 }
 
 class DebugAccount implements IAccount {
   // factory Account({bool? isEmulator}) => isEmulator == true ? _emulatorAccount : _debugCloudAccount;
-  DebugAccount._(this.name, this.keyStr) : _isEmulator = null {
-    key = base64.decode(keyStr);
+  DebugAccount._(this._accountName, this._keyStr, this._tableName, {this.isEmulator = false}) {
+    key = base64.decode(_keyStr);
 
-    final host = isEmulator ? 'http://127.0.0.1:10002' : 'https://$name.table.core.windows.net';
-    batchInnerUri = host + (isEmulator ? '/$name/$name' : '/$name');
+    final host = isEmulator ? 'http://127.0.0.1:10002' : 'https://$_accountName.table.core.windows.net';
+    batchInnerUri = host + (isEmulator ? '/$_accountName/$_tableName' : '/$_tableName');
 
     for (var idx = 0; idx < 2; idx++) {
-      final signatureTable = idx == 1 ? '\$batch' : name;
-      final slashAcountTable = '/$name/$signatureTable';
-      signaturePart[idx] = (isEmulator ? '/$name' : '') + slashAcountTable; // second part of signature
+      final signatureTable = idx == 1 ? '\$batch' : _tableName;
+      final slashAcountTable = '/$_accountName/$signatureTable';
+      _signaturePart[idx] = (isEmulator ? '/$_accountName' : '') + slashAcountTable; // second part of signature
       uriConfig[idx] = host + (isEmulator ? slashAcountTable : '/$signatureTable');
     }
   }
-  final bool? _isEmulator;
-  bool get isEmulator => _isEmulator == true;
-  final String name;
-  final String keyStr;
+  final bool isEmulator;
+  final String _accountName;
+  final String _tableName;
+  final String _keyStr;
   late Uint8List key;
 
-  final signaturePart = ['', ''];
+  final _signaturePart = ['', ''];
   final uriConfig = ['', ''];
-  String? batchInnerUri;
+  late String? batchInnerUri;
 
-  static final _emulatorAccount =
-      DebugAccount._('devstoreaccount1', 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==');
-  static final _debugCloudAccount =
-      DebugAccount._('wikibularydata', 'm8so0vlCxtzpPMIu3IeQox+mtlqw4m/a0OALvXkvdgH1/zi5ZJHfmicIfwFAZXbOsZxlb2eDdlLREWKdjh4UWg==');
-  static DebugAccount getAccount([bool? isEmulator]) => isEmulator == true ? _emulatorAccount : _debugCloudAccount;
+  static DebugAccount _emulatorAccount(String tableName) => DebugAccount._(
+        'devstoreaccount1',
+        'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==',
+        tableName,
+        isEmulator: true,
+      );
+  static DebugAccount _debugCloudAccount(String tableName) => DebugAccount._(
+        'wikibularydata',
+        'm8so0vlCxtzpPMIu3IeQox+mtlqw4m/a0OALvXkvdgH1/zi5ZJHfmicIfwFAZXbOsZxlb2eDdlLREWKdjh4UWg==',
+        tableName,
+        isEmulator: false,
+      );
+  static DebugAccount getAccount(String tableName, [bool? isEmulator]) =>
+      isEmulator == true ? _emulatorAccount(tableName) : _debugCloudAccount(tableName);
 }
 
 class Azure extends Sender {
-  Azure({required String table, required this.account});
-  //  {
-  //   //account = Account.azureAccount(isEmulator);
-
-  //   final host = account.isEmulator ? 'http://127.0.0.1:10002' : 'https://${account.name}.table.core.windows.net';
-  //   batchInnerUri = host + (account.isEmulator ? '/${account.name}/$table' : '/$table');
-
-  //   for (var idx = 0; idx < 2; idx++) {
-  //     final signatureTable = idx == 1 ? '\$batch' : table;
-  //     final slashAcountTable = '/${account.name}/$signatureTable';
-  //     _signaturePart[idx] = (account.isEmulator ? '/${account.name}' : '') + slashAcountTable; // second part of signature
-  //     uriConfig[idx] = host + (account.isEmulator ? slashAcountTable : '/$signatureTable');
-  //   }
-  // }
+  Azure({required this.account});
 
   final IAccount account;
-  // 1..for entity batch, 0..others
-  // final _signaturePart = ['', ''];
-  // final uriConfig = ['', ''];
-  // String? batchInnerUri;
 
   // https://stackoverflow.com/questions/26066640/windows-azure-rest-api-sharedkeylite-authentication-storage-emulator
   // https://docs.microsoft.com/cs-cz/rest/api/storageservices/authorize-with-shared-key
   void sign(Map<String, String> headers, {String? uriAppend, bool? isBatch}) {
     // RFC1123 format
     final String dateStr = HttpDate.format(DateTime.now());
-    final String signature = '$dateStr\n${account.signaturePart[isBatch == true ? 1 : 0]}${uriAppend ?? ''}';
+    final String signature = '$dateStr\n${account._signaturePart[isBatch == true ? 1 : 0]}${uriAppend ?? ''}';
     final toHash = utf8.encode(signature);
     final hmacSha256 = Hmac(sha256, account.key); // HMAC-SHA256
     final token = base64.encode(hmacSha256.convert(toHash).bytes);
     // Authorization header
-    final String strAuthorization = 'SharedKeyLite ${account.name}:$token';
+    final String strAuthorization = 'SharedKeyLite ${account._accountName}:$token';
 
     headers['Authorization'] = strAuthorization;
     headers['x-ms-date'] = dateStr;
