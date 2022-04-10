@@ -1,12 +1,4 @@
-part of 'azure.dart';
-
-class Key {
-  Key(String? partition, String? row)
-      : partition = Encoder.keys.encode(partition),
-        row = Encoder.keys.encode(row);
-  final String? partition;
-  final String? row;
-}
+part of 'azure_ex.dart';
 
 // https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-the-table-service-data-model
 class RowData {

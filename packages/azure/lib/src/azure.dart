@@ -10,7 +10,6 @@ import 'for_storage.dart';
 import 'lib.dart';
 
 part 'azure_storage.dart';
-part 'azure_model.dart';
 part 'azure_sender.dart';
 
 class Account {
@@ -68,12 +67,6 @@ class Azure extends Sender {
     headers['x-ms-date'] = dateStr;
     // headers['x-ms-version'] = '2018-03-28';
     headers['x-ms-version'] = '2021-04-10';
-  }
-
-  // entity Insert x Update x Delete, ...
-  Future writeRowRequest(RowData data, String method, {SendPar? sendPar}) async {
-    final res = await writeBytesRequest(data.toJsonBytes(), method, eTag: data.eTag, sendPar: sendPar, uriAppend: data.keyUrlPart());
-    data.eTag = res;
   }
 
   Future<String?> writeBytesRequest(List<int>? bytes, String method,

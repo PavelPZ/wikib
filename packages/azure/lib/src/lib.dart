@@ -1,6 +1,14 @@
 import 'package:http/http.dart';
 import 'package:tuple/tuple.dart';
 
+class Key {
+  Key(String? partition, String? row)
+      : partition = Encoder.keys.encode(partition),
+        row = Encoder.keys.encode(row);
+  final String? partition;
+  final String? row;
+}
+
 Request copyRequest(Request request) => Request(request.method, request.url)
   ..encoding = request.encoding
   ..bodyBytes = request.bodyBytes

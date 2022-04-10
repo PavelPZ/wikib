@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:azure/azure.dart';
+import 'package:azure/azure_ex.dart';
 import 'package:test/test.dart';
 
 import 'azure_lib.dart';

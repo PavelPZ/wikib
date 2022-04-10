@@ -38,9 +38,15 @@ class Table<T extends RowData> extends Azure {
   Future insert(T data) async =>
       data.eTag = await writeBytesRequest(data.toJsonBytes(), 'POST', finishHttpRequest: (req) => req.headers['Prefer'] = 'return-no-content');
 
-  Future insertOrReplace(T data) => writeRowRequest(data, 'PUT');
-  Future insertOrMerge(T data) => writeRowRequest(data, 'MERGE');
-  Future update(T data) => writeRowRequest(data, 'PUT');
-  Future merge(T data) => writeRowRequest(data, 'MERGE');
-  Future delete(T data) => writeRowRequest(data, 'DELETE');
+  Future insertOrReplace(T data) => _writeRowRequest(data, 'PUT');
+  Future insertOrMerge(T data) => _writeRowRequest(data, 'MERGE');
+  Future update(T data) => _writeRowRequest(data, 'PUT');
+  Future merge(T data) => _writeRowRequest(data, 'MERGE');
+  Future delete(T data) => _writeRowRequest(data, 'DELETE');
+
+  // entity Insert x Update x Delete, ...
+  Future _writeRowRequest(RowData data, String method, {SendPar? sendPar}) async {
+    final res = await writeBytesRequest(data.toJsonBytes(), method, eTag: data.eTag, sendPar: sendPar, uriAppend: data.keyUrlPart());
+    data.eTag = res;
+  }
 }
