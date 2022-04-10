@@ -42,6 +42,7 @@ class RowData {
     return val == null ? null : base64.decode(val); // Convert.FromBase64String(val);
   }
 
+  // propName, msg.writeToBuffer()
   void setBinaryValue(String propName, List<int>? value) {
     final typeProp = '$propName@odata.type';
     if (value == null) /* remove value.isEmpty test: binary of protobuf messages could be 0 bytes len */ {

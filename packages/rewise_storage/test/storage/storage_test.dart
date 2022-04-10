@@ -8,11 +8,17 @@ import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
 import 'package:utils/utils.dart';
 
-Future<ProviderContainer> createContainer(String dbName) async {
-  final storage = RewiseStorage(await Hive.openBox(dbName, path: r'd:\temp\hive'));
-  await storage.box.clear();
-  await storage.seed();
-  final res = ProviderContainer(overrides: rewiseStorageOverrides(storage));
+Future<ProviderContainer> createContainer(
+  String name, {
+  bool isLogged = false,
+  bool clear = true,
+}) async {
+  final storage = RewiseStorage(await Hive.openBox(name, path: r'd:\temp\hive'));
+  if (clear) await storage.box.clear();
+  storage.seed(name);
+  final res = ProviderContainer(overrides: [
+    rewiseStorageProvider.overrideWithValue(storage),
+  ]);
   addTearDown(res.dispose);
   return res;
 }
@@ -22,7 +28,7 @@ void main() {
   initRewiseStorage();
   group('rewise_storage', () {
     test('basic', () async {
-      final container = await createContainer('t1');
+      final container = await createContainer('user1');
       final db = container.read(rewiseStorageProvider);
       await db.facts.addItems([
         dom.Fact()..nextInterval = 1,
@@ -39,14 +45,16 @@ void main() {
       expect(facts.where((f) => f.isDefered).length, 3);
 
       final azureUpload = db.toAzureUpload();
+      final dblen1 = db.box.length;
 
       // =====================
       await db.debugReopen();
 
       db.fromAzureUpload(azureUpload!.versions);
+      expect(db.box.length, dblen1);
 
       final upload2 = db.toAzureUpload();
-      expect(upload2, null);
+      expect(upload2!.rows.length, 1);
       final facts2 = db.facts.getMsgs().toList();
       expect(facts2.where((f) => f.isDefered).length, 0);
 
@@ -72,16 +80,17 @@ void main() {
       return;
     });
     test('daylies', () async {
-      final container = await createContainer('t2');
+      const partitionKey = 'pk2';
+      final container = await createContainer('user2');
       final db = container.read(rewiseStorageProvider);
 
       // after initialization
       await db.debugReopen();
       final its01 = db.box.values.cast<BoxItem>().toList();
       final keys01 = its01.map((d) => d.key).join(',');
-      expect(its01.length, 4);
+      expect(its01.length, 6);
       final def01 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
-      expect(def01.length, 4);
+      expect(def01.length, 6);
 
       // save to azure
       db.fromAzureUpload(db.toAzureUpload()!.versions);
@@ -90,7 +99,7 @@ void main() {
       final values = db.box.values.toList();
       final its0 = db.box.values.cast<BoxItem>().toList();
       final keys0 = its0.map((d) => d.key).join(',');
-      expect(its0.length, 4);
+      expect(its0.length, 6);
       final def0 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
       expect(def0.length, 0);
 
@@ -127,10 +136,15 @@ void main() {
 
       return;
     });
-  });
-  group('test', () {
-    test('t3', () async {
-      final container = await createContainer('t3');
+    test('bootstrap', () async {
+      final container = await createContainer('user3');
+      final db = container.read(rewiseStorageProvider);
+      container.dispose();
+      await db.debugReopen();
+
+      final container2 = await createContainer('user3', clear: false);
+      final db2 = container2.read(rewiseStorageProvider);
+      return;
     });
   });
 }

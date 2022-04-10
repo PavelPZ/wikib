@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
@@ -15,12 +16,19 @@ void initStorage() {
   Hive.registerAdapter(BoxStringAdapter());
 }
 
+const initialETag = 'initialETag';
+
 // ***************************************
 // STORAGE
 // ***************************************
 
 abstract class Storage {
-  Storage(this.box);
+  Storage(this.box) {
+    systemRow = SinglesGroup(this, row: 0, singles: [
+      eTagPlace = PlaceString(this, rowId: 0, propId: 0),
+      namePlace = PlaceString(this, rowId: 0, propId: 1),
+    ]);
+  }
 
   void initializeGroups(List<ItemsGroup> groups) {
     allGroups = groups;
@@ -43,8 +51,56 @@ abstract class Storage {
   Box box;
   late Map<int, ItemsGroup> row2Group;
   late List<ItemsGroup> allGroups;
+  late SinglesGroup systemRow;
+  late PlaceString eTagPlace;
+  late PlaceString namePlace; // email|speakLang|learnLang
 
-  Future seed() => Future.wait(allGroups.map((e) => e.seed()));
+  void seed(String? name) {
+    if (namePlace.exists()) rAssert(namePlace.getValueOrMsg() == name);
+    if (eTagPlace.exists()) return;
+    eTagPlace.saveValue(initialETag);
+    if (name != null) namePlace.saveValue(name);
+    allGroups.forEach((e) => e.seed());
+  }
+
+  AzureDataUpload? toAzureUpload({bool Function(BoxItem item)? filter}) {
+    if (!namePlace.exists()) return null;
+    filter ??= (b) => b.isDefered || b.key == BoxKey.eTagPlaceKey;
+    final rowGroups = <String, List<BoxItem>>{};
+    final versions = <int, int>{};
+    for (var item in box.values.cast<BoxItem>().where(filter)) {
+      rowGroups.update(item.rowKey, (value) => value..add(item), ifAbsent: () => <BoxItem>[item]);
+      versions[item.key] = item.version;
+    }
+    assert(versions.isNotEmpty);
+    // finish rows
+    final rows = <BatchRow>[];
+    for (final r in rowGroups.entries) {
+      final data = <String, dynamic>{'PartitionKey': Encoder.keys.encode(namePlace.getValueOrMsg()), 'RowKey': Encoder.keys.encode(r.key)};
+      if (r.value.every((b) => b.isDeleted)) {
+        rows.add(BatchRow(data: data, method: BatchMethod.delete));
+      } else {
+        for (final item in r.value.where((b) => !b.isDeleted)) item.toAzureUpload(data);
+        rows.add(BatchRow(data: data, method: r.value.any((b) => b.isDeleted) ? BatchMethod.put : BatchMethod.merge));
+      }
+    }
+    return AzureDataUpload(rows: rows, versions: versions);
+  }
+
+  void fromAzureUpload(Map<int, int> versions) {
+    // TODO(pz): eTagPlace.getBox()!..value = newETag];
+    final modified = <BoxItem>[];
+    for (var kv in versions.entries) {
+      final item = box.get(kv.key) as BoxItem?;
+      if (item == null || item.version != kv.value) continue;
+      assert(item.isDefered || item.key == BoxKey.eTagPlaceKey);
+      if (item.isDeleted)
+        item.delete();
+      else
+        modified.add(item..isDefered = false);
+    }
+    if (modified.isNotEmpty) box.putAll(Map.fromEntries(modified.map((e) => MapEntry(e.key, e))));
+  }
 
   void fromAzureDownload(AzureDataDownload rows) {
     box.clear();
@@ -57,41 +113,6 @@ abstract class Storage {
       }
     final entries = Map.fromEntries(puts);
     box.putAll(entries);
-  }
-
-  AzureDataUpload? toAzureUpload() {
-    final rowGroups = <String, List<BoxItem>>{};
-    final versions = <int, int>{};
-    for (var item in box.values.cast<BoxItem>().where((b) => b.isDefered)) {
-      rowGroups.update(item.rowKey, (value) => value..add(item), ifAbsent: () => <BoxItem>[item]);
-      versions[item.key] = item.version;
-    }
-    if (versions.length == 0) return null;
-    // finish rows
-    final rows = <BatchRow>[];
-    for (final r in rowGroups.entries) {
-      if (r.value.every((b) => b.isDeleted)) {
-        rows.add(BatchRow(rowId: r.key, data: <String, dynamic>{}, method: BatchMethod.delete));
-      } else {
-        final notDeletedMap = Map.fromEntries(r.value.where((b) => !b.isDeleted).map((e) => MapEntry(e.rowPropId, e.value)));
-        rows.add(BatchRow(rowId: r.key, data: notDeletedMap, method: r.value.any((b) => b.isDeleted) ? BatchMethod.put : BatchMethod.merge));
-      }
-    }
-    return AzureDataUpload(rows: rows, versions: versions);
-  }
-
-  void fromAzureUpload(Map<int, int> versions) {
-    final modified = <BoxItem>[];
-    for (var kv in versions.entries) {
-      final item = box.get(kv.key) as BoxItem?;
-      if (item == null || item.version != kv.value) continue;
-      assert(item.isDefered);
-      if (item.isDeleted)
-        item.delete();
-      else
-        modified.add(item..isDefered = false);
-    }
-    if (modified.isNotEmpty) box.putAll(Map.fromEntries(modified.map((e) => MapEntry(e.key, e))));
   }
 
   void saveBoxItem(BoxItem boxItem) {
@@ -158,6 +179,8 @@ abstract class BoxItem<T> extends HiveObject {
 
   String get rowKey => BoxKey.getRowKey(key);
   String get rowPropId => BoxKey.getRowPropId(key);
+
+  void toAzureUpload(Map<String, dynamic> data) => data[rowPropId] = value;
 }
 
 @HiveType(typeId: 1)
@@ -194,6 +217,12 @@ abstract class BoxMsg<T extends $pb.GeneratedMessage> extends BoxItem<Uint8List?
   }
 
   T? _msg;
+
+  @override
+  void toAzureUpload(Map<String, dynamic> data) {
+    data[rowKey] = base64.encode(value!);
+    data['$rowKey@odata.type'] = 'Edm.Binary';
+  }
 
   @override
   @HiveField(1, defaultValue: null)
@@ -297,7 +326,7 @@ abstract class ItemsGroup {
   final int rowEnd;
 
   BoxItem fromAzureDownload(int key, dynamic value);
-  Future seed() => Future.value();
+  void seed() {}
 }
 
 class SinglesGroup extends ItemsGroup {
@@ -406,6 +435,7 @@ class BoxKey {
   static String getRowKey(int key) => _byte2Hex(key >> 8);
   static String getRowPropId(int key) => _byte2Hex(key & 0xff);
   static int getBoxKey(int rowId, int propId) => (rowId << 8) + propId;
+  static var eTagPlaceKey = getBoxKey(0, 0);
 
   //-------- RowData
   String get rowKey => _byte2Hex(rowId);

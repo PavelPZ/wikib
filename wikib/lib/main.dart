@@ -21,7 +21,7 @@ void main() async {
   initRewiseStorage();
   final storage = RewiseStorage(await Hive.openBox('rewise_storage'));
   // TODO(pz): will be modified by download from azure etc.
-  await storage.seed();
+  storage.seed(null);
   runApp(
     ProviderScope(
       overrides: [

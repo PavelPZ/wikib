@@ -40,7 +40,7 @@ typedef TRows = Map<String, Map<String, dynamic>>;
 class RewiseStorage extends Storage {
   RewiseStorage(Box storage) : super(storage) {
     initializeGroups([
-      row0 = SinglesGroup(this, row: 0, singles: []),
+      systemRow,
       row1 = SinglesGroup(this, row: 1, singles: [
         config = PlaceConfig(this, rowId: 1, propId: 0),
       ]),
@@ -68,7 +68,6 @@ class RewiseStorage extends Storage {
       ),
     ]);
   }
-  late SinglesGroup row0;
   late SinglesGroup row1;
   late PlaceConfig config;
   late MessagesGroupDaily daylies;

@@ -10,7 +10,7 @@ void main() {
   group('query', () {
     test('no inet', () async {
       await Future.delayed(Duration(seconds: 5));
-      await table.batchInsertOrReplace('Q01', [RowData.forBatch('R01'), RowData.forBatch('R02')]);
+      await tableBatch.batchInsertOrReplace('Q01', [RowData.forBatch('R01'), RowData.forBatch('R02')]);
       final retries = () => RetriesSimple()
         ..baseMsec = 1000
         ..maxSec = 2000;
@@ -40,14 +40,14 @@ void main() {
       mockConnection = true;
     });
     test('key query', () async {
-      await table.batchInsertOrReplace('Q01', [RowData.forBatch('R01'), RowData.forBatch('R02')]);
+      await tableBatch.batchInsertOrReplace('Q01', [RowData.forBatch('R01'), RowData.forBatch('R02')]);
       final res = await table.read(Key('Q01', 'R02'));
       expect(res != null, true);
       final res2 = await table.read(Key('Q01x', 'R02'));
       expect(res2 == null, true);
     });
     test('partition query', () async {
-      await table.batchInsertOrReplace('Čau', [
+      await tableBatch.batchInsertOrReplace('Čau', [
         RowData.forBatch('ř1'),
         RowData.forBatch('ř2')
           ..data['prop1'] = 'value1'
@@ -61,7 +61,7 @@ void main() {
       expect(res[0].data['prop1'] == 'value1' && res[0].data['prop2'] == null, true);
     });
     test('filter', () async {
-      await table.batchInsertOrReplace('Q01', [RowData.forBatch('R01'), RowData.forBatch('R02')]);
+      await tableBatch.batchInsertOrReplace('Q01', [RowData.forBatch('R01'), RowData.forBatch('R02')]);
       var res = await table.query(Query(filter: '${Q.p('Q01')} and ${Q.r('R01', QO.gt)}'));
       expect(res.length, 1);
       expect(res[0].rowKey, 'R02');

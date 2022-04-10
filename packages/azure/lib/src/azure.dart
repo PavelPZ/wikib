@@ -13,6 +13,8 @@ import 'forStorage.dart';
 
 part 'azure_tables.dart';
 part 'azure_table.dart';
+part 'azure_batch.dart';
+part 'azure_storage.dart';
 part 'lib.dart';
 part 'model.dart';
 part 'sender.dart';
@@ -58,10 +60,10 @@ class Azure extends Sender {
 
   // https://stackoverflow.com/questions/26066640/windows-azure-rest-api-sharedkeylite-authentication-storage-emulator
   // https://docs.microsoft.com/cs-cz/rest/api/storageservices/authorize-with-shared-key
-  void _sign(Map<String, String> headers, {String? uriAppend, int? idx}) {
+  void _sign(Map<String, String> headers, {String? uriAppend, bool? isBatch}) {
     // RFC1123 format
     final String dateStr = HttpDate.format(DateTime.now());
-    final String signature = '$dateStr\n${_signaturePart[idx ?? 0]}${uriAppend ?? ''}';
+    final String signature = '$dateStr\n${_signaturePart[isBatch == true ? 1 : 0]}${uriAppend ?? ''}';
     final toHash = utf8.encode(signature);
     final hmacSha256 = Hmac(sha256, _account.key); // HMAC-SHA256
     final token = base64.encode(hmacSha256.convert(toHash).bytes);

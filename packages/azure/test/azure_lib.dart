@@ -10,7 +10,9 @@ const isEmulator = false;
 const tableName = 'users';
 
 Table<T> _create<T extends RowData>(CreateFromMap<T> createFromMap) => Table<T>(tableName, isEmulator: isEmulator, createFromMap: createFromMap);
+TableBatch _createBatch() => TableBatch(tableName, isEmulator: isEmulator);
 
+final tableBatch = _createBatch();
 final table = _create<RowData>(RowData.create);
 final customTable = _create<CustomModel>(CustomModel.create);
 // final deferHelper = _create<DeferRowData>(DeferRowData.create);

@@ -12,7 +12,7 @@ void main() {
     test('row eTag', () async {
       final m1 = RowData.forBatch('B02');
       for (var i = 0; i < 3; i++) {
-        await table.batchInsertOrMerge('B01', [m1]);
+        await tableBatch.batchInsertOrMerge('B01', [m1]);
         print(m1.eTag);
       }
       expect(m1 == m1, true);
@@ -30,17 +30,17 @@ void main() {
       final m1 = RowData.fromKeys('ET', 'B01');
       final m1Updated = RowData.fromKeys('ET', 'B01');
       final m2 = RowData.fromKeys('ET', 'B02');
-      await table.batchInsertOrMerge('ET', [m1, m2]);
+      await tableBatch.batchInsertOrMerge('ET', [m1, m2]);
       print(m1.eTag);
       await table.update(m1);
       print(m1.eTag);
       m1Updated.eTag = m1.eTag;
-      await table.batchInsertOrMerge('ET', [m1, m2]);
+      await tableBatch.batchInsertOrMerge('ET', [m1, m2]);
       print('${m1.eTag} x ${m1Updated.eTag}');
       // errors:
       try {
         m2.data['p0'] = 'edited';
-        await table.batchInsertOrMerge('ET', [m2, m1Updated]);
+        await tableBatch.batchInsertOrMerge('ET', [m2, m1Updated]);
       } catch (e) {
         expect(e, 412);
       }
@@ -56,10 +56,10 @@ void main() {
       await table.insertOrReplace(m1);
       final m2 = RowData.forBatch('B02');
       m1.data['x0'] = 'y00';
-      var response = await table.batchInsertOrReplace('U01', [m1, m2]);
+      var response = await tableBatch.batchInsertOrReplace('U01', [m1, m2]);
       m1.data['x1'] = 'y11';
       m2.data['x2'] = 'y22';
-      response = await table.batchInsertOrReplace('U01', [m1, m2]);
+      response = await tableBatch.batchInsertOrReplace('U01', [m1, m2]);
       response = null;
       expect(response, null);
     });
@@ -68,10 +68,10 @@ void main() {
       final m2 = RowData.forBatch('B02');
       await table.insertOrReplace(m1);
       m1.data['x0'] = 'y00';
-      var response = await table.batchInsertOrMerge('B01', [m1, m2]);
+      var response = await tableBatch.batchInsertOrMerge('B01', [m1, m2]);
       m1.data['x1'] = 'y11';
       m2.data['x2'] = 'y22';
-      response = await table.batchInsertOrMerge('B01', [m1, m2]);
+      response = await tableBatch.batchInsertOrMerge('B01', [m1, m2]);
       response = null;
       expect(response, null);
     });
@@ -111,13 +111,13 @@ void main() {
       expect(model.eTag, null);
     });
     test('batch delete', () async {
-      await table.batchInsertOrReplace('Čau', [
+      await tableBatch.batchInsertOrReplace('Čau', [
         RowData.forBatch('ř1'),
         RowData.forBatch('ř2')
           ..data['prop1'] = 'value1'
           ..data['prop2'] = 'value2',
       ]);
-      await table.batchDelete('Čau', null);
+      await tableBatch.batchDelete('Čau', null);
     });
     test('insert x update', () async {
       final model = RowData.fromKeys('insertOrUpdateEntity', '005');
