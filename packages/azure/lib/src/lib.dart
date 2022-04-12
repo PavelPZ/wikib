@@ -26,15 +26,13 @@ class BatchRow {
 class AzureDataUpload {
   AzureDataUpload({required this.rows});
   final List<BatchRow> rows;
-  // final Map<int, int> versions;
   // String? newETag;
   Map<int, int> debugAllRowVersions() => Map<int, int>.fromEntries(rows.map((r) => r.versions.entries).expand((e) => e));
 }
 
 abstract class IStorage {
   AzureDataUpload? toAzureUpload([bool alowEmptyData = false]);
-  void fromAzureUpload(Map<int, int> versions);
-  //void fromAzureUpload(AzureDataUpload azureDataUpload);
+  Future fromAzureUpload(Map<int, int> versions);
 }
 
 typedef AzureDataDownload = Map<String, Map<String, dynamic>>;
@@ -49,14 +47,6 @@ const batchMethodName = <BatchMethod, String>{
   BatchMethod.put: 'PUT',
   BatchMethod.delete: 'DELETE',
 };
-
-// Request copyRequest(Request request) => Request(request.method, request.url)
-//   ..encoding = request.encoding
-//   ..bodyBytes = request.bodyBytes
-//   ..persistentConnection = request.persistentConnection
-//   ..followRedirects = request.followRedirects
-//   ..maxRedirects = request.maxRedirects
-//   ..headers.addAll(request.headers);
 
 class ResponsePart {
   late int statusCode;

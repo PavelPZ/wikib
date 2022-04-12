@@ -54,11 +54,10 @@ class TableBatch extends Azure {
       final sendRes = await send<String>(
           request: request,
           sendPar: sendPar,
-          finalizeResponse: (resp, token) async {
+          finalizeResponse: (resp) async {
             if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
             // reponse OK, parse response string:
             final respStr = await resp.response!.stream.bytesToString();
-            if (token?.canceled == true) return ContinueResult.doRethrow;
             resp.error = ErrorCodes.computeStatusCode(finishBatchRows(respStr, data));
             if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
             resp.result = respStr;

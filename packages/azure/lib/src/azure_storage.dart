@@ -7,7 +7,7 @@ class TableStorage extends Azure {
 
   Future<AzureDataDownload> loadAll() => Future.value(AzureDataDownload());
 
-  Future batch(IStorage storage, {CancelToken? token}) async {
+  Future saveToCloud(IStorage storage, {CancelToken? token}) async {
     if (_batchIsRunning) return;
     _batchIsRunning = true;
 
@@ -37,12 +37,12 @@ class TableStorage extends Azure {
       return requests;
     }
 
-    int finishBatchRows(String res, AzureDataUpload data) {
+    Future<int> finishBatchRows(String res, AzureDataUpload data) async {
       final rowResponses = List<ResponsePart>.from(ResponsePart.parseResponse(res));
       var code = 0;
       for (final resp in rowResponses) {
         final row = data.rows[int.parse(resp.headers['Content-ID'] ?? '9999')];
-        if (ErrorCodes.computeStatusCode(resp.statusCode) == ErrorCodes.no) storage.fromAzureUpload(row.versions);
+        if (ErrorCodes.computeStatusCode(resp.statusCode) == ErrorCodes.no) await storage.fromAzureUpload(row.versions);
         row.batchResponse = resp;
         row.eTag = resp.headers['ETag'];
         code = max(code, resp.statusCode);
@@ -55,13 +55,12 @@ class TableStorage extends Azure {
         final sendRes = await send<void>(
           getRequests: () => getRequests(storage),
           token: token,
-          finalizeResponse: (resp, token) async {
-            if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
+          finalizeResponse: (resp) async {
             // reponse OK, parse response string:
             final respStr = await resp.response!.stream.bytesToString();
-            if (token?.canceled == true) return ContinueResult.doRethrow;
             final AzureDataUpload data = resp.myRequest!.finalizeData;
-            resp.error = ErrorCodes.computeStatusCode(finishBatchRows(respStr, data));
+            resp.error = ErrorCodes.computeStatusCode(await finishBatchRows(respStr, data));
+            // await box
             if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
             return ContinueResult.doBreak;
           },

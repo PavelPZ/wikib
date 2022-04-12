@@ -40,7 +40,7 @@ class AzureResponse<T> {
 }
 
 typedef FinishRequest = void Function(AzureRequest req);
-typedef FinalizeResponse<T> = Future<ContinueResult> Function(AzureResponse<T> resp, CancelToken? token);
+typedef FinalizeResponse<T> = Future<ContinueResult> Function(AzureResponse<T> resp);
 // order matter, see selectResponse bellow
 enum ContinueResult { doBreak, doContinue, doWait, doRethrow }
 
@@ -125,6 +125,7 @@ abstract class Sender {
     final sp = sendPar ?? SendPar();
     sp.retries ??= RetriesSimple._instance;
 
+    // not cancelable between "await client.send" and "await finalizeResponse(resp)"
     Future<AzureResponse<T>> getContinueResult(AzureRequest req, AzureResponse<T> resp, bool internetOK) async {
       final client = Client();
       try {
@@ -135,15 +136,11 @@ abstract class Sender {
             assert(dpCounter('send attempts'));
 
             resp.response = await client.send(req.toHttpRequest());
-            if (token?.canceled == true) return AzureResponse()..error = ErrorCodes.canceled;
 
             if (sp.debugSimulateLongRequest > 0) await Future.delayed(Duration(milliseconds: sp.debugSimulateLongRequest));
-            if (token?.canceled == true) return AzureResponse()..error = ErrorCodes.canceled;
-
             ErrorCodes.statusCodeToResponse(resp);
           } on Exception catch (e) {
             if (!await connectedByOne4()) {
-              if (token?.canceled == true) return AzureResponse()..error = ErrorCodes.canceled;
               resp.error = ErrorCodes.noInternet;
             } else {
               ErrorCodes.exceptionToResponse(resp, e);
@@ -163,8 +160,7 @@ abstract class Sender {
           case ErrorCodes.exception2:
             return resp..continueResult = ContinueResult.doRethrow;
           default:
-            final cr = await finalizeResponse(resp, token);
-            if (token?.canceled == true) return AzureResponse()..error = ErrorCodes.canceled;
+            final cr = await finalizeResponse(resp);
             return resp..continueResult = cr;
         }
       } finally {
@@ -175,6 +171,8 @@ abstract class Sender {
     AzureResponse<T>? resp;
 
     while (true) {
+      if (token?.canceled == true) return null;
+
       final internetOK = await connectedByOne4();
       if (token?.canceled == true) return null;
 
@@ -183,6 +181,7 @@ abstract class Sender {
         final requests = getRequests();
         if (requests == null || requests.isEmpty) return null;
         final resp0 = await getContinueResult(requests[0], AzureResponse<T>()..myRequest = requests[0], internetOK);
+        if (token?.canceled == true) return null;
         if (requests.length == 1 || resp0.error != ErrorCodes.no) {
           resp = resp0;
         } else {

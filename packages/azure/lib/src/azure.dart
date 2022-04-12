@@ -95,7 +95,7 @@ class Azure extends Sender {
         request: request,
         sendPar: sendPar,
         token: token,
-        finalizeResponse: (resp, token) {
+        finalizeResponse: (resp) {
           if (resp.error != ErrorCodes.no) return Future.value(ContinueResult.doRethrow);
           resp.result = resp.response!.headers['etag'];
           return Future.value(ContinueResult.doBreak);
@@ -130,10 +130,9 @@ class Azure extends Sender {
         sendPar: sendPar,
         getRequest: getRequest,
         token: token,
-        finalizeResponse: (resp, token) async {
+        finalizeResponse: (resp) async {
           if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
           final resStr = await resp.response!.stream.bytesToString();
-          if (token?.canceled == true) return ContinueResult.doRethrow;
           final resList = jsonDecode(resStr)['value'];
           assert(resList != null);
           (resp.result ??= <dynamic>[]).addAll(resList);

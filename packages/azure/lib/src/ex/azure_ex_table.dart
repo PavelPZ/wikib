@@ -24,11 +24,10 @@ class Table<T extends RowData> extends Azure {
     final res = await send<Tuple2<Map<String, dynamic>, String>>(
         request: request,
         sendPar: sendPar,
-        finalizeResponse: (resp, token) async {
+        finalizeResponse: (resp) async {
           if (resp.error == ErrorCodes.notFound) return ContinueResult.doBreak; // => doBreak with null result
           if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
           final json = await resp.response!.stream.bytesToString();
-          if (token?.canceled == true) return ContinueResult.doRethrow;
           final map = jsonDecode(json);
           resp.result = Tuple2<Map<String, dynamic>, String>(map, resp.response!.headers['etag']!);
           return ContinueResult.doBreak;

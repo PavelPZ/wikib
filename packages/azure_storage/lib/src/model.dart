@@ -84,7 +84,7 @@ abstract class Storage implements IStorage {
     return AzureDataUpload(rows: rows);
   }
 
-  void fromAzureUpload(Map<int, int> versions) {
+  Future fromAzureUpload(Map<int, int> versions) {
     // TODO(pz): eTagPlace.getBox()!..value = newETag];
     final modified = <BoxItem>[];
     for (var kv in versions.entries) {
@@ -97,6 +97,7 @@ abstract class Storage implements IStorage {
         modified.add(item..isDefered = false);
     }
     if (modified.isNotEmpty) box.putAll(Map.fromEntries(modified.map((e) => MapEntry(e.key, e))));
+    return box.flush();
   }
 
   Future fromAzureDownload(AzureDataDownload rows) async {
@@ -109,14 +110,14 @@ abstract class Storage implements IStorage {
         puts.add(MapEntry(key.boxKey, messageGroup.fromAzureDownload(key.boxKey, prop.value)));
       }
     final entries = Map.fromEntries(puts);
-    box.putAll(entries);
+    await box.putAll(entries);
   }
 
   void saveBoxItem(BoxItem boxItem, {CancelToken? token}) {
     boxItem.version = Day.nowMilisecUtc;
     boxItem.isDefered = true;
     box.put(boxItem.key, boxItem);
-    azureTable?.batch(this, token: token);
+    azureTable?.saveToCloud(this, token: token);
   }
 
   void saveBoxItems(Iterable<BoxItem> boxItems, {CancelToken? token}) {
@@ -125,7 +126,7 @@ abstract class Storage implements IStorage {
       boxItem.isDefered = true;
       return MapEntry(boxItem.key, boxItem);
     })));
-    azureTable?.batch(this, token: token);
+    azureTable?.saveToCloud(this, token: token);
   }
 
   Future debugReopen() async {
