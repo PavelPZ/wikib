@@ -8,6 +8,7 @@ environment:
 
 
 dependencies:
+  azure:
   hive:
   rewise_storage:
     path: ../rewise_storage

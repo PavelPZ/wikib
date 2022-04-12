@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:azure/azure.dart';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
 import 'package:utils/utils.dart';
@@ -11,71 +12,66 @@ import 'lib.dart';
 part 'azure_storage.dart';
 part 'azure_sender.dart';
 
-abstract class IAccount {
-  List<String> get _signaturePart;
-  List<String> get uriConfig;
-  String? get batchInnerUri;
-  Uint8List get key;
-  String get _accountName;
+class AzureAccounts {
+  const AzureAccounts({
+    this.emulatorAccount =
+        const AzureAccount._('devstoreaccount1', 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=='),
+    this.cloudAccount =
+        const AzureAccount._('wikibularydata', 'm8so0vlCxtzpPMIu3IeQox+mtlqw4m/a0OALvXkvdgH1/zi5ZJHfmicIfwFAZXbOsZxlb2eDdlLREWKdjh4UWg=='),
+  });
+  final AzureAccount emulatorAccount;
+  final AzureAccount cloudAccount;
 }
 
-class DebugAccount implements IAccount {
-  // factory Account({bool? isEmulator}) => isEmulator == true ? _emulatorAccount : _debugCloudAccount;
-  DebugAccount._(this._accountName, this._keyStr, this._tableName, {this.isEmulator = false}) {
-    key = base64.decode(_keyStr);
+class AzureAccount {
+  const AzureAccount._(this.accountName, this.keyStr);
+  final String accountName;
+  final String keyStr;
+}
 
-    final host = isEmulator ? 'http://127.0.0.1:10002' : 'https://$_accountName.table.core.windows.net';
-    batchInnerUri = host + (isEmulator ? '/$_accountName/$_tableName' : '/$_tableName');
+class TableAccount {
+  // factory Account({bool? isEmulator}) => isEmulator == true ? _emulatorAccount : _debugCloudAccount;
+  TableAccount({required AzureAccounts azureAccounts, required String tableName, bool isEmulator = false}) {
+    azureAccount = isEmulator ? azureAccounts.emulatorAccount : azureAccounts.cloudAccount;
+    key = base64.decode(azureAccount.keyStr);
+
+    final host = isEmulator ? 'http://127.0.0.1:10002' : 'https://${azureAccount.accountName}.table.core.windows.net';
+    batchInnerUri = host + (isEmulator ? '/${azureAccount.accountName}/$tableName' : '/$tableName');
 
     for (var idx = 0; idx < 2; idx++) {
-      final signatureTable = idx == 1 ? '\$batch' : _tableName;
-      final slashAcountTable = '/$_accountName/$signatureTable';
-      _signaturePart[idx] = (isEmulator ? '/$_accountName' : '') + slashAcountTable; // second part of signature
+      final signatureTable = idx == 1 ? '\$batch' : tableName;
+      final slashAcountTable = '/${azureAccount.accountName}/$signatureTable';
+      signaturePart[idx] = (isEmulator ? '/${azureAccount.accountName}' : '') + slashAcountTable; // second part of signature
       uriConfig[idx] = host + (isEmulator ? slashAcountTable : '/$signatureTable');
     }
   }
-  final bool isEmulator;
-  final String _accountName;
-  final String _tableName;
-  final String _keyStr;
+  late AzureAccount azureAccount;
   late Uint8List key;
 
-  final _signaturePart = ['', ''];
+  final signaturePart = ['', ''];
   final uriConfig = ['', ''];
   late String? batchInnerUri;
 
-  static DebugAccount _emulatorAccount(String tableName) => DebugAccount._(
-        'devstoreaccount1',
-        'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==',
-        tableName,
-        isEmulator: true,
-      );
-  static DebugAccount _debugCloudAccount(String tableName) => DebugAccount._(
-        'wikibularydata',
-        'm8so0vlCxtzpPMIu3IeQox+mtlqw4m/a0OALvXkvdgH1/zi5ZJHfmicIfwFAZXbOsZxlb2eDdlLREWKdjh4UWg==',
-        tableName,
-        isEmulator: false,
-      );
-  static DebugAccount getAccount(String tableName, [bool? isEmulator]) =>
-      isEmulator == true ? _emulatorAccount(tableName) : _debugCloudAccount(tableName);
+  static TableAccount debugGetAccount(String tableName, bool isEmulator) =>
+      TableAccount(azureAccounts: const AzureAccounts(), tableName: tableName, isEmulator: isEmulator);
 }
 
 class Azure extends Sender {
   Azure({required this.account});
 
-  final IAccount account;
+  final TableAccount account;
 
   // https://stackoverflow.com/questions/26066640/windows-azure-rest-api-sharedkeylite-authentication-storage-emulator
   // https://docs.microsoft.com/cs-cz/rest/api/storageservices/authorize-with-shared-key
   void sign(Map<String, String> headers, {String? uriAppend, bool? isBatch}) {
     // RFC1123 format
     final String dateStr = HttpDate.format(DateTime.now());
-    final String signature = '$dateStr\n${account._signaturePart[isBatch == true ? 1 : 0]}${uriAppend ?? ''}';
+    final String signature = '$dateStr\n${account.signaturePart[isBatch == true ? 1 : 0]}${uriAppend ?? ''}';
     final toHash = utf8.encode(signature);
     final hmacSha256 = Hmac(sha256, account.key); // HMAC-SHA256
     final token = base64.encode(hmacSha256.convert(toHash).bytes);
     // Authorization header
-    final String strAuthorization = 'SharedKeyLite ${account._accountName}:$token';
+    final String strAuthorization = 'SharedKeyLite ${account.azureAccount.accountName}:$token';
 
     headers['Authorization'] = strAuthorization;
     headers['x-ms-date'] = dateStr;
@@ -84,7 +80,7 @@ class Azure extends Sender {
   }
 
   Future<String?> writeBytesRequest(List<int>? bytes, String method,
-      {String? eTag, SendPar? sendPar, String? uriAppend, void finishHttpRequest(AzureRequest req)?}) async {
+      {String? eTag, SendPar? sendPar, String? uriAppend, void finishHttpRequest(AzureRequest req)?, CancelToken? token}) async {
     final String uri = account.uriConfig[0] + (uriAppend ?? '');
     // Web request
     final request = AzureRequest(method, Uri.parse(uri));
@@ -98,11 +94,14 @@ class Azure extends Sender {
     final sendRes = await send<String>(
         request: request,
         sendPar: sendPar,
-        finalizeResponse: (resp) {
+        token: token,
+        finalizeResponse: (resp, token) {
           if (resp.error != ErrorCodes.no) return Future.value(ContinueResult.doRethrow);
           resp.result = resp.response!.headers['etag'];
           return Future.value(ContinueResult.doBreak);
         });
+    if (token?.canceled == true) return null;
+
     return sendRes?.result;
   }
 
@@ -112,27 +111,29 @@ class Azure extends Sender {
   static final nextPartitionPar = msContinuation + nextPartitionName.toLowerCase();
   static final nextRowPar = msContinuation + nextRowName.toLowerCase();
 
-  Future<List<dynamic>> queryLow<T>(Query? query, {SendPar? sendPar}) async {
+  Future<List<dynamic>> queryLow<T>(Query? query, {SendPar? sendPar, CancelToken? token}) async {
     final request = queryRequest(query: query);
     var nextPartition = '';
     var nextRow = '';
     final oldUrl = request.uri.toString();
 
-    Future<AzureRequest> getRequest() {
-      if (nextPartition == '' && nextRow == '') return Future.value(request);
+    AzureRequest getRequest() {
+      if (nextPartition == '' && nextRow == '') return request;
       var newUrl = oldUrl;
       if (nextPartition != '') newUrl += '&$nextPartitionName=$nextPartition';
       if (nextRow != '') newUrl += '&$nextRowName=$nextRow';
       request.uri = Uri.parse(newUrl);
-      return Future.value(request);
+      return request;
     }
 
     final resp = await send<List<dynamic>>(
         sendPar: sendPar,
         getRequest: getRequest,
-        finalizeResponse: (resp) async {
+        token: token,
+        finalizeResponse: (resp, token) async {
           if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
           final resStr = await resp.response!.stream.bytesToString();
+          if (token?.canceled == true) return ContinueResult.doRethrow;
           final resList = jsonDecode(resStr)['value'];
           assert(resList != null);
           (resp.result ??= <dynamic>[]).addAll(resList);
@@ -140,6 +141,7 @@ class Azure extends Sender {
           nextRow = resp.response!.headers[nextRowPar] ?? '';
           return nextPartition == '' && nextRow == '' ? ContinueResult.doBreak : ContinueResult.doContinue;
         });
+    if (token?.canceled == true) return <dynamic>[];
 
     return resp!.result!;
   }

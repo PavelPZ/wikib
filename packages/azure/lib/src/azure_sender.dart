@@ -13,7 +13,8 @@ abstract class IRetries {
 }
 
 class AzureRequest {
-  AzureRequest(this.method, this.uri);
+  AzureRequest(this.method, this.uri, {this.finalizeData});
+  final dynamic finalizeData;
   final headers = <String, String>{};
   Uri uri;
   String method;
@@ -29,16 +30,18 @@ class AzureResponse<T> {
   // input
   StreamedResponse? response;
   int error = ErrorCodes.no;
+  ContinueResult continueResult = ContinueResult.doBreak;
   String? errorReason;
   Exception? errorDetail;
-  AzureRequest? oldRequest;
+  AzureRequest? myRequest;
 
   // output
   T? result;
 }
 
 typedef FinishRequest = void Function(AzureRequest req);
-typedef FinalizeResponse<T> = Future<ContinueResult?> Function(AzureResponse<T> resp);
+typedef FinalizeResponse<T> = Future<ContinueResult> Function(AzureResponse<T> resp, CancelToken? token);
+// order matter, see selectResponse bellow
 enum ContinueResult { doBreak, doContinue, doWait, doRethrow }
 
 class ErrorCodes {
@@ -54,6 +57,8 @@ class ErrorCodes {
   static const exception1 = 602;
   static const exception2 = 603;
   static const timeout = 604;
+
+  static const canceled = 605;
 
   static int computeStatusCode(int statusCode) {
     switch (statusCode) {
@@ -102,103 +107,126 @@ class SendPar {
 }
 
 abstract class Sender {
+  // Future? _running;
+  // Completer? _runningCompleter;
+  // Future get running => _running ?? Future.value();
+  // void canceled() =>
+  // bool _canceled;
+
   Future<AzureResponse<T>?> send<T>({
     AzureRequest? request,
-    Future<AzureRequest?> getRequest()?,
+    List<AzureRequest>? getRequests()?,
+    AzureRequest? getRequest()?,
     required FinalizeResponse<T> finalizeResponse,
     SendPar? sendPar,
+    CancelToken? token,
   }) async {
-    assert((request == null) != (getRequest == null));
+    assert(((request == null ? 0 : 1) + (getRequest == null ? 0 : 1) + (getRequests == null ? 0 : 1)) == 1);
     final sp = sendPar ?? SendPar();
     sp.retries ??= RetriesSimple._instance;
-    _debugCanceled = false;
-    final client = Client();
-    AzureResponse<T>? resp;
 
-    try {
-      while (true) {
-        if (_debugCanceled) return null;
-
-        if (getRequest != null) {
-          request = await getRequest();
-          resp ??= AzureResponse<T>();
+    Future<AzureResponse<T>> getContinueResult(AzureRequest req, AzureResponse<T> resp, bool internetOK) async {
+      final client = Client();
+      try {
+        if (!internetOK) {
+          resp.error = ErrorCodes.noInternet;
         } else {
-          resp = AzureResponse<T>();
-        }
-        resp.oldRequest = request;
-
-        if (request == null) return null;
-
-        try {
-          final internetOK = await connectedByOne4();
-          if (_debugCanceled) return null;
-          if (!internetOK) {
-            resp.error = ErrorCodes.noInternet;
-          } else {
+          try {
             assert(dpCounter('send attempts'));
 
-            resp.response = await client.send(request.toHttpRequest());
-            if (_debugCanceled) return resp;
+            resp.response = await client.send(req.toHttpRequest());
+            if (token?.canceled == true) return AzureResponse()..error = ErrorCodes.canceled;
 
-            if (sp.debugSimulateLongRequest > 0) {
-              await Future.delayed(Duration(milliseconds: sp.debugSimulateLongRequest));
-              if (_debugCanceled) return resp;
-            }
+            if (sp.debugSimulateLongRequest > 0) await Future.delayed(Duration(milliseconds: sp.debugSimulateLongRequest));
+            if (token?.canceled == true) return AzureResponse()..error = ErrorCodes.canceled;
+
             ErrorCodes.statusCodeToResponse(resp);
-          }
-        } on Exception catch (e) {
-          if (!await connectedByOne4()) {
-            resp.error = ErrorCodes.noInternet;
-          } else {
-            ErrorCodes.exceptionToResponse(resp, e);
+          } on Exception catch (e) {
+            if (!await connectedByOne4()) {
+              if (token?.canceled == true) return AzureResponse()..error = ErrorCodes.canceled;
+              resp.error = ErrorCodes.noInternet;
+            } else {
+              ErrorCodes.exceptionToResponse(resp, e);
+            }
           }
         }
-
         assert(resp.error != ErrorCodes.no || resp.response != null);
 
         assert(resp.error != ErrorCodes.no || dpCounter('send_ok'));
         assert(resp.error == ErrorCodes.no || (dpCounter('send_error') && dpCounter(resp.errorReason ?? resp.error.toString())));
 
-        ContinueResult continueResult;
         switch (resp.error) {
           case ErrorCodes.noInternet:
           case ErrorCodes.bussy:
-            continueResult = ContinueResult.doWait;
-            break;
+            return resp..continueResult = ContinueResult.doWait;
           case ErrorCodes.exception1:
           case ErrorCodes.exception2:
-            continueResult = ContinueResult.doRethrow;
-            break;
+            return resp..continueResult = ContinueResult.doRethrow;
           default:
-            continueResult = (await finalizeResponse(resp)) ?? ContinueResult.doBreak;
-            break;
+            final cr = await finalizeResponse(resp, token);
+            if (token?.canceled == true) return AzureResponse()..error = ErrorCodes.canceled;
+            return resp..continueResult = cr;
         }
-
-        switch (continueResult) {
-          case ContinueResult.doBreak:
-            return resp;
-          case ContinueResult.doContinue:
-            continue; // continue due more requests (e.g. multi part query)
-          case ContinueResult.doWait:
-            final res = await sp.retries!.delay();
-            if (res != 0) {
-              resp.error = res;
-              return Future.error(resp.error);
-            }
-            resp = null; // continue due error
-            continue;
-          case ContinueResult.doRethrow:
-            return Future.error(resp.error);
-        }
+      } finally {
+        client.close();
       }
-    } finally {
-      client.close();
+    }
+
+    AzureResponse<T>? resp;
+
+    while (true) {
+      final internetOK = await connectedByOne4();
+      if (token?.canceled == true) return null;
+
+      var max = ContinueResult.doBreak.index;
+      if (getRequests != null) {
+        final requests = getRequests();
+        if (requests == null || requests.isEmpty) return null;
+        final resp0 = await getContinueResult(requests[0], AzureResponse<T>()..myRequest = requests[0], internetOK);
+        if (requests.length == 1 || resp0.error != ErrorCodes.no) {
+          resp = resp0;
+        } else {
+          final resps = await Future.wait(requests.skip(1).map((r) => getContinueResult(r, AzureResponse<T>()..myRequest = r, internetOK)));
+          if (token?.canceled == true) return null;
+          resp = null;
+          for (var rs in resps) {
+            if (rs.continueResult.index < max) continue;
+            resp = rs;
+            max = rs.continueResult.index;
+          }
+        }
+      } else {
+        AzureRequest? req;
+        if (getRequest != null) {
+          req = getRequest();
+          assert(req != null);
+          resp ??= AzureResponse<T>();
+        } else {
+          req = request;
+          resp = AzureResponse<T>();
+        }
+        resp.myRequest = req;
+
+        resp = await getContinueResult(req!, resp, internetOK);
+        if (token?.canceled == true) return null;
+      }
+
+      switch (resp!.continueResult) {
+        case ContinueResult.doBreak:
+          return resp;
+        case ContinueResult.doContinue:
+          continue; // continue due more requests while cycle (e.g. multi part query)
+        case ContinueResult.doWait: // recoverable error ()
+          final res = await sp.retries!.delay();
+          if (token?.canceled == true) return null;
+          if (res != 0) return Future.error(res);
+          resp = null; // continue due error
+          continue;
+        case ContinueResult.doRethrow:
+          return Future.error(resp.error);
+      }
     }
   }
-
-  void debugCancel() => _debugCanceled = true;
-
-  var _debugCanceled = false;
 }
 
 class RetriesSimple extends IRetries {

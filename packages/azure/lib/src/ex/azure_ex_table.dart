@@ -3,7 +3,7 @@ part of 'azure_ex.dart';
 typedef CreateFromMap<T extends RowData> = T Function(Map<String, dynamic> map);
 
 class Table<T extends RowData> extends Azure {
-  Table({required IAccount account, this.createFromMap = RowData.create}) : super(account: account);
+  Table({required TableAccount account, this.createFromMap = RowData.create}) : super(account: account);
 
   Future<List<T>> query(Query query, {SendPar? sendPar}) async {
     final res = await queryLow(query, sendPar: sendPar);
@@ -24,10 +24,11 @@ class Table<T extends RowData> extends Azure {
     final res = await send<Tuple2<Map<String, dynamic>, String>>(
         request: request,
         sendPar: sendPar,
-        finalizeResponse: (resp) async {
+        finalizeResponse: (resp, token) async {
           if (resp.error == ErrorCodes.notFound) return ContinueResult.doBreak; // => doBreak with null result
           if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
           final json = await resp.response!.stream.bytesToString();
+          if (token?.canceled == true) return ContinueResult.doRethrow;
           final map = jsonDecode(json);
           resp.result = Tuple2<Map<String, dynamic>, String>(map, resp.response!.headers['etag']!);
           return ContinueResult.doBreak;

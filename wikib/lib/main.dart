@@ -5,7 +5,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:localization/localization_meta.dart';
 import 'package:riverpod_navigator/riverpod_navigator.dart';
-import 'package:wikib_providers/wikb_providers.dart';
 
 import 'localize.dart';
 import 'utils/media_query.dart';
@@ -18,13 +17,11 @@ part 'main.g.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  final wikibProvidersConfig = await appInit();
   // TODO(pz): will be modified by download from azure etc.
   runApp(
     ProviderScope(
       overrides: [
         ...riverpodNavigatorOverrides([RegionSegment()], AppNavigator.new),
-        ...wikibOverrides(wikibProvidersConfig),
       ],
       child: const MyApp(),
     ),

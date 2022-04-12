@@ -1,7 +1,7 @@
 part of 'azure_ex.dart';
 
 class TableBatch extends Azure {
-  TableBatch({required IAccount account}) : super(account: account);
+  TableBatch({required TableAccount account}) : super(account: account);
 
   // rethrowExceptionDuringSend=true => response.statusCode == 500 or 503 raises exception
   // used in Defers._flush
@@ -54,10 +54,11 @@ class TableBatch extends Azure {
       final sendRes = await send<String>(
           request: request,
           sendPar: sendPar,
-          finalizeResponse: (resp) async {
+          finalizeResponse: (resp, token) async {
             if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
             // reponse OK, parse response string:
             final respStr = await resp.response!.stream.bytesToString();
+            if (token?.canceled == true) return ContinueResult.doRethrow;
             resp.error = ErrorCodes.computeStatusCode(finishBatchRows(respStr, data));
             if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
             resp.result = respStr;

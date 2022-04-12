@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:azure/azure.dart';
 import 'package:azure_storage/azure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:riverpod/riverpod.dart';
@@ -38,9 +39,10 @@ void hiveRewiseStorageAdapters() {
 typedef TRows = Map<String, Map<String, dynamic>>;
 
 class RewiseStorage extends Storage {
-  RewiseStorage(Box storage) : super(storage) {
+  // TODO(pz): TableStorage? azureTable
+  RewiseStorage(Box storage, TableStorage? azureTable, String primaryKey) : super(storage, azureTable, primaryKey) {
     initializeGroups([
-      systemRow,
+      //systemRow,
       row1 = SinglesGroup(this, row: 1, singles: [
         config = PlaceConfig(this, rowId: 1, propId: 0),
       ]),
@@ -68,14 +70,12 @@ class RewiseStorage extends Storage {
       ),
     ]);
   }
+
   late SinglesGroup row1;
   late PlaceConfig config;
   late MessagesGroupDaily daylies;
   late MessagesGroupBook books;
   late MessagesGroupFact facts;
-
-  @override
-  void onChanged() {}
 }
 
 class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
@@ -98,23 +98,24 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   }
 
   @override
-  Future seed() {
-    super.seed();
-    if (!actDay.exists()) actDay.saveValue(Day.now);
+  Future seed({CancelToken? token}) {
+    super.seed(token: token);
+    if (!actDay.exists()) actDay.saveValue(Day.now, token: token);
+    if (token?.canceled == true) return Future.value();
     return storage.box.flush();
   }
 
   int get actDayValue => actDay.getValueOrMsg();
 
-  void addDaylies(int actDatValue, Iterable<dom.Daily> msgs) {
-    clear(true);
+  void addDaylies(int actDatValue, Iterable<dom.Daily> msgs, {CancelToken? token}) {
+    clear(startItemsIncluded: true, token: token);
     // final a1 = storage.debugDump();
-    seed();
+    seed(token: token);
     // final a2 = storage.debugDump();
     // final c = uniqueCounter.getValueOrMsg();
-    actDay.saveValue(actDatValue);
+    actDay.saveValue(actDatValue, token: token);
     // final a3 = storage.debugDump();
-    addItems(msgs.map((e) => e..day = actDatValue));
+    addItems(msgs.map((e) => e..day = actDatValue), token: token);
     // final a4 = storage.debugDump();
   }
 }
