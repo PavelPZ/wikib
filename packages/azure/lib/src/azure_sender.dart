@@ -107,11 +107,9 @@ class SendPar {
 }
 
 abstract class Sender {
-  // Future? _running;
-  // Completer? _runningCompleter;
-  // Future get running => _running ?? Future.value();
-  // void canceled() =>
-  // bool _canceled;
+  Future? _running;
+  Completer? _runningCompleter;
+  Future get running => _running ?? Future.value();
 
   Future<AzureResponse<T>?> send<T>({
     AzureRequest? request,
@@ -119,9 +117,12 @@ abstract class Sender {
     AzureRequest? getRequest()?,
     required FinalizeResponse<T> finalizeResponse,
     SendPar? sendPar,
-    CancelToken? token,
+    ICancelToken? token,
   }) async {
     assert(((request == null ? 0 : 1) + (getRequest == null ? 0 : 1) + (getRequests == null ? 0 : 1)) == 1);
+    assert(_runningCompleter == null);
+    _runningCompleter = Completer();
+    _running = _runningCompleter!.future;
     final sp = sendPar ?? SendPar();
     sp.retries ??= RetriesSimple._instance;
 
@@ -170,60 +171,66 @@ abstract class Sender {
 
     AzureResponse<T>? resp;
 
-    while (true) {
-      if (token?.canceled == true) return null;
-
-      final internetOK = await connectedByOne4();
-      if (token?.canceled == true) return null;
-
-      var max = ContinueResult.doBreak.index;
-      if (getRequests != null) {
-        final requests = getRequests();
-        if (requests == null || requests.isEmpty) return null;
-        final resp0 = await getContinueResult(requests[0], AzureResponse<T>()..myRequest = requests[0], internetOK);
+    try {
+      while (true) {
         if (token?.canceled == true) return null;
-        if (requests.length == 1 || resp0.error != ErrorCodes.no) {
-          resp = resp0;
-        } else {
-          final resps = await Future.wait(requests.skip(1).map((r) => getContinueResult(r, AzureResponse<T>()..myRequest = r, internetOK)));
+
+        final internetOK = await connectedByOne4();
+        if (token?.canceled == true) return null;
+
+        var max = ContinueResult.doBreak.index;
+        if (getRequests != null) {
+          final requests = getRequests();
+          if (requests == null || requests.isEmpty) return null;
+          final resp0 = await getContinueResult(requests[0], AzureResponse<T>()..myRequest = requests[0], internetOK);
           if (token?.canceled == true) return null;
-          resp = null;
-          for (var rs in resps) {
-            if (rs.continueResult.index < max) continue;
-            resp = rs;
-            max = rs.continueResult.index;
+          if (requests.length == 1 || resp0.error != ErrorCodes.no) {
+            resp = resp0;
+          } else {
+            final resps = await Future.wait(requests.skip(1).map((r) => getContinueResult(r, AzureResponse<T>()..myRequest = r, internetOK)));
+            if (token?.canceled == true) return null;
+            resp = null;
+            for (var rs in resps) {
+              if (rs.continueResult.index < max) continue;
+              resp = rs;
+              max = rs.continueResult.index;
+            }
           }
-        }
-      } else {
-        AzureRequest? req;
-        if (getRequest != null) {
-          req = getRequest();
-          assert(req != null);
-          resp ??= AzureResponse<T>();
         } else {
-          req = request;
-          resp = AzureResponse<T>();
-        }
-        resp.myRequest = req;
+          AzureRequest? req;
+          if (getRequest != null) {
+            req = getRequest();
+            assert(req != null);
+            resp ??= AzureResponse<T>();
+          } else {
+            req = request;
+            resp = AzureResponse<T>();
+          }
+          resp.myRequest = req;
 
-        resp = await getContinueResult(req!, resp, internetOK);
-        if (token?.canceled == true) return null;
-      }
-
-      switch (resp!.continueResult) {
-        case ContinueResult.doBreak:
-          return resp;
-        case ContinueResult.doContinue:
-          continue; // continue due more requests while cycle (e.g. multi part query)
-        case ContinueResult.doWait: // recoverable error ()
-          final res = await sp.retries!.delay();
+          resp = await getContinueResult(req!, resp, internetOK);
           if (token?.canceled == true) return null;
-          if (res != 0) return Future.error(res);
-          resp = null; // continue due error
-          continue;
-        case ContinueResult.doRethrow:
-          return Future.error(resp.error);
+        }
+
+        switch (resp!.continueResult) {
+          case ContinueResult.doBreak:
+            return resp;
+          case ContinueResult.doContinue:
+            continue; // continue due more requests while cycle (e.g. multi part query)
+          case ContinueResult.doWait: // recoverable error ()
+            final res = await sp.retries!.delay();
+            if (token?.canceled == true) return null;
+            if (res != 0) return Future.error(res);
+            resp = null; // continue due error
+            continue;
+          case ContinueResult.doRethrow:
+            return Future.error(resp.error);
+        }
       }
+    } finally {
+      _runningCompleter!.complete();
+      _runningCompleter = null;
+      _running = null;
     }
   }
 }

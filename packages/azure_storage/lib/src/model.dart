@@ -22,13 +22,8 @@ const initialETag = 'initialETag';
 // STORAGE
 // ***************************************
 
-abstract class Storage implements IStorage {
-  Storage(this.box, this.azureTable, this.primaryKey) {
-    // systemRow = SinglesGroup(this, row: 0, singles: [
-    //   eTagPlace = PlaceString(this, rowId: 0, propId: 0),
-    //   namePlace = PlaceString(this, rowId: 0, propId: 1),
-    // ]);
-  }
+abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
+  Storage(this.box, this.azureTable, this.dbId, this.email);
 
   void initializeGroups(List<ItemsGroup> groups) {
     allGroups = groups;
@@ -40,11 +35,24 @@ abstract class Storage implements IStorage {
       }
   }
 
+  final DBId dbId;
+  final String email;
   Box box; // due to debugReopen
   final TableStorage? azureTable;
-  final String primaryKey;
   late Map<int, ItemsGroup> row2Group;
   late List<ItemsGroup> allGroups;
+
+  Future close() => cancel();
+
+  Future cancel() async {
+    _canceled = true;
+    if (azureTable != null) await azureTable!.running;
+    await box.flush();
+    _canceled = false;
+  }
+
+  bool get canceled => _canceled;
+  bool _canceled = false;
   // late SinglesGroup systemRow;
   // late PlaceString eTagPlace;
   // late PlaceString namePlace; // email|speakLang|learnLang
@@ -56,47 +64,63 @@ abstract class Storage implements IStorage {
   //   if (name != null) namePlace.saveValue(name);
   //   allGroups.forEach((e) => e.seed());
   // }
+  // TODO(pz): is already seeded?
   void seed() => allGroups.forEach((e) => e.seed());
 
-  AzureDataUpload? toAzureUpload([bool alowEmptyData = false]) {
+  AzureDataUpload? toAzureUpload() {
     //if (!namePlace.exists()) return null;
-    final rowGroups = <String, List<BoxItem>>{};
-    var itemCount = 0;
-    for (var item in box.values.cast<BoxItem>().where((b) => b.isDefered || b.key == BoxKey.eTagPlaceKey)) {
-      rowGroups.update(item.rowKey, (value) => value..add(item), ifAbsent: () => <BoxItem>[item]);
-      itemCount++;
-    }
-    assert(itemCount >= 1);
-    if (!alowEmptyData && itemCount <= 1) return null;
+    final rowGroups = <int, List<BoxItem>>{};
+    for (var item in box.values.whereType<BoxItem>().where((b) => b.isDefered))
+      rowGroups.update(item.key, (value) => value..add(item), ifAbsent: () => <BoxItem>[item]);
+
+    // assert(itemCount >= 1);
+    Map<String, dynamic> initData(int rowId) =>
+        <String, dynamic>{'PartitionKey': Encoder.keys.encode(dbId.partition(email)), 'RowKey': Encoder.keys.encode(BoxKey.byte2Hex(rowId))};
+    // first row
+    final firstRow = BatchRow(rowId: BoxKey.eTagHiveKey.rowId, data: initData(BoxKey.eTagHiveKey.rowId), method: BatchMethod.put)
+      ..eTag = box.get(BoxKey.eTagHiveKey.boxKey);
+    final rows = <BatchRow>[firstRow];
     // finish rows
-    final rows = <BatchRow>[];
     for (final r in rowGroups.entries) {
-      final data = <String, dynamic>{'PartitionKey': Encoder.keys.encode(primaryKey), 'RowKey': Encoder.keys.encode(r.key)};
+      final data = initData(r.key);
       BatchRow row;
       if (r.value.every((b) => b.isDeleted)) {
-        rows.add(row = BatchRow(data: data, method: BatchMethod.delete));
+        rows.add(row = BatchRow(rowId: r.key, data: data, method: BatchMethod.delete));
       } else {
         for (final item in r.value.where((b) => !b.isDeleted)) item.toAzureUpload(data);
-        rows.add(row = BatchRow(data: data, method: r.value.any((b) => b.isDeleted) ? BatchMethod.put : BatchMethod.merge));
+        rows.add(row = BatchRow(rowId: r.key, data: data, method: r.value.any((b) => b.isDeleted) ? BatchMethod.put : BatchMethod.merge));
       }
       for (var item in r.value) row.versions[item.key] = item.version;
     }
     return AzureDataUpload(rows: rows);
   }
 
-  Future fromAzureUpload(Map<int, int> versions) {
+  Future fromAzureETagUploaded(String eTag) => box.put(BoxKey.eTagHiveKey.boxKey, eTag);
+
+  Future fromAzureRowUploaded(Map<int, int> versions) {
     // TODO(pz): eTagPlace.getBox()!..value = newETag];
     final modified = <BoxItem>[];
     for (var kv in versions.entries) {
       final item = box.get(kv.key) as BoxItem?;
       if (item == null || item.version != kv.value) continue;
-      assert(item.isDefered || item.key == BoxKey.eTagPlaceKey);
+      assert(item.isDefered || item.key == BoxKey.eTagHiveKey.boxKey);
       if (item.isDeleted)
         item.delete();
       else
         modified.add(item..isDefered = false);
     }
     if (modified.isNotEmpty) box.putAll(Map.fromEntries(modified.map((e) => MapEntry(e.key, e))));
+    return box.flush();
+  }
+
+  Future debugFromAzureAllUploaded(AzureDataUpload? azureDataUpload) {
+    if (azureDataUpload == null) return Future.value();
+    for (var row in azureDataUpload.rows) {
+      if (row.rowId == BoxKey.eTagHiveKey.rowId)
+        fromAzureETagUploaded(DateTime.now().millisecondsSinceEpoch.toString());
+      else
+        fromAzureRowUploaded(row.versions);
+    }
     return box.flush();
   }
 
@@ -113,20 +137,20 @@ abstract class Storage implements IStorage {
     await box.putAll(entries);
   }
 
-  void saveBoxItem(BoxItem boxItem, {CancelToken? token}) {
+  void saveBoxItem(BoxItem boxItem) {
     boxItem.version = Day.nowMilisecUtc;
     boxItem.isDefered = true;
     box.put(boxItem.key, boxItem);
-    azureTable?.saveToCloud(this, token: token);
+    azureTable?.saveToCloud(this, token: this);
   }
 
-  void saveBoxItems(Iterable<BoxItem> boxItems, {CancelToken? token}) {
+  void saveBoxItems(Iterable<BoxItem> boxItems) {
     box.putAll(Map.fromEntries(boxItems.map((boxItem) {
       boxItem.version = Day.nowMilisecUtc;
       boxItem.isDefered = true;
       return MapEntry(boxItem.key, boxItem);
     })));
-    azureTable?.saveToCloud(this, token: token);
+    azureTable?.saveToCloud(this, token: this);
   }
 
   Future debugReopen() async {
@@ -136,7 +160,7 @@ abstract class Storage implements IStorage {
   }
 
   String debugDump([bool filter(BoxItem item)?]) {
-    var all = box.values.cast<BoxItem>();
+    var all = box.values.whereType<BoxItem>();
     if (filter != null) all = all.where(filter);
     return all
         .map((e) => '${e.isDeleted ? '-' : ''}${e.isDefered ? '*' : ''}${e.key}${e.value is Uint8List ? '' : '=' + e.value.toString()}')
@@ -144,7 +168,7 @@ abstract class Storage implements IStorage {
   }
 
   String debugDeletedAndDefered([bool filter(BoxItem item)?]) {
-    var all = box.values.cast<BoxItem>();
+    var all = box.values.whereType<BoxItem>();
     if (filter != null) all = all.where(filter);
     var deleted = 0, defered = 0;
     all.forEach((e) {
@@ -255,14 +279,14 @@ abstract class Place<T> {
 
   bool exists([int? key]) => getBox(key) != null;
 
-  void delete({int? key, CancelToken? token}) {
+  void delete({int? key}) {
     final boxItem = getBox(key);
     rAssert(boxItem != null);
     boxItem!.isDeleted = true;
-    storage.saveBoxItem(boxItem, token: token);
+    storage.saveBoxItem(boxItem);
   }
 
-  void saveValue(T valueOrMsg, {int? key, CancelToken? token}) => storage.saveBoxItem(getBox(key) ?? fromValueOrMsg(key, valueOrMsg), token: token);
+  void saveValue(T valueOrMsg, {int? key}) => storage.saveBoxItem(getBox(key) ?? fromValueOrMsg(key, valueOrMsg));
 }
 
 abstract class PlaceValue<T> extends Place<T> {
@@ -291,11 +315,11 @@ class PlaceString extends PlaceValue<String> {
 abstract class PlaceMsg<T extends $pb.GeneratedMessage> extends Place<T> {
   PlaceMsg(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
-  void updateMsg(void proc(T t), {int? key, CancelToken? token}) {
+  void updateMsg(void proc(T t), {int? key}) {
     final boxItem = getBox(key) as BoxMsg<T>;
     rAssert(!boxItem.isDeleted);
     proc(boxItem.msg!);
-    storage.saveBoxItem(boxItem, token: token);
+    storage.saveBoxItem(boxItem);
   }
 
   @override
@@ -324,7 +348,7 @@ abstract class ItemsGroup {
   final int rowEnd;
 
   BoxItem fromAzureDownload(int key, dynamic value);
-  void seed({CancelToken? token}) {}
+  void seed() {}
 }
 
 class SinglesGroup extends ItemsGroup {
@@ -365,8 +389,8 @@ abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemsGroup 
 
   Iterable<BoxMsg<T>> getMsgs() => getItems().whereType<BoxMsg<T>>();
 
-  void clear({bool startItemsIncluded = false, CancelToken? token}) =>
-      storage.saveBoxItems((startItemsIncluded ? getItems() : getMsgs()).map((e) => e..isDeleted = true), token: token);
+  void clear({bool startItemsIncluded = false}) =>
+      storage.saveBoxItems((startItemsIncluded ? getItems() : getMsgs()).map((e) => e..isDeleted = true));
 }
 
 abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends MessagesGroup<T> {
@@ -387,79 +411,19 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
     return super.fromAzureDownload(key, value);
   }
 
-  Future addItems(Iterable<T> msgs, {CancelToken? token}) {
+  Future addItems(Iterable<T> msgs) {
     final uniqueBox = uniqueCounter.getBox() as BoxInt;
     var nextKey = uniqueBox.value;
     final items = msgs.map((msg) => itemsPlace.fromValueOrMsg(nextKey = BoxKey.nextKey(nextKey), msg)).toList();
     items.add(uniqueBox..value = nextKey);
-    storage.saveBoxItems(items, token: token);
-    if (token?.canceled == true) return Future.value();
+    storage.saveBoxItems(items);
     return storage.box.flush();
   }
 
   @override
-  Future seed({CancelToken? token}) {
-    super.seed(token: token);
-    if (!uniqueCounter.exists()) uniqueCounter.saveValue(itemsPlace.boxKey - 1, token: token);
-    if (token?.canceled == true) return Future.value();
+  Future seed() {
+    super.seed();
+    if (!uniqueCounter.exists()) uniqueCounter.saveValue(itemsPlace.boxKey - 1);
     return storage.box.flush();
   }
-}
-
-// ***************************************
-// BOX KEY
-// ***************************************
-
-class BoxKey {
-  const BoxKey(this.boxKey);
-  const BoxKey.idx(int rowId, int propId)
-      : assert(propId <= maxPropId),
-        boxKey = (rowId << 8) + propId;
-  factory BoxKey.azure(String rowId, String propId) => BoxKey.idx(_hex2Byte(rowId), _hex2Byte(propId));
-
-  final int boxKey;
-  int get rowId => boxKey >> 8;
-  int get propId => boxKey & 0xff;
-
-  BoxKey next() => propId < maxPropId ? BoxKey(boxKey + 1) : BoxKey.idx(rowId + 1, 0);
-
-  //-------- statics
-
-  static int nextKey(int key) {
-    final rowId = key >> 8;
-    final propId = key & 0xff;
-    return propId < maxPropId ? key + 1 : (rowId + 1) << 8;
-  }
-
-  static String getRowKey(int key) => _byte2Hex(key >> 8);
-  static String getRowPropId(int key) => _byte2Hex(key & 0xff);
-  static int getBoxKey(int rowId, int propId) => (rowId << 8) + propId;
-  static var eTagPlaceKey = getBoxKey(0, 0);
-
-  //-------- RowData
-  String get rowKey => _byte2Hex(rowId);
-  String get rowPropId => _byte2Hex(propId);
-
-  static const maxPropId = 252;
-  static const hexMap = <String>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'];
-  static String _byte2Hex(int b) => hexMap[(b >> 8) & 0xf] + hexMap[b & 0xf];
-  static int _hex2Byte(String hex) => (byteMap[hex[0]]! << 8) + byteMap[hex[1]]!;
-  static const byteMap = <String, int>{
-    'a': 0,
-    'b': 1,
-    'c': 2,
-    'd': 3,
-    'e': 4,
-    'f': 5,
-    'g': 6,
-    'h': 7,
-    'i': 8,
-    'j': 9,
-    'k': 10,
-    'l': 11,
-    'm': 12,
-    'n': 13,
-    'o': 14,
-    'p': 15
-  };
 }

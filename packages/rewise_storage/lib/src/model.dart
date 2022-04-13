@@ -38,9 +38,9 @@ void hiveRewiseStorageAdapters() {
 
 typedef TRows = Map<String, Map<String, dynamic>>;
 
-class RewiseStorage extends Storage {
+class RewiseStorage extends Storage<DBRewiseId> {
   // TODO(pz): TableStorage? azureTable
-  RewiseStorage(Box storage, TableStorage? azureTable, String primaryKey) : super(storage, azureTable, primaryKey) {
+  RewiseStorage(Box storage, TableStorage? azureTable, DBRewiseId dbId, String email) : super(storage, azureTable, dbId, email) {
     initializeGroups([
       //systemRow,
       row1 = SinglesGroup(this, row: 1, singles: [
@@ -98,24 +98,23 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   }
 
   @override
-  Future seed({CancelToken? token}) {
-    super.seed(token: token);
-    if (!actDay.exists()) actDay.saveValue(Day.now, token: token);
-    if (token?.canceled == true) return Future.value();
+  Future seed() {
+    super.seed();
+    if (!actDay.exists()) actDay.saveValue(Day.now);
     return storage.box.flush();
   }
 
   int get actDayValue => actDay.getValueOrMsg();
 
-  void addDaylies(int actDatValue, Iterable<dom.Daily> msgs, {CancelToken? token}) {
-    clear(startItemsIncluded: true, token: token);
+  void addDaylies(int actDatValue, Iterable<dom.Daily> msgs) {
+    clear(startItemsIncluded: true);
     // final a1 = storage.debugDump();
-    seed(token: token);
+    seed();
     // final a2 = storage.debugDump();
     // final c = uniqueCounter.getValueOrMsg();
-    actDay.saveValue(actDatValue, token: token);
+    actDay.saveValue(actDatValue);
     // final a3 = storage.debugDump();
-    addItems(msgs.map((e) => e..day = actDatValue), token: token);
+    addItems(msgs.map((e) => e..day = actDatValue));
     // final a4 = storage.debugDump();
   }
 }

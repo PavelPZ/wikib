@@ -7,7 +7,7 @@ class TableStorage extends Azure {
 
   Future<AzureDataDownload> loadAll() => Future.value(AzureDataDownload());
 
-  Future saveToCloud(IStorage storage, {CancelToken? token}) async {
+  Future saveToCloud(IStorage storage, {ICancelToken? token}) async {
     if (_batchIsRunning) return;
     _batchIsRunning = true;
 
@@ -41,11 +41,18 @@ class TableStorage extends Azure {
       final rowResponses = List<ResponsePart>.from(ResponsePart.parseResponse(res));
       var code = 0;
       for (final resp in rowResponses) {
-        final row = data.rows[int.parse(resp.headers['Content-ID'] ?? '9999')];
-        if (ErrorCodes.computeStatusCode(resp.statusCode) == ErrorCodes.no) await storage.fromAzureUpload(row.versions);
+        final isError = ErrorCodes.computeStatusCode(resp.statusCode) != ErrorCodes.no;
+        final rowId = int.parse(resp.headers['Content-ID'] ?? '9999');
+        final row = data.rows[rowId];
         row.batchResponse = resp;
         row.eTag = resp.headers['ETag'];
         code = max(code, resp.statusCode);
+        if (isError) continue;
+        if (rowId == BoxKey.eTagHiveKey.rowId) {
+          assert(row.eTag != null);
+          await storage.fromAzureETagUploaded(row.eTag!);
+        } else
+          await storage.fromAzureRowUploaded(row.versions);
       }
       return code;
     }

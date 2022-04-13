@@ -13,7 +13,7 @@ Future<ProviderContainer> createContainer(
   bool isLogged = false,
   bool debugClear = true,
 }) async {
-  final storage = RewiseStorage(await Hive.openBox(name, path: r'd:\temp\hive'), null, '');
+  final storage = RewiseStorage(await Hive.openBox(name, path: r'd:\temp\hive'), null, DBRewiseId(learn: 'en', speak: 'cs'), 'pzika@langmaster.cz');
   if (debugClear) await storage.box.clear();
   storage.seed();
   final res = ProviderContainer(overrides: debugRewiseStorageOverrides(storage));
@@ -28,6 +28,10 @@ void main() {
     test('basic', () async {
       final container = await createContainer('user1');
       final db = container.read(rewiseStorageProvider);
+      expect(db.box.length, 4); // without aTag first row
+      db.debugFromAzureAllUploaded(db.toAzureUpload());
+      expect(db.box.length, 5); // with aTag first row
+
       await db.facts.addItems([
         dom.Fact()..nextInterval = 1,
         dom.Fact()..nextInterval = 2,
@@ -48,7 +52,7 @@ void main() {
       // =====================
       await db.debugReopen();
 
-      db.fromAzureUpload(azureUpload!.debugAllRowVersions());
+      db.debugFromAzureAllUploaded(azureUpload);
       expect(db.box.length, dblen1);
 
       final upload2 = db.toAzureUpload();
@@ -84,38 +88,39 @@ void main() {
 
       // after initialization
       await db.debugReopen();
-      final its01 = db.box.values.cast<BoxItem>().toList();
+      final its01 = db.box.values.whereType<BoxItem>().toList();
       final keys01 = its01.map((d) => d.key).join(',');
-      expect(its01.length, 6);
-      final def01 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
-      expect(def01.length, 6);
+      expect(its01.length, 4); // without eTagRow
+      final def01 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
+      expect(def01.length, 4);
 
       // save to azure
-      db.fromAzureUpload(db.toAzureUpload()!.debugAllRowVersions());
+      db.debugFromAzureAllUploaded(db.toAzureUpload());
+
       // after save to azure
       await db.debugReopen();
       final values = db.box.values.toList();
-      final its0 = db.box.values.cast<BoxItem>().toList();
+      final its0 = db.box.values.whereType<BoxItem>().toList();
       final keys0 = its0.map((d) => d.key).join(',');
-      expect(its0.length, 6);
-      final def0 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
+      expect(its0.length, 4);
+      final def0 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
       expect(def0.length, 0);
 
       // addDaylies
       db.daylies.addDaylies(Day.now, range(0, 2).map((e) => dom.Daily()));
       await db.debugReopen();
-      final def1 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
+      final def1 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
       final d1 = db.debugDump();
       expect(def1.length, 4);
 
-      db.fromAzureUpload(db.toAzureUpload()!.debugAllRowVersions());
+      db.debugFromAzureAllUploaded(db.toAzureUpload());
       final d11 = db.debugDump();
       await db.debugReopen();
-      expect(db.box.values.cast<BoxItem>().where((f) => f.isDefered).length, 0);
+      expect(db.box.values.whereType<BoxItem>().where((f) => f.isDefered).length, 0);
 
       db.daylies.addDaylies(Day.now + 1, range(0, 510).map((e) => dom.Daily()));
       await db.debugReopen();
-      final def2 = db.box.values.cast<BoxItem>().where((f) => f.isDefered).toList();
+      final def2 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
       final d2 = db.debugDump(); // 512 new & defered
       expect(db.debugDeletedAndDefered(), 'deleted=0, defered=512');
       expect(def2.length, 512);
@@ -123,13 +128,13 @@ void main() {
       final toAzure = db.toAzureUpload();
       db.daylies.addDaylies(Day.now + 1, range(0, 10).map((e) => dom.Daily()));
       expect(db.debugDeletedAndDefered(), 'deleted=500, defered=512');
-      db.fromAzureUpload(toAzure!.debugAllRowVersions());
+      db.debugFromAzureAllUploaded(toAzure);
       expect(db.debugDeletedAndDefered(), 'deleted=500, defered=512'); // no statistics change, only 12 items are modified
       final d5 = db.debugDump();
 
       // save to azure
       final toAzure2 = db.toAzureUpload(); // 1 row is "put", 2 rows are "delete"
-      db.fromAzureUpload(toAzure2!.debugAllRowVersions());
+      db.debugFromAzureAllUploaded(toAzure2);
       expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
 
       return;
@@ -142,6 +147,12 @@ void main() {
 
       final container2 = await createContainer('user3', debugClear: false);
       final db2 = container2.read(rewiseStorageProvider);
+      return;
+    });
+
+    test('with eTag', () async {
+      final container = await createContainer('user3');
+      final db = container.read(rewiseStorageProvider);
       return;
     });
   });

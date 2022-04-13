@@ -80,7 +80,7 @@ class Azure extends Sender {
   }
 
   Future<String?> writeBytesRequest(List<int>? bytes, String method,
-      {String? eTag, SendPar? sendPar, String? uriAppend, void finishHttpRequest(AzureRequest req)?, CancelToken? token}) async {
+      {String? eTag, SendPar? sendPar, String? uriAppend, void finishHttpRequest(AzureRequest req)?, ICancelToken? token}) async {
     final String uri = account.uriConfig[0] + (uriAppend ?? '');
     // Web request
     final request = AzureRequest(method, Uri.parse(uri));
@@ -111,7 +111,7 @@ class Azure extends Sender {
   static final nextPartitionPar = msContinuation + nextPartitionName.toLowerCase();
   static final nextRowPar = msContinuation + nextRowName.toLowerCase();
 
-  Future<List<dynamic>> queryLow<T>(Query? query, {SendPar? sendPar, CancelToken? token}) async {
+  Future<List<dynamic>> queryLow<T>(Query? query, {SendPar? sendPar, ICancelToken? token}) async {
     final request = queryRequest(query: query);
     var nextPartition = '';
     var nextRow = '';

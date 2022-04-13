@@ -12,7 +12,8 @@ class Key {
 }
 
 class BatchRow {
-  BatchRow({required this.data, required this.method});
+  BatchRow({required this.rowId, required this.data, required this.method});
+  final int rowId;
   final Map<String, dynamic> data;
   String? eTag;
   final BatchMethod method;
@@ -27,15 +28,75 @@ class AzureDataUpload {
   AzureDataUpload({required this.rows});
   final List<BatchRow> rows;
   // String? newETag;
-  Map<int, int> debugAllRowVersions() => Map<int, int>.fromEntries(rows.map((r) => r.versions.entries).expand((e) => e));
+  // Map<int, int> debugAllRowVersions() => Map<int, int>.fromEntries(rows.map((r) => r.versions.entries).expand((e) => e));
 }
 
 abstract class IStorage {
-  AzureDataUpload? toAzureUpload([bool alowEmptyData = false]);
-  Future fromAzureUpload(Map<int, int> versions);
+  AzureDataUpload? toAzureUpload();
+  Future fromAzureRowUploaded(Map<int, int> versions);
+  Future fromAzureETagUploaded(String eTag);
 }
 
 typedef AzureDataDownload = Map<String, Map<String, dynamic>>;
+
+// ***************************************
+// BOX KEY
+// ***************************************
+
+class BoxKey {
+  const BoxKey(this.boxKey);
+  const BoxKey.idx(int rowId, int propId)
+      : assert(propId <= maxPropId),
+        boxKey = (rowId << 8) + propId;
+  factory BoxKey.azure(String rowId, String propId) => BoxKey.idx(_hex2Byte(rowId), _hex2Byte(propId));
+
+  final int boxKey;
+  int get rowId => boxKey >> 8;
+  int get propId => boxKey & 0xff;
+
+  BoxKey next() => propId < maxPropId ? BoxKey(boxKey + 1) : BoxKey.idx(rowId + 1, 0);
+
+  //-------- statics
+
+  static int nextKey(int key) {
+    final rowId = key >> 8;
+    final propId = key & 0xff;
+    return propId < maxPropId ? key + 1 : (rowId + 1) << 8;
+  }
+
+  static String getRowKey(int key) => byte2Hex(key >> 8);
+  static String getRowPropId(int key) => byte2Hex(key & 0xff);
+  static int getBoxKey(int rowId, int propId) => (rowId << 8) + propId;
+  static final eTagHiveKey = BoxKey.idx(0, 0);
+  static final eTagKeyFakeVersion = 0xffffff;
+
+  //-------- RowData
+  String get rowKey => byte2Hex(rowId);
+  String get rowPropId => byte2Hex(propId);
+
+  static const maxPropId = 252;
+  static const hexMap = <String>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'];
+  static String byte2Hex(int b) => hexMap[(b >> 8) & 0xf] + hexMap[b & 0xf];
+  static int _hex2Byte(String hex) => (byteMap[hex[0]]! << 8) + byteMap[hex[1]]!;
+  static const byteMap = <String, int>{
+    'a': 0,
+    'b': 1,
+    'c': 2,
+    'd': 3,
+    'e': 4,
+    'f': 5,
+    'g': 6,
+    'h': 7,
+    'i': 8,
+    'j': 9,
+    'k': 10,
+    'l': 11,
+    'm': 12,
+    'n': 13,
+    'o': 14,
+    'p': 15
+  };
+}
 
 enum BatchMethod {
   merge,

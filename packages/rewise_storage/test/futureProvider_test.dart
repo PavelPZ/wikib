@@ -1,33 +1,6 @@
 import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
 
-class RewiseStart {
-  RewiseStart(this.email, this.speak, this.learn);
-  final String email;
-  final String learn;
-  final String speak;
-  String get primaryKey => '';
-}
-
-class Storage {
-  Storage(this.primaryKey);
-  final String primaryKey;
-  Future init() => Future.delayed(Duration(milliseconds: 500));
-  Future dispose() => Future.delayed(Duration(milliseconds: 500));
-}
-
-final rewiseStartProvider = StateProvider<RewiseStart?>((ref) {
-  return RewiseStart('', '', '');
-});
-
-final storageProvider = FutureProvider<Storage?>((ref) async {
-  final rs = ref.watch(rewiseStartProvider);
-  if (rs == null) return null;
-  final res = Storage(rs.primaryKey);
-  await res.init();
-  return res;
-});
-
 void main() {
   test('basic', () async {
     final container = ProviderContainer();
@@ -51,5 +24,22 @@ void main() {
   });
 }
 
+int count = 1;
 final stateProvider = StateProvider<int>((_) => 0);
-final futureProvider = FutureProvider((ref) => Future.delayed(Duration(milliseconds: ref.watch(stateProvider))));
+
+final oldProvider = StateProvider<Storage?>((_) => null);
+
+final futureProvider = FutureProvider<Storage>((ref) async {
+  final old = ref.read(oldProvider.notifier);
+  await Future.delayed(Duration(milliseconds: ref.watch(stateProvider)));
+  final res = Storage(count++);
+  print('Old: ${old.state?.value.toString()}');
+  print('Create: ${res.value.toString()}');
+  old.state = res;
+  return res;
+});
+
+class Storage {
+  Storage(this.value);
+  final int value;
+}

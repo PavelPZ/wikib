@@ -1,9 +1,0 @@
-// TODO(pz): token
-
-{CancelToken? token}
-
-, CancelToken? token
-
-if (token?.canceled == true) return Future.value();
-
-token: token
