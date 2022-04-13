@@ -8,9 +8,6 @@ class TableStorage extends Azure {
   Future<AzureDataDownload> loadAll() => Future.value(AzureDataDownload());
 
   Future saveToCloud(IStorage storage, {ICancelToken? token}) async {
-    if (_batchIsRunning) return;
-    _batchIsRunning = true;
-
     List<AzureRequest>? getRequests(IStorage storage) {
       final data = storage.toAzureUpload();
       if (data == null) return null;
@@ -25,9 +22,8 @@ class TableStorage extends Azure {
         final batch = BatchStorage(request, account.batchInnerUri!);
 
         while (nextIndex < data.rows.length) {
-          final row = data.rows[nextIndex];
+          final row = data.rows[nextIndex]..batchDataId = nextIndex;
           if (!batch.appendData(row)) break;
-          row.batchDataId = nextIndex;
           nextIndex++;
         }
 
@@ -43,125 +39,50 @@ class TableStorage extends Azure {
       for (final resp in rowResponses) {
         final isError = ErrorCodes.computeStatusCode(resp.statusCode) != ErrorCodes.no;
         final rowId = int.parse(resp.headers['Content-ID'] ?? '9999');
-        final row = data.rows[rowId];
-        row.batchResponse = resp;
-        row.eTag = resp.headers['ETag'];
+        if (rowId != 9999) {
+          final row = data.rows[rowId];
+          row.batchResponse = resp;
+          row.eTag = resp.headers['ETag'];
+          if (!isError) {
+            if (row.eTag != null) {
+              // not DELETE
+              if (rowId == BoxKey.eTagHiveKey.rowId) {
+                await storage.fromAzureETagUploaded(row.eTag!);
+              } else
+                await storage.fromAzureRowUploaded(row.versions);
+            }
+          }
+        }
         code = max(code, resp.statusCode);
-        if (isError) continue;
-        if (rowId == BoxKey.eTagHiveKey.rowId) {
-          assert(row.eTag != null);
-          await storage.fromAzureETagUploaded(row.eTag!);
-        } else
-          await storage.fromAzureRowUploaded(row.versions);
       }
       return code;
     }
 
-    try {
-      await Future.microtask(() async {
-        final sendRes = await send<void>(
-          getRequests: () => getRequests(storage),
-          token: token,
-          finalizeResponse: (resp) async {
-            // reponse OK, parse response string:
-            final respStr = await resp.response!.stream.bytesToString();
-            final AzureDataUpload data = resp.myRequest!.finalizeData;
-            resp.error = ErrorCodes.computeStatusCode(await finishBatchRows(respStr, data));
-            // await box
-            if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
-            return ContinueResult.doBreak;
-          },
-        );
-        if (token?.canceled == true) return null;
-        if (sendRes!.error >= 400) throw sendRes;
-      });
-      if (token?.canceled == true) return null;
-    } finally {
-      _batchIsRunning = false;
-    }
+    final sendRes = await send<void>(
+      getRequests: () => getRequests(storage),
+      token: token,
+      finalizeResponse: (resp) async {
+        // reponse OK, parse response string:
+        final respStr = await resp.response!.stream.bytesToString();
+        final AzureDataUpload data = resp.myRequest!.finalizeData;
+        resp.error = ErrorCodes.computeStatusCode(await finishBatchRows(respStr, data));
+        // await box
+        if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
+        return ContinueResult.doBreak;
+      },
+    );
+    if (token?.canceled == true) return null;
+    if (sendRes != null && sendRes.error >= 400) throw sendRes;
   }
 
-  bool _batchIsRunning = false;
-
-  // Future _sendRequest(AzureRequest request) async {
-  //   int finishBatchRows(String res, AzureDataUpload data) {
-  //     final rowResponses = List<ResponsePart>.from(ResponsePart.parseResponse(res));
-  //     var code = 0;
-  //     for (final resp in rowResponses) {
-  //       // final row = data.rows[int.parse(resp.headers['Content-ID'] ?? '9999')];
-  //       // row.batchResponse = resp;
-  //       // row.eTag = resp.headers['ETag'];
-  //       code = max(code, resp.statusCode);
-  //     }
-  //     return code;
-  //   }
-
-  //   try {
-  //     final sendRes = await send<void>(
-  //       request: request,
-  //       finalizeResponse: (resp) async {
-  //         if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
-  //         // reponse OK, parse response string:
-  //         final respStr = await resp.response!.stream.bytesToString();
-  //         final AzureDataUpload data = resp.myRequest!.finalizeData;
-  //         resp.error = ErrorCodes.computeStatusCode(finishBatchRows(respStr, data));
-  //         if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
-  //         return ContinueResult.doBreak;
-  //       },
-  //     );
-  //     if (sendRes!.error >= 400) throw sendRes;
-  //   } finally {
-  //     _batchIsRunning = false;
-  //   }
-  // }
-
-  // Future _batch(IStorage storage, {required SendPar sendPar}) async {
-  //   AzureRequest? getBatchRequest(IStorage storage) {
-  //     final data = storage.toAzureUpload();
-  //     if (data == null) return null;
-  //     final request = AzureRequest('POST', Uri.parse(account.uriConfig[1]), finalizeData: data);
-  //     sign(request.headers, isBatch: true);
-
-  //     final batch = BatchStorage(request, account.batchInnerUri!);
-  //     for (var i = 0; i < data.rows.length; i++) if (!batch.appendData(data.rows[i]..batchDataId = i)) break;
-
-  //     request.bodyBytes = batch.getBody();
-  //     return request;
-  //   }
-
-  //   int finishBatchRows(String res, AzureDataUpload data) {
-  //     final rowResponses = List<ResponsePart>.from(ResponsePart.parseResponse(res));
-  //     var code = 0;
-  //     for (final resp in rowResponses) {
-  //       final row = data.rows[int.parse(resp.headers['Content-ID'] ?? '9999')];
-  //       row.batchResponse = resp;
-  //       row.eTag = resp.headers['ETag'];
-  //       code = max(code, resp.statusCode);
-  //     }
-  //     return code;
-  //   }
-
-  //   try {
-  //     final sendRes = await send<void>(
-  //       getRequest: () => getBatchRequest(storage),
-  //       sendPar: sendPar,
-  //       finalizeResponse: (resp) async {
-  //         if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
-  //         // reponse OK, parse response string:
-  //         final respStr = await resp.response!.stream.bytesToString();
-  //         final AzureDataUpload data = resp.myRequest!.finalizeData;
-  //         resp.error = ErrorCodes.computeStatusCode(finishBatchRows(respStr, data));
-  //         if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
-  //         //resp.result = respStr;
-  //         return ContinueResult.doContinue;
-  //       },
-  //     );
-  //     if (sendRes!.error >= 400) throw sendRes;
-  //   } finally {
-  //     _batchIsRunning = false;
-  //   }
-  // }
-
+  Future<List<String>?> getAllRows(String partitionKey, {ICancelToken? token}) async {
+    final query = Query.partition(partitionKey);
+    query.select = <String>['RowKey'];
+    final res = await queryLow(query);
+    if (res.isEmpty) return null;
+    final data = res.map((m) => m['RowKey'] as String).toList();
+    return data;
+  }
 }
 
 const maxAzureRequestLen = 4000000;

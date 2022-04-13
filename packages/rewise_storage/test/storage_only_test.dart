@@ -4,21 +4,22 @@ import 'package:azure_storage/azure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:protobuf_for_dart/algorithm.dart' as dom;
 import 'package:rewise_storage/rewise_storage.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
 import 'package:utils/utils.dart';
 
-Future<ProviderContainer> createContainer(
-  String name, {
-  bool isLogged = false,
+Future<RewiseStorage> createDB(
+  String email, {
   bool debugClear = true,
 }) async {
-  final storage = RewiseStorage(await Hive.openBox(name, path: r'd:\temp\hive'), null, DBRewiseId(learn: 'en', speak: 'cs'), 'pzika@langmaster.cz');
-  if (debugClear) await storage.box.clear();
-  storage.seed();
-  final res = ProviderContainer(overrides: debugRewiseStorageOverrides(storage));
-  addTearDown(res.dispose);
-  return res;
+  final rewiseId = DBRewiseId(learn: 'en', speak: 'cs');
+  final storage = RewiseStorage(
+    await Hive.openBox(rewiseId.partitionKey(email), path: r'd:\temp\hive'),
+    null,
+    rewiseId,
+    email,
+  );
+  if (debugClear) await storage.debugClear();
+  return storage;
 }
 
 void main() {
@@ -26,8 +27,7 @@ void main() {
   hiveRewiseStorageAdapters();
   group('rewise_storage', () {
     test('basic', () async {
-      final container = await createContainer('user1');
-      final db = container.read(rewiseStorageProvider);
+      final db = await createDB('email@1.en');
       expect(db.box.length, 4); // without aTag first row
       db.debugFromAzureAllUploaded(db.toAzureUpload());
       expect(db.box.length, 5); // with aTag first row
@@ -83,8 +83,7 @@ void main() {
     });
     test('daylies', () async {
       const partitionKey = 'pk2';
-      final container = await createContainer('user2');
-      final db = container.read(rewiseStorageProvider);
+      final db = await createDB('email@2.en');
 
       // after initialization
       await db.debugReopen();
@@ -140,19 +139,14 @@ void main() {
       return;
     });
     test('bootstrap', () async {
-      final container = await createContainer('user3');
-      final db = container.read(rewiseStorageProvider);
-      container.dispose();
-      await db.debugReopen();
+      final db = await createDB('email@3.en');
+      db.debugFromAzureAllUploaded(db.toAzureUpload());
+      expect(db.box.length, 5); // with aTag first row
+      await db.close();
 
-      final container2 = await createContainer('user3', debugClear: false);
-      final db2 = container2.read(rewiseStorageProvider);
-      return;
-    });
-
-    test('with eTag', () async {
-      final container = await createContainer('user3');
-      final db = container.read(rewiseStorageProvider);
+      final db2 = await createDB('user3', debugClear: false);
+      expect(db2.box.length, 5); // with aTag first row
+      await db2.close();
       return;
     });
   });

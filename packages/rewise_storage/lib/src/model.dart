@@ -40,8 +40,10 @@ typedef TRows = Map<String, Map<String, dynamic>>;
 
 class RewiseStorage extends Storage<DBRewiseId> {
   // TODO(pz): TableStorage? azureTable
-  RewiseStorage(Box storage, TableStorage? azureTable, DBRewiseId dbId, String email) : super(storage, azureTable, dbId, email) {
-    initializeGroups([
+  RewiseStorage(Box storage, TableStorage? azureTable, DBRewiseId dbId, String email) : super(storage, azureTable, dbId, email);
+
+  Future<RewiseStorage> initialize({bool debugClear = false}) async {
+    await initializeGroups([
       //systemRow,
       row1 = SinglesGroup(this, row: 1, singles: [
         config = PlaceConfig(this, rowId: 1, propId: 0),
@@ -68,7 +70,8 @@ class RewiseStorage extends Storage<DBRewiseId> {
         uniqueCounter: PlaceInt(this, rowId: 8, propId: 0),
         itemsPlace: PlaceFact(this, rowId: 8, propId: 1),
       ),
-    ]);
+    ], debugClear: debugClear);
+    return this;
   }
 
   late SinglesGroup row1;

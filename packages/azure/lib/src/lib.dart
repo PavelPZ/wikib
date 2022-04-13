@@ -48,7 +48,7 @@ class BoxKey {
   const BoxKey.idx(int rowId, int propId)
       : assert(propId <= maxPropId),
         boxKey = (rowId << 8) + propId;
-  factory BoxKey.azure(String rowId, String propId) => BoxKey.idx(_hex2Byte(rowId), _hex2Byte(propId));
+  factory BoxKey.azure(String rowId, String propId) => BoxKey.idx(hex2Byte(rowId), hex2Byte(propId));
 
   final int boxKey;
   int get rowId => boxKey >> 8;
@@ -77,7 +77,7 @@ class BoxKey {
   static const maxPropId = 252;
   static const hexMap = <String>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'];
   static String byte2Hex(int b) => hexMap[(b >> 8) & 0xf] + hexMap[b & 0xf];
-  static int _hex2Byte(String hex) => (byteMap[hex[0]]! << 8) + byteMap[hex[1]]!;
+  static int hex2Byte(String hex) => (byteMap[hex[0]]! << 8) + byteMap[hex[1]]!;
   static const byteMap = <String, int>{
     'a': 0,
     'b': 1,

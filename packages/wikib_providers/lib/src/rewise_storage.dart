@@ -7,7 +7,7 @@ import 'wikb_providers.dart';
 
 // rewise hive box
 final rewiseHiveBoxProvider = FutureProvider<Box>((ref) =>
-    Hive.openBox(ref.watch(rewiseIdProvider).partition(ref.watch(emailProvider)), path: ref.watch(debugIsTestProvider) ? r'd:\temp\hive' : null));
+    Hive.openBox(ref.watch(rewiseIdProvider).partitionKey(ref.watch(emailProvider)), path: ref.watch(debugIsTestProvider) ? r'd:\temp\hive' : null));
 
 final rewiseStorageProvider = FutureProvider<RewiseStorage>((ref) async {
   final old = ref.read(_rewiseStorageOldProvider.notifier);
