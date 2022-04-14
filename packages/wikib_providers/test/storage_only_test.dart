@@ -24,7 +24,7 @@ Future<RewiseStorage> createDB(
     cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
     cont.read(debugHivePath.notifier).state = r'd:\temp\hive';
     if (withoutAzure) cont.read(azureRewiseUsersTableProvider.notifier).state = null;
-    storage = await cont.read((debugClear ? rewiseProviderDebugClear : rewiseProvider).storage.future);
+    storage = (await cont.read((debugClear ? rewiseProviderDebugClear : rewiseProvider).storage.future))!;
   } else {
     final rewiseId = DBRewiseId(learn: 'en', speak: 'cs');
     storage = RewiseStorage(
@@ -33,23 +33,35 @@ Future<RewiseStorage> createDB(
       rewiseId,
       email,
     );
+    await storage.initialize(debugClear);
   }
-  await storage.initialize(debugClear);
   return storage;
 }
 
 void main() {
   Hive.init('');
   hiveRewiseStorageAdapters();
+  dpIgnore = false; // DEBUG prints
   group('rewise_storage', () {
     test('basic', () async {
+      print('=========== 0 ================');
       final db = await createDB('email@10.en');
+      await db.flush();
+      print('=========== 1 ================');
+      final db2 = await createDB('email@10.en', debugClear: false);
+      await db2.flush();
+      print('=========== 2 ================');
+      expect(db2.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, 0);
+      return;
     });
     test('facts', () async {
       final db = await createDB('email@1.en');
-      expect(db.box.length, 4); // without aTag first row
+      print(db.box.values);
+      expect(db.box.length, 5);
       db.debugFromAzureAllUploaded(db.toAzureUpload());
-      expect(db.box.length, 5); // with aTag first row
+      expect(db.box.length, 5);
+
+      await db.flush();
 
       await db.facts.addItems([
         dom.Fact()..nextInterval = 1,
@@ -98,6 +110,8 @@ void main() {
       db.facts.clear(startItemsIncluded: true);
       expect(db.facts.getItems().length, 0);
 
+      await db.close();
+
       return;
     });
     test('daylies', () async {
@@ -110,7 +124,7 @@ void main() {
       final keys01 = its01.map((d) => d.key).join(',');
       expect(its01.length, 4); // without eTagRow
       final def01 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
-      expect(def01.length, 4);
+      expect(def01.length, 0);
 
       // save to azure
       db.debugFromAzureAllUploaded(db.toAzureUpload());
@@ -155,6 +169,8 @@ void main() {
       db.debugFromAzureAllUploaded(toAzure2);
       expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
 
+      await db.flush();
+
       return;
     });
     test('bootstrap', () async {
@@ -163,7 +179,8 @@ void main() {
       expect(db.box.length, 5); // with aTag first row
       await db.close();
 
-      final db2 = await createDB('user3', debugClear: false);
+      final db2 = await createDB('email@3.en', debugClear: false);
+      await db2.flush();
       expect(db2.box.length, 5); // with aTag first row
       await db2.close();
       return;

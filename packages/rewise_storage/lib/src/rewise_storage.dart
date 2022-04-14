@@ -97,10 +97,9 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   }
 
   @override
-  Future seed() {
+  void seed() {
     super.seed();
     if (!actDay.exists()) actDay.saveValue(Day.now);
-    return storage.box.flush();
   }
 
   int get actDayValue => actDay.getValueOrMsg();

@@ -35,6 +35,8 @@ class TableStorage extends Azure {
 
     Future<int> finishBatchRows(String res, AzureDataUpload data) async {
       final rowResponses = List<ResponsePart>.from(ResponsePart.parseResponse(res));
+      assert(dpAzureMsg(
+          'TableStorage.finishBatchRows: ${rowResponses.map((e) => '${int.parse(e.headers['Content-ID'] ?? '9999')}-${e.statusCode}').join(',')}')());
       var code = 0;
       for (final resp in rowResponses) {
         final isError = ErrorCodes.computeStatusCode(resp.statusCode) != ErrorCodes.no;
@@ -79,8 +81,9 @@ class TableStorage extends Azure {
     final query = Query.partition(partitionKey);
     query.select = <String>['RowKey'];
     final res = await queryLow(query);
-    if (res.isEmpty) return null;
+    if (res == null || res.isEmpty) return null;
     final data = res.map((m) => m['RowKey'] as String).toList();
+    assert(dpAzureMsg('TableStorage.getAllRows: ${data.join(',')}')());
     return data;
   }
 }
@@ -112,7 +115,7 @@ class BatchStorage {
     final method = data.method;
     final methodName = batchMethodName[method];
     subSb.writeln('$methodName $_innerBatchUri${batchKeyUrlPart(data)} HTTP/1.1');
-    if (data.eTag != null) subSb.writeln('If-Match: ${data.eTag}');
+    if (method == BatchMethod.delete) subSb.writeln('If-Match: ${data.eTag ?? '*'}');
     subSb.writeln('Content-ID: ${data.batchDataId}');
     subSb.writeln('Accept: application/json;odata=nometadata');
     subSb.writeln('Content-Type: application/json');

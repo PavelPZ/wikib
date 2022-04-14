@@ -13,7 +13,7 @@ class TableBatch extends Azure {
     query ??= Query.partition(partitionKey);
     query.select = <String>['RowKey'];
     final res = await queryLow(query);
-    if (res.isEmpty) return null;
+    if (res == null || res.isEmpty) return null;
     final data = List<RowData>.from(res.map((m) => RowData.fromMap({'RowKey': m['RowKey']})..eTag = '*'));
     return runBatch(partitionKey, data, BatchMethod.delete, sendPar);
   }

@@ -50,8 +50,8 @@ class ErrorCodes {
   static const notFound = 404; // EntityNotFound, TableNotFound
   static const conflict = 409; // EntityAlreadyExists, TableAlreadyExists, TableBeingDeleted
   static const eTagConflict = 412; // Precondition Failed
+  static const otherHttpSend = 600; // other statusCode >= 400, other than 404, 409, 412
   static const bussy = 500; // 500, 503, 504
-  static const otherHttpSend = 600; // other statusCode >= 400
 
   static const noInternet = 601;
   static const exception1 = 602;
@@ -71,7 +71,7 @@ class ErrorCodes {
       case 504:
         return bussy;
       default:
-        return statusCode < 400 ? 0 : otherHttpSend;
+        return statusCode < 400 ? 0 : throw (otherHttpSend);
     }
   }
 
@@ -109,7 +109,7 @@ class SendPar {
 abstract class Sender {
   Future? _running;
   Completer? _runningCompleter;
-  Future get running => _running ?? Future.value();
+  Future flush() => _running ?? Future.value();
 
   Future<AzureResponse<T>?> send<T>({
     AzureRequest? request,

@@ -6,7 +6,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:utils/utils.dart';
 
 final emailProvider = StateProvider<String>((_) => 'pzika@langmaster.cz');
-final rewiseIdProvider = StateProvider<DBRewiseId>((_) => DBRewiseId(speak: 'cs', learn: 'en'));
+final rewiseIdProvider = StateProvider<DBRewiseId?>((_) => null); // null => close RewiseStorage
 final debugHivePath = StateProvider<String?>((_) => null); // e.g. r'd:\temp\hive'
 final debugIsAzureEmulator = StateProvider<bool>((_) => false);
 
@@ -22,20 +22,30 @@ final azureRewiseUsersTableProvider = StateProvider<TableStorage?>((ref) => Tabl
 
 class StorageProviders<TStorage extends Storage> {
   StorageProviders(
-    AlwaysAliveProviderBase<DBRewiseId> dbIdProvider,
+    AlwaysAliveProviderBase<DBRewiseId?> dbIdProvider,
     TStorage create(Box storage, TableStorage? azureTable, DBRewiseId dbId, String email),
     bool debugClear,
-  ) : _hive = FutureProvider<Box>((ref) => Hive.openBox(
-              ref.watch(dbIdProvider).partitionKey(ref.watch(emailProvider)),
+  ) {
+    _hive = FutureProvider<Box?>((ref) {
+      final dbId = ref.watch(dbIdProvider);
+      return dbId == null
+          ? null
+          : Hive.openBox(
+              ref.watch(dbIdProvider)!.partitionKey(ref.watch(emailProvider)),
               path: ref.watch(debugHivePath),
-            )) {
-    storage = FutureProvider<TStorage>((ref) async {
+            );
+    });
+    storage = FutureProvider<TStorage?>((ref) async {
       final old = ref.read(_old.notifier);
       if (old.state != null) await old.state!.close();
+      final dbId = ref.watch(dbIdProvider);
+      if (dbId == null) return null;
+      final box = await ref.watch(_hive.future);
+      assert(box != null);
       final nw = create(
-        await ref.watch(_hive.future),
+        box!,
         ref.watch(azureRewiseUsersTableProvider),
-        ref.watch(dbIdProvider),
+        dbId,
         ref.watch(emailProvider),
       );
       await nw.initialize(debugClear);
@@ -43,9 +53,9 @@ class StorageProviders<TStorage extends Storage> {
       return nw;
     });
   }
-  final FutureProvider<Box> _hive;
+  late FutureProvider<Box?> _hive;
   final _old = StateProvider<TStorage?>((_) => null);
-  late FutureProvider<TStorage> storage;
+  late FutureProvider<TStorage?> storage;
 }
 
 final rewiseProvider = StorageProviders<RewiseStorage>(rewiseIdProvider, RewiseStorage.new, false);

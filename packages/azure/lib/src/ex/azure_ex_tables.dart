@@ -5,7 +5,7 @@ class Tables extends Azure {
 
   Future<List<String>> query(Query? query) async {
     final res = await queryLow(query);
-    return List<String>.from(res.map((map) => map['TableName']));
+    return res == null ? <String>[] : List<String>.from(res.map((map) => map['TableName']));
   }
 
   // https://docs.microsoft.com/en-us/rest/api/storageservices/delete-table

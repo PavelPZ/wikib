@@ -2,6 +2,7 @@ import 'dart:convert';
 
 // import 'package:http/http.dart';
 import 'package:tuple/tuple.dart';
+import 'package:utils/utils.dart';
 
 class Key {
   Key(String? partition, String? row)
@@ -65,7 +66,7 @@ class BoxKey {
   }
 
   static String getRowKey(int key) => byte2Hex(key >> 8);
-  static String getRowPropId(int key) => byte2Hex(key & 0xff);
+  static String getPropKey(int key) => byte2Hex(key & 0xff);
   static int getBoxKey(int rowId, int propId) => (rowId << 8) + propId;
   static final eTagHiveKey = BoxKey.idx(0, 0);
   static final eTagKeyFakeVersion = 0xffffff;
@@ -225,3 +226,6 @@ class Encoder {
     return sb.toString();
   }
 }
+
+bool Function() dpAzureMsg(String? msg) => dpMsg(msg, debugAzure);
+const debugAzure = true;

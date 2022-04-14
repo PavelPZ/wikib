@@ -111,7 +111,7 @@ class Azure extends Sender {
   static final nextPartitionPar = msContinuation + nextPartitionName.toLowerCase();
   static final nextRowPar = msContinuation + nextRowName.toLowerCase();
 
-  Future<List<dynamic>> queryLow<T>(Query? query, {SendPar? sendPar, ICancelToken? token}) async {
+  Future<List<dynamic>?> queryLow<T>(Query? query, {SendPar? sendPar, ICancelToken? token}) async {
     final request = queryRequest(query: query);
     var nextPartition = '';
     var nextRow = '';
@@ -142,7 +142,7 @@ class Azure extends Sender {
         });
     if (token?.canceled == true) return <dynamic>[];
 
-    return resp!.result!;
+    return resp?.result;
   }
 
   // entity x table query

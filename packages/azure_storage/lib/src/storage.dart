@@ -35,13 +35,6 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
       }
   }
 
-  Future initialize([bool debugClear = false]) async {
-    if (debugClear)
-      await this.debugClear();
-    else
-      _seed();
-  }
-
   final DBId dbId;
   final String email;
   Box box; // due to debugReopen
@@ -51,16 +44,43 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
 
   String get partitionKey => dbId.partitionKey(email);
 
+  Future initialize([bool debugClear = false]) async {
+    if (debugClear) {
+      assert(dpAzureMsg('Storage.initialize: debugClear START')());
+      if (azureTable != null) await azureTable!.flush();
+      await toAzureDeleteAll();
+      await box.clear();
+      assert(dpAzureMsg('Storage.initialize: debugClear END')());
+    } else {
+      if (azureTable != null) {
+        assert(dpAzureMsg('Storage.initialize: saveToCloud START')());
+        await azureTable!.saveToCloud(this);
+        assert(dpAzureMsg('Storage.initialize: saveToCloud END')());
+      }
+    }
+    assert(dpAzureMsg('Storage.initialize: seed RUN')());
+    _seed();
+    await flush();
+  }
+
   Future close() async {
     await cancel();
-    await box.flush();
     await box.close();
+  }
+
+  Future flush() async {
+    if (azureTable != null) await azureTable!.flush();
+    await box.flush();
   }
 
   Future cancel() async {
     _canceled = true;
-    if (azureTable != null) await azureTable!.running;
-    _canceled = false;
+    try {
+      if (azureTable != null) await azureTable!.flush();
+      await box.flush();
+    } finally {
+      _canceled = false;
+    }
   }
 
   bool get canceled => _canceled;
@@ -68,14 +88,8 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
 
   void _seed() {
     if (box.length > 0) return;
+    box.put(BoxKey.eTagHiveKey.boxKey, '');
     allGroups.forEach((e) => e.seed());
-  }
-
-  Future debugClear() async {
-    if (azureTable != null) await azureTable!.running;
-    await box.clear();
-    await toAzureDeleteAll();
-    _seed();
   }
 
   AzureDataUpload? toAzureUpload() {
@@ -102,6 +116,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
       }
       for (var item in r.value) row.versions[item.key] = item.version;
     }
+    assert(dpAzureMsg('Storage.toAzureUpload: ${rows.map((e) => '${e.rowId.toString()}-${e.method.toString()}').join(',')}')());
     return AzureDataUpload(rows: rows);
   }
 
@@ -195,9 +210,11 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     final rowKeys = await azureTable!.getAllRows(partitionKey);
     if (rowKeys == null) return null;
     final rowIds = rowKeys.map((key) => BoxKey.hex2Byte(key));
-    final rows = rowIds.map((rowId) => BatchRow(rowId: rowId, data: _initAzureRowData(rowId), method: BatchMethod.delete)..eTag = '*').toList();
+    final rows = rowIds.map((rowId) => BatchRow(rowId: rowId, data: _initAzureRowData(rowId), method: BatchMethod.delete)).toList();
+    assert(dpAzureMsg('Storage.toAzureDeleteAll: ${rows.map((e) => '${e.rowId.toString()}-${e.method.toString()}').join(',')}')());
     final azureDataUpload = AzureDataUpload(rows: rows);
-    return azureTable!.saveToCloud(DeleteAllStorage(azureDataUpload));
+    await azureTable!.saveToCloud(DeleteAllStorage(azureDataUpload));
+    await azureTable!.flush();
   }
 }
 
@@ -230,10 +247,7 @@ abstract class BoxItem<T> extends HiveObject {
   @HiveField(4, defaultValue: false)
   bool isDefered = false;
 
-  String get rowKey => BoxKey.getRowKey(key);
-  String get rowPropId => BoxKey.getRowPropId(key);
-
-  void toAzureUpload(Map<String, dynamic> data) => data[rowPropId] = value;
+  void toAzureUpload(Map<String, dynamic> data) => data[BoxKey.getPropKey(key)] = value;
 }
 
 @HiveType(typeId: 1)
@@ -273,8 +287,9 @@ abstract class BoxMsg<T extends $pb.GeneratedMessage> extends BoxItem<Uint8List?
 
   @override
   void toAzureUpload(Map<String, dynamic> data) {
-    data[rowKey] = base64.encode(value!);
-    data['$rowKey@odata.type'] = 'Edm.Binary';
+    final propKey = BoxKey.getPropKey(key);
+    data[propKey] = base64.encode(value!);
+    data['$propKey@odata.type'] = 'Edm.Binary';
   }
 
   @override
@@ -452,9 +467,8 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
   }
 
   @override
-  Future seed() {
+  void seed() {
     super.seed();
     if (!uniqueCounter.exists()) uniqueCounter.saveValue(itemsPlace.boxKey - 1);
-    return storage.box.flush();
   }
 }

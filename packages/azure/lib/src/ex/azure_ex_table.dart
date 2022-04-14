@@ -7,7 +7,7 @@ class Table<T extends RowData> extends Azure {
 
   Future<List<T>> query(Query query, {SendPar? sendPar}) async {
     final res = await queryLow(query, sendPar: sendPar);
-    return List<T>.from(res.map((map) => createFromMap(map)));
+    return res == null ? <T>[] : List<T>.from(res.map((map) => createFromMap(map)));
   }
 
   final CreateFromMap createFromMap;

@@ -1,14 +1,13 @@
 import 'dart:async';
 
 Map<String, int>? _dbCounter;
-var _dpIgnore = false;
+var dpIgnore = true;
 
 void dpCounterInit([bool dpIgnore = true]) {
-  _dpIgnore = dpIgnore;
+  dpIgnore = dpIgnore;
   _dbCounter = dpIgnore ? null : <String, int>{};
 }
 
-//typedef DpCounter = bool Function(String key, [int count]);
 bool dpCounter(String key, [int? count]) {
   if (_dbCounter != null) {
     count ??= 1;
@@ -18,7 +17,7 @@ bool dpCounter(String key, [int? count]) {
 }
 
 Future<bool> dpActionDuration(Future action()) async {
-  if (_dpIgnore != true) return true;
+  if (dpIgnore != true) return true;
   final d = DateTime.now();
   await action();
   final dur = DateTime.now().difference(d);
@@ -35,7 +34,7 @@ String dbCounterDump() {
   return sb.toString();
 }
 
-bool dpMsg(String? msg) {
-  if (msg != null && _dpIgnore != true) print(msg);
-  return true;
+bool Function() dpMsg(String? msg, [bool run = false]) {
+  if (msg != null && run) print(msg);
+  return () => true;
 }
