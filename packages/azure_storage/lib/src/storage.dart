@@ -9,7 +9,7 @@ import 'package:utils/utils.dart';
 import 'package:azure/azure.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
-part 'model.g.dart';
+part 'storage.g.dart';
 
 void initStorage() {
   Hive.registerAdapter(BoxIntAdapter());
@@ -23,7 +23,7 @@ const initialETag = 'initialETag';
 // ***************************************
 
 abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
-  Storage(this.box, this.azureTable, this.dbId, this.email);
+  Storage(this.box, this.azureTable, this.dbId, this.email, this.groups) {}
 
   Future initializeGroups(List<ItemsGroup> groups, {bool debugClear = false}) async {
     allGroups = groups;
@@ -44,7 +44,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
   Box box; // due to debugReopen
   final TableStorage? azureTable;
   late Map<int, ItemsGroup> row2Group;
-  late List<ItemsGroup> allGroups;
+  final List<ItemsGroup> allGroups;
 
   String get partitionKey => dbId.partitionKey(email);
 
@@ -106,21 +106,6 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
       <String, dynamic>{'PartitionKey': Encoder.keys.encode(dbId.partitionKey(email)), 'RowKey': Encoder.keys.encode(BoxKey.byte2Hex(rowId))};
 
   Future fromAzureETagUploaded(String eTag) => box.put(BoxKey.eTagHiveKey.boxKey, eTag);
-
-  Future<AzureDataUpload?> _toAzureDeleteAll() async {
-    final rowKeys = await azureTable!.getAllRows(partitionKey);
-    if (rowKeys == null) return null;
-    final rowIds = rowKeys.map((key) => BoxKey.hex2Byte(key)).toList();
-    final rows = rowIds.map((rowId) => BatchRow(rowId: rowId, data: _initAzureRowData(rowId), method: BatchMethod.delete)..eTag = '*').toList();
-    return AzureDataUpload(rows: rows);
-  }
-
-  Future toAzureDeleteAll() async {
-    if (azureTable == null) return;
-    final data = await _toAzureDeleteAll();
-    if (data == null) return;
-    return DeleteAllStorage.deleteAll(data, azureTable!);
-  }
 
   Future fromAzureRowUploaded(Map<int, int> versions) {
     // TODO(pz): eTagPlace.getBox()!..value = newETag];
@@ -201,14 +186,23 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     });
     return 'deleted=$deleted, defered=$defered';
   }
+
+  Future toAzureDeleteAll() async {
+    if (azureTable == null) return;
+    final rowKeys = await azureTable!.getAllRows(partitionKey);
+    if (rowKeys == null) return null;
+    final rowIds = rowKeys.map((key) => BoxKey.hex2Byte(key));
+    final rows = rowIds.map((rowId) => BatchRow(rowId: rowId, data: _initAzureRowData(rowId), method: BatchMethod.delete)..eTag = '*').toList();
+    final azureDataUpload = AzureDataUpload(rows: rows);
+    return azureTable!.saveToCloud(DeleteAllStorage(azureDataUpload));
+  }
 }
 
 class DeleteAllStorage implements IStorage {
-  DeleteAllStorage._(this.data);
-  final AzureDataUpload data;
-  static Future deleteAll(AzureDataUpload data, TableStorage table) => table.saveToCloud(DeleteAllStorage._(data));
+  DeleteAllStorage(this._data);
+  final AzureDataUpload _data;
 
-  AzureDataUpload? toAzureUpload() => data;
+  AzureDataUpload? toAzureUpload() => _data;
   Future fromAzureRowUploaded(Map<int, int> versions) => Future.value();
   Future fromAzureETagUploaded(String eTag) => Future.value();
 }

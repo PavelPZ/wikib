@@ -9,10 +9,13 @@ environment:
 
 dependencies:
   azure:
+    path: ../azure
   hive:
   rewise_storage:
     path: ../rewise_storage
   riverpod:
+  azure_storage:
+    path: ../azure_storage
   utils:
     path: ../utils 
 

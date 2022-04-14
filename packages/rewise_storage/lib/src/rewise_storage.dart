@@ -10,7 +10,7 @@ import 'package:protobuf_for_dart/algorithm.dart' as dom;
 import 'package:utils/utils.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
-part 'model.g.dart';
+part 'rewise_storage.g.dart';
 
 final rewiseStorageProvider = Provider<RewiseStorage>((_) => throw UnimplementedError());
 List<Override> debugRewiseStorageOverrides(RewiseStorage storage) => <Override>[rewiseStorageProvider.overrideWithValue(storage)];
@@ -39,7 +39,6 @@ void hiveRewiseStorageAdapters() {
 typedef TRows = Map<String, Map<String, dynamic>>;
 
 class RewiseStorage extends Storage<DBRewiseId> {
-  // TODO(pz): TableStorage? azureTable
   RewiseStorage(Box storage, TableStorage? azureTable, DBRewiseId dbId, String email) : super(storage, azureTable, dbId, email);
 
   Future<RewiseStorage> initialize({bool debugClear = false}) async {
