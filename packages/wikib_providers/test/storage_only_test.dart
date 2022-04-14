@@ -1,4 +1,5 @@
 // ignore_for_file: unused_local_variable
+@Timeout(Duration(seconds: 3600))
 
 import 'package:azure_storage/azure_storage.dart';
 import 'package:hive/hive.dart';
@@ -9,7 +10,8 @@ import 'package:test/test.dart';
 import 'package:utils/utils.dart';
 import 'package:wikib_providers/wikb_providers.dart';
 
-const createDBWithProviders = false;
+const createDBWithProviders = true;
+const withoutAzure = false;
 
 Future<RewiseStorage> createDB(
   String email, {
@@ -21,7 +23,8 @@ Future<RewiseStorage> createDB(
     cont.read(emailProvider.notifier).state = email;
     cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
     cont.read(debugHivePath.notifier).state = r'd:\temp\hive';
-    storage = await cont.read(rewiseProvider.storage.future);
+    if (withoutAzure) cont.read(azureRewiseUsersTableProvider.notifier).state = null;
+    storage = await cont.read((debugClear ? rewiseProviderDebugClear : rewiseProvider).storage.future);
   } else {
     final rewiseId = DBRewiseId(learn: 'en', speak: 'cs');
     storage = RewiseStorage(
@@ -31,7 +34,7 @@ Future<RewiseStorage> createDB(
       email,
     );
   }
-  if (debugClear) await storage.debugClear();
+  await storage.initialize(debugClear);
   return storage;
 }
 
@@ -40,6 +43,9 @@ void main() {
   hiveRewiseStorageAdapters();
   group('rewise_storage', () {
     test('basic', () async {
+      final db = await createDB('email@10.en');
+    });
+    test('facts', () async {
       final db = await createDB('email@1.en');
       expect(db.box.length, 4); // without aTag first row
       db.debugFromAzureAllUploaded(db.toAzureUpload());

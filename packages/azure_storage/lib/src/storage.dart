@@ -23,16 +23,19 @@ const initialETag = 'initialETag';
 // ***************************************
 
 abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
-  Storage(this.box, this.azureTable, this.dbId, this.email, this.groups) {}
+  Storage(this.box, this.azureTable, this.dbId, this.email);
 
-  Future initializeGroups(List<ItemsGroup> groups, {bool debugClear = false}) async {
-    allGroups = groups;
+  void setAllGroups(List<ItemsGroup> allGroups) {
+    this.allGroups = allGroups;
     row2Group = <int, ItemsGroup>{};
     for (var grp in allGroups)
       for (var i = grp.rowStart; i <= grp.rowEnd; i++) {
         assert(row2Group[i] == null);
         row2Group[i] = grp;
       }
+  }
+
+  Future initialize([bool debugClear = false]) async {
     if (debugClear)
       await this.debugClear();
     else
@@ -44,7 +47,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
   Box box; // due to debugReopen
   final TableStorage? azureTable;
   late Map<int, ItemsGroup> row2Group;
-  final List<ItemsGroup> allGroups;
+  late List<ItemsGroup> allGroups;
 
   String get partitionKey => dbId.partitionKey(email);
 

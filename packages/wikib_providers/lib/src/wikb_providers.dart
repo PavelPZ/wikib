@@ -24,6 +24,7 @@ class StorageProviders<TStorage extends Storage> {
   StorageProviders(
     AlwaysAliveProviderBase<DBRewiseId> dbIdProvider,
     TStorage create(Box storage, TableStorage? azureTable, DBRewiseId dbId, String email),
+    bool debugClear,
   ) : _hive = FutureProvider<Box>((ref) => Hive.openBox(
               ref.watch(dbIdProvider).partitionKey(ref.watch(emailProvider)),
               path: ref.watch(debugHivePath),
@@ -37,6 +38,7 @@ class StorageProviders<TStorage extends Storage> {
         ref.watch(dbIdProvider),
         ref.watch(emailProvider),
       );
+      await nw.initialize(debugClear);
       old.state = nw;
       return nw;
     });
@@ -46,4 +48,5 @@ class StorageProviders<TStorage extends Storage> {
   late FutureProvider<TStorage> storage;
 }
 
-final rewiseProvider = StorageProviders<RewiseStorage>(rewiseIdProvider, RewiseStorage.new);
+final rewiseProvider = StorageProviders<RewiseStorage>(rewiseIdProvider, RewiseStorage.new, false);
+final rewiseProviderDebugClear = StorageProviders<RewiseStorage>(rewiseIdProvider, RewiseStorage.new, true);
