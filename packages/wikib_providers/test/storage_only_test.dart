@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 @Timeout(Duration(seconds: 3600))
 
+import 'package:azure/azure.dart';
 import 'package:azure_storage/azure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:protobuf_for_dart/algorithm.dart' as dom;
@@ -11,7 +12,7 @@ import 'package:utils/utils.dart';
 import 'package:wikib_providers/wikb_providers.dart';
 
 const createDBWithProviders = true;
-const withoutAzure = false;
+var withoutAzure = false;
 
 Future<RewiseStorage> createDB(
   String email, {
@@ -29,7 +30,7 @@ Future<RewiseStorage> createDB(
     final rewiseId = DBRewiseId(learn: 'en', speak: 'cs');
     storage = RewiseStorage(
       await Hive.openBox(rewiseId.partitionKey(email), path: r'd:\temp\hive'),
-      null,
+      withoutAzure ? null : TableStorage(account: TableAccount(azureAccounts: AzureAccounts(), tableName: 'users')),
       rewiseId,
       email,
     );
@@ -51,126 +52,119 @@ void main() {
       final db2 = await createDB('email@10.en', debugClear: false);
       await db2.flush();
       print('=========== 2 ================');
-      expect(db2.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, 0);
+      if (!withoutAzure) expect(db2.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, 0);
       return;
     });
+    test('update', () async {
+      final db = await createDB('email@11.en');
+      db.facts.addItems([dom.Fact()..nextInterval = 1]);
+    });
     test('facts', () async {
-      final db = await createDB('email@1.en');
-      print(db.box.values);
-      expect(db.box.length, 5);
-      db.debugFromAzureAllUploaded(db.toAzureUpload());
-      expect(db.box.length, 5);
+      for (var i = 0; i < 2; i++) {
+        withoutAzure = i == 0;
+        final db = await createDB('email@1.en');
+        print(db.box.values);
+        expect(db.box.length, 5);
+        if (withoutAzure) db.debugFromAzureAllUploaded(db.toAzureUpload());
 
-      await db.flush();
+        db.facts.addItems([
+          dom.Fact()..nextInterval = 1,
+          dom.Fact()..nextInterval = 2,
+          dom.Fact()..nextInterval = 3,
+        ]);
+        expect(db.facts.getMsgs().where((f) => f.isDefered).length, 3);
+        expect(db.facts.getItems().where((f) => f.isDefered).length, 4);
 
-      await db.facts.addItems([
-        dom.Fact()..nextInterval = 1,
-        dom.Fact()..nextInterval = 2,
-        dom.Fact()..nextInterval = 3,
-      ]);
+        // =====================
+        // await db.debugReopen();
+        if (withoutAzure)
+          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        else
+          await db.flush();
 
-      // =====================
-      await db.debugReopen();
+        expect(db.facts.getItems().where((f) => f.isDefered).length, 0);
 
-      final facts = db.facts.getMsgs().toList();
-      expect(facts.map((f) => f.msg!.nextInterval).join(','), '1,2,3');
-      expect(facts.map((f) => f.msg!.id).join(','), '2049,2050,2051');
-      expect(facts.where((f) => f.isDefered).length, 3);
+        final upload2 = db.toAzureUpload(allowSingleRow: false);
+        expect(upload2 == null, true);
 
-      final azureUpload = db.toAzureUpload();
-      final dblen1 = db.box.length;
+        // =====================
+        await db.debugReopen();
 
-      // =====================
-      await db.debugReopen();
+        db.facts.itemsPlace.updateMsg((fact) => fact.nextInterval = 4, key: db.facts.getMsgs().first.key + 1);
+        expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '1,4,3');
 
-      db.debugFromAzureAllUploaded(azureUpload);
-      expect(db.box.length, dblen1);
+        db.facts.itemsPlace.updateMsg((fact) => fact.nextInterval = 5, key: db.facts.getMsgs().first.key);
+        expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '5,4,3');
 
-      final upload2 = db.toAzureUpload();
-      expect(upload2!.rows.length, 1);
-      final facts2 = db.facts.getMsgs().toList();
-      expect(facts2.where((f) => f.isDefered).length, 0);
+        final f3 = db.facts.itemsPlace.getValueOrMsg(db.facts.getMsgs().first.key + 2);
+        f3.nextInterval = 6;
+        db.facts.itemsPlace.saveValue(f3, key: f3.id);
+        expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '5,4,6');
 
-      // =====================
-      await db.debugReopen();
+        db.facts.clear();
+        expect(db.facts.getItems().length, 1);
+        db.facts.clear(startItemsIncluded: true);
+        expect(db.facts.getItems().length, 0);
 
-      db.facts.itemsPlace.updateMsg((fact) => fact.nextInterval = 4, key: 2050);
-      expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '1,4,3');
-
-      db.facts.itemsPlace.updateMsg((fact) => fact.nextInterval = 5);
-      expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '5,4,3');
-
-      final f3 = db.facts.itemsPlace.getValueOrMsg(2051);
-      f3.nextInterval = 6;
-      db.facts.itemsPlace.saveValue(f3, key: f3.id);
-      expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '5,4,6');
-
-      db.facts.clear();
-      expect(db.facts.getItems().length, 1);
-      db.facts.clear(startItemsIncluded: true);
-      expect(db.facts.getItems().length, 0);
-
-      await db.close();
-
+        await db.flush();
+        await db.close();
+        continue;
+      }
       return;
     });
     test('daylies', () async {
-      const partitionKey = 'pk2';
-      final db = await createDB('email@2.en');
+      for (var i = 1; i < 2; i++) {
+        withoutAzure = i == 0;
+        final db = await createDB('email@2.en');
+        // save to azure
+        if (withoutAzure)
+          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        else
+          await db.flush();
 
-      // after initialization
-      await db.debugReopen();
-      final its01 = db.box.values.whereType<BoxItem>().toList();
-      final keys01 = its01.map((d) => d.key).join(',');
-      expect(its01.length, 4); // without eTagRow
-      final def01 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
-      expect(def01.length, 0);
+        // ==== addDaylies 2x
+        db.daylies.addDaylies(Day.now, range(0, 5).map((e) => dom.Daily()));
+        expect(db.daylies.getMsgs().length, 5);
+        expect(db.debugDeletedAndDefered(), 'deleted=0, defered=6');
+        final d1 = db.debugDump();
+        if (withoutAzure)
+          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        else
+          await db.flush();
+        await db.debugReopen();
+        final d11 = db.debugDump();
+        expect(db.box.values.whereType<BoxItem>().where((f) => f.isDefered).length, 0);
 
-      // save to azure
-      db.debugFromAzureAllUploaded(db.toAzureUpload());
+        // ==== change day
+        db.daylies.addDaylies(Day.now + 1, range(0, 2).map((e) => dom.Daily()));
+        expect(db.daylies.getMsgs().length, 2);
+        expect(db.debugDeletedAndDefered(), 'deleted=3, defered=7');
+        if (withoutAzure)
+          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        else
+          await db.flush();
+        expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
 
-      // after save to azure
-      await db.debugReopen();
-      final values = db.box.values.toList();
-      final its0 = db.box.values.whereType<BoxItem>().toList();
-      final keys0 = its0.map((d) => d.key).join(',');
-      expect(its0.length, 4);
-      final def0 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
-      expect(def0.length, 0);
+        // addDaylies 510x
+        db.daylies.addDaylies(Day.now + 2, range(0, 510).map((e) => dom.Daily()));
+        expect(db.daylies.getMsgs().length, 510);
+        if (withoutAzure)
+          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        else
+          await db.flush();
 
-      // addDaylies
-      db.daylies.addDaylies(Day.now, range(0, 2).map((e) => dom.Daily()));
-      await db.debugReopen();
-      final def1 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
-      final d1 = db.debugDump();
-      expect(def1.length, 4);
+        // addDaylies 10x, the same day
+        db.daylies.addDaylies(Day.now + 2, range(0, 10).map((e) => dom.Daily()));
+        expect(db.debugDeletedAndDefered(), 'deleted=0, defered=11');
+        if (withoutAzure)
+          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        else
+          await db.flush();
 
-      db.debugFromAzureAllUploaded(db.toAzureUpload());
-      final d11 = db.debugDump();
-      await db.debugReopen();
-      expect(db.box.values.whereType<BoxItem>().where((f) => f.isDefered).length, 0);
-
-      db.daylies.addDaylies(Day.now + 1, range(0, 510).map((e) => dom.Daily()));
-      await db.debugReopen();
-      final def2 = db.box.values.whereType<BoxItem>().where((f) => f.isDefered).toList();
-      final d2 = db.debugDump(); // 512 new & defered
-      expect(db.debugDeletedAndDefered(), 'deleted=0, defered=512');
-      expect(def2.length, 512);
-
-      final toAzure = db.toAzureUpload();
-      db.daylies.addDaylies(Day.now + 1, range(0, 10).map((e) => dom.Daily()));
-      expect(db.debugDeletedAndDefered(), 'deleted=500, defered=512');
-      db.debugFromAzureAllUploaded(toAzure);
-      expect(db.debugDeletedAndDefered(), 'deleted=500, defered=512'); // no statistics change, only 12 items are modified
-      final d5 = db.debugDump();
-
-      // save to azure
-      final toAzure2 = db.toAzureUpload(); // 1 row is "put", 2 rows are "delete"
-      db.debugFromAzureAllUploaded(toAzure2);
-      expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
-
-      await db.flush();
-
+        await db.flush();
+        await db.close();
+        continue;
+      }
       return;
     });
     test('bootstrap', () async {

@@ -92,13 +92,14 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     allGroups.forEach((e) => e.seed());
   }
 
-  AzureDataUpload? toAzureUpload() {
+  AzureDataUpload? toAzureUpload({bool allowSingleRow = true}) {
     //if (!namePlace.exists()) return null;
     final rowGroups = <int, List<BoxItem>>{};
     for (var item in box.values.whereType<BoxItem>().where((b) => b.isDefered))
-      rowGroups.update(item.key, (value) => value..add(item), ifAbsent: () => <BoxItem>[item]);
+      rowGroups.update(BoxKey.getRowId(item.key), (value) => value..add(item), ifAbsent: () => <BoxItem>[item]);
 
     // first row
+    if (rowGroups.length == 0 && !allowSingleRow) return null;
     final firstRow = BatchRow(rowId: BoxKey.eTagHiveKey.rowId, data: _initAzureRowData(BoxKey.eTagHiveKey.rowId), method: BatchMethod.put)
       ..eTag = box.get(BoxKey.eTagHiveKey.boxKey);
     firstRow.data['aa'] = '';
@@ -121,7 +122,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
   }
 
   Map<String, dynamic> _initAzureRowData(int rowId) =>
-      <String, dynamic>{'PartitionKey': Encoder.keys.encode(dbId.partitionKey(email)), 'RowKey': Encoder.keys.encode(BoxKey.byte2Hex(rowId))};
+      <String, dynamic>{'PartitionKey': Encoder.keys.encode(dbId.partitionKey(email)), 'RowKey': Encoder.keys.encode(BoxKey.byte2HexRow(rowId))};
 
   Future fromAzureETagUploaded(String eTag) => box.put(BoxKey.eTagHiveKey.boxKey, eTag);
 
@@ -308,13 +309,15 @@ abstract class Place<T> {
   final Storage storage;
 
   BoxItem createBoxItem();
-  BoxItem fromValueOrMsg(int? key, T value);
-  T getValueOrMsg([int? key]);
+  BoxItem createFromValueOrMsg(int? key, T value);
+
+  T getValueOrMsg([int? key]) => (getBox(key)!.value);
+  BoxItem setValueOrMsg(T value, [int? key]) => getBox(key)!..value = value;
 
   int getKey([int? key]) => key ?? boxKey;
   int getBoxKey([int? key]) => getKey(key);
 
-  BoxItem fromKeyValue(int key, dynamic value) => createBoxItem()
+  BoxItem createFromValue(int key, dynamic value) => createBoxItem()
     ..key = key
     ..value = value;
 
@@ -332,16 +335,18 @@ abstract class Place<T> {
     storage.saveBoxItem(boxItem);
   }
 
-  void saveValue(T valueOrMsg, {int? key}) => storage.saveBoxItem(getBox(key) ?? fromValueOrMsg(key, valueOrMsg));
+  void saveValue(T valueOrMsg, {int? key}) {
+    final b = getBox(key);
+    final res = b == null ? createFromValueOrMsg(key, valueOrMsg) : setValueOrMsg(valueOrMsg, key);
+    storage.saveBoxItem(res);
+  }
 }
 
 abstract class PlaceValue<T> extends Place<T> {
   PlaceValue(Storage storage, {required int rowId, required int propId}) : super(storage, rowId: rowId, propId: propId);
 
   @override
-  T getValueOrMsg([int? key]) => (getBox(key)?.value)!;
-  @override
-  BoxItem fromValueOrMsg(int? key, T value) => fromKeyValue(getKey(key), value);
+  BoxItem createFromValueOrMsg(int? key, T value) => createFromValue(getKey(key), value);
 }
 
 class PlaceInt extends PlaceValue<int> {
@@ -369,7 +374,7 @@ abstract class PlaceMsg<T extends $pb.GeneratedMessage> extends Place<T> {
   }
 
   @override
-  BoxItem fromValueOrMsg(int? key, T msg) {
+  BoxItem createFromValueOrMsg(int? key, T msg) {
     key ??= getKey(key);
     return (createBoxItem() as BoxMsg<T>)
       ..setMsgId(msg, key) // must be first: following "msg = msg" saves msg to uint8 value
@@ -378,7 +383,9 @@ abstract class PlaceMsg<T extends $pb.GeneratedMessage> extends Place<T> {
   }
 
   @override
-  T getValueOrMsg([int? key]) => ((getBox(key) as BoxMsg<T>?)?.msg)!;
+  T getValueOrMsg([int? key]) => ((getBox(key) as BoxMsg<T>).msg)!;
+  @override
+  BoxItem setValueOrMsg(T value, [int? key]) => (getBox(key) as BoxMsg<T>)..msg = value;
 }
 
 // ***************************************
@@ -406,7 +413,7 @@ class SinglesGroup extends ItemsGroup {
   BoxItem fromAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
     assert(boxKey.propId < singles.length);
-    return singles[boxKey.propId].fromKeyValue(key, value);
+    return singles[boxKey.propId].createFromValue(key, value);
   }
 }
 
@@ -421,7 +428,7 @@ abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemsGroup 
   final PlaceMsg<T> itemsPlace;
 
   @override
-  BoxItem fromAzureDownload(int key, dynamic value) => itemsPlace.fromKeyValue(key, value);
+  BoxItem fromAzureDownload(int key, dynamic value) => itemsPlace.createFromValue(key, value);
 
   Iterable<BoxItem> getItems() {
     final endKey = BoxKey.getBoxKey(rowEnd, BoxKey.maxPropId);
@@ -453,17 +460,16 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
   @override
   BoxItem fromAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
-    if (boxKey.rowId == rowStart && boxKey.propId == 0) return uniqueCounter.fromKeyValue(key, value);
+    if (boxKey.rowId == rowStart && boxKey.propId == 0) return uniqueCounter.createFromValue(key, value);
     return super.fromAzureDownload(key, value);
   }
 
-  Future addItems(Iterable<T> msgs) {
+  void addItems(Iterable<T> msgs) {
     final uniqueBox = uniqueCounter.getBox() as BoxInt;
     var nextKey = uniqueBox.value;
-    final items = msgs.map((msg) => itemsPlace.fromValueOrMsg(nextKey = BoxKey.nextKey(nextKey), msg)).toList();
+    final items = msgs.map((msg) => itemsPlace.createFromValueOrMsg(nextKey = BoxKey.nextKey(nextKey), msg)).toList();
     items.add(uniqueBox..value = nextKey);
     storage.saveBoxItems(items);
-    return storage.box.flush();
   }
 
   @override

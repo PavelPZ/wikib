@@ -52,33 +52,34 @@ class BoxKey {
   factory BoxKey.azure(String rowId, String propId) => BoxKey.idx(hex2Byte(rowId), hex2Byte(propId));
 
   final int boxKey;
-  int get rowId => boxKey >> 8;
-  int get propId => boxKey & 0xff;
+  int get rowId => getRowId(boxKey);
+  int get propId => getPropId(boxKey);
+  String get rowKey => byte2HexRow(rowId);
+  String get rowPropId => byte2Hex(propId);
 
-  BoxKey next() => propId < maxPropId ? BoxKey(boxKey + 1) : BoxKey.idx(rowId + 1, 0);
+  BoxKey next() => BoxKey(nextKey(boxKey));
 
   //-------- statics
+  static int nextKey(int key) => getPropId(key) < maxPropId ? key + 1 : (getRowId(key) + 1) << 8;
 
-  static int nextKey(int key) {
-    final rowId = key >> 8;
-    final propId = key & 0xff;
-    return propId < maxPropId ? key + 1 : (rowId + 1) << 8;
-  }
-
-  static String getRowKey(int key) => byte2Hex(key >> 8);
-  static String getPropKey(int key) => byte2Hex(key & 0xff);
+  static String getRowKey(int key) => byte2HexRow(getRowId(key));
+  static String getPropKey(int key) => byte2Hex(getPropId(key));
   static int getBoxKey(int rowId, int propId) => (rowId << 8) + propId;
+  static int getRowId(int key) => key >> 8;
+  static int getPropId(int key) => key & 0xff;
   static final eTagHiveKey = BoxKey.idx(0, 0);
   static final eTagKeyFakeVersion = 0xffffff;
 
-  //-------- RowData
-  String get rowKey => byte2Hex(rowId);
-  String get rowPropId => byte2Hex(propId);
-
-  static const maxPropId = 252;
+  static const maxPropId = 251;
   static const hexMap = <String>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'];
-  static String byte2Hex(int b) => hexMap[(b >> 8) & 0xf] + hexMap[b & 0xf];
-  static int hex2Byte(String hex) => (byteMap[hex[0]]! << 8) + byteMap[hex[1]]!;
+  static String byte2Hex(int b) => hexMap[(b >> 4) & 0xf] + hexMap[b & 0xf];
+  static String byte2HexRow(int b) => hexMap[(b >> 12) & 0xf] + hexMap[(b >> 8) & 0xf] + hexMap[(b >> 4) & 0xf] + hexMap[b & 0xf];
+  static int hex2Byte(String hex) {
+    var res = (byteMap[hex[0]]! << 8) + byteMap[hex[1]]!;
+    if (hex.length == 4) res = (res << 16) + (byteMap[hex[2]]! << 8) + byteMap[hex[3]]!;
+    return res;
+  }
+
   static const byteMap = <String, int>{
     'a': 0,
     'b': 1,

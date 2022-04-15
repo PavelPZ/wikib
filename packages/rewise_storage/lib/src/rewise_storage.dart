@@ -92,7 +92,7 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   @override
   BoxItem fromAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
-    if (boxKey.rowId == rowStart && boxKey.propId == 1) return actDay.fromKeyValue(key, value);
+    if (boxKey.rowId == rowStart && boxKey.propId == 1) return actDay.createFromValue(key, value);
     return super.fromAzureDownload(key, value);
   }
 
@@ -104,15 +104,17 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
 
   int get actDayValue => actDay.getValueOrMsg();
 
-  void addDaylies(int actDatValue, Iterable<dom.Daily> msgs) {
-    clear(startItemsIncluded: true);
-    // final a1 = storage.debugDump();
-    seed();
-    // final a2 = storage.debugDump();
-    // final c = uniqueCounter.getValueOrMsg();
-    actDay.saveValue(actDatValue);
+  void addDaylies(int newActDay, Iterable<dom.Daily> msgs) {
+    if (newActDay != actDayValue) {
+      clear(startItemsIncluded: true);
+      // final a1 = storage.debugDump();
+      seed();
+      // final a2 = storage.debugDump();
+      // final c = uniqueCounter.getValueOrMsg();
+      actDay.saveValue(newActDay);
+    }
     // final a3 = storage.debugDump();
-    addItems(msgs.map((e) => e..day = actDatValue));
+    addItems(msgs.map((e) => e..day = newActDay));
     // final a4 = storage.debugDump();
   }
 }
