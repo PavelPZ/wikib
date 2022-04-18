@@ -13,7 +13,7 @@ dependencies:
   hive:
   rewise_storage:
     path: ../rewise_storage
-  riverpod:
+  riverpod: 2.0.0-dev.5
   azure_storage:
     path: ../azure_storage
   utils:

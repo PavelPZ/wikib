@@ -19,7 +19,7 @@ dependencies:
   functional_widget_annotation: ^0.9.2
   hive:
   hive_flutter: 
-  hooks_riverpod: ^1.0.0
+  hooks_riverpod: 2.0.0-dev.5
   localization:     
     path: ../packages/localization
   protobuf:
@@ -29,7 +29,7 @@ dependencies:
   rewise_storage:
     path: ../packages/rewise_storage
   riverpod_navigator: 
-    path: ../../riverpod_navigator/packages/riverpod_navigator 
+   path: ../../riverpod_navigator/packages/riverpod_navigator 
   utils:
     path: ../packages/utils 
   wikib_providers:

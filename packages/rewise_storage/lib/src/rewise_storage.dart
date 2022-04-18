@@ -23,23 +23,10 @@ void hiveRewiseStorageAdapters() {
   Hive.registerAdapter(BoxConfigAdapter());
 }
 
-// DEVICEID = 0; // 1 rows (max 1*252 items)
-// CONFIGS = 1; // 1 rows (max 1*252 items)
-//   CONFIG = 0;
-//   MICROCYCLE = 1;
-//   AUTH_CONFIG = 2;
-// BOOKS = 2..3; // 2 rows (max 2*252 items)
-//   uniqueCounter = 0;
-// DAILY = 4..7; // 4 rows (max 4*252 items)
-//   uniqueCounter = 0;
-//   actDay = 1;
-// FACT = 8..; // rest: (max (100-4-1-2)*252 items)
-//   uniqueCounter = 0;
-
 typedef TRows = Map<String, Map<String, dynamic>>;
 
 class RewiseStorage extends Storage<DBRewiseId> {
-  RewiseStorage(Box storage, TableStorage? azureTable, DBRewiseId dbId, String email) : super(storage, azureTable, dbId, email) {
+  RewiseStorage(Box storage, TableStorage? azureTable, DBId dbId, String email) : super(storage, azureTable, dbId, email) {
     setAllGroups([
       //systemRow,
       row1 = SinglesGroup(this, row: 1, singles: [
@@ -202,3 +189,17 @@ class BoxConfig extends BoxMsg<dom.Config> {
   @override
   void setMsgId(dom.Config c, int id) => c.id = id;
 }
+
+// DEVICEID = 0; // 1 rows (max 1*252 items)
+// CONFIGS = 1; // 1 rows (max 1*252 items)
+//   CONFIG = 0;
+//   MICROCYCLE = 1;
+//   AUTH_CONFIG = 2;
+// BOOKS = 2..3; // 2 rows (max 2*252 items)
+//   uniqueCounter = 0;
+// DAILY = 4..7; // 4 rows (max 4*252 items)
+//   uniqueCounter = 0;
+//   actDay = 1;
+// FACT = 8..; // rest: (max (100-4-1-2)*252 items)
+//   uniqueCounter = 0;
+

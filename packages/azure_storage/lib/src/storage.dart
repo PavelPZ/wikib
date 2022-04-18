@@ -45,46 +45,53 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
 
   String get partitionKey => dbId.partitionKey(email);
 
-  Future initialize([bool debugClear = false]) async {
-    if (debugClear) {
-      assert(dpAzureMsg('Storage.initialize: debugClear START')());
-      if (azureTable != null) await azureTable!.flush();
-      await debugDeleteAzureAll();
-      await box.clear();
-      assert(dpAzureMsg('Storage.initialize: debugClear END')());
-    } else {
-      if (azureTable != null) {
-        assert(dpAzureMsg('Storage.initialize: saveToCloud START')());
-        azureTable!.saveToCloud(this);
-        await flush();
-        assert(dpAzureMsg('Storage.initialize: saveToCloud END')());
-      }
-    }
-    assert(dpAzureMsg('Storage.initialize: seed RUN')());
-    seed();
-    print(debugDump());
+  Future initialize() async {
+    if (box.length == 0) seed();
+    if (azureTable != null) await azureTable!.saveToCloud(this); // !!! must be await here, due to waiting for wholeAzureDownload !!!
     await flush();
   }
 
-  Future<Storage> rename(Box newBox, TableStorage? newTable, String newEmail) {
-    return Future.value(this);
+  // move local 'emptyEMail' DB to user email DB.
+  // try email DB from cloud first.
+  Future moveTo(Storage newStorage) async {
+    assert(azureTable == null);
+    assert(newStorage.azureTable != null);
+    assert(newStorage.box.isEmpty);
+    assert(newStorage.email != emptyEMail);
+    // get content of newStorage.partitionKey cloud
+    final newRows = await newStorage.azureTable!.getAllRows(newStorage.partitionKey);
+    final newRowsCount =
+        newRows == null ? 0 : newRows.rows.cast<Map<String, dynamic>>().map((row) => row.length).reduce((value, element) => value + element);
+    if (newRowsCount > box.length) {
+      // newStorage.partitionKey cloud databaze is greater than local databaze => take DB from cloud
+      await newStorage._wholeAzureDownload(newRows!);
+    } else {
+      // newStorage.partitionKey databaze is smaller than local databaze => take DB from local db
+      newStorage.box.put(BoxKey.eTagHiveKey.boxKey, newRows?.eTag ?? '');
+      final olds = box.values.whereType<BoxItem>().toList();
+      await box.clear();
+      newStorage.saveBoxItems(olds);
+    }
+    await box.deleteFromDisk();
+    await newStorage.flush();
   }
 
+  // interrupts waiting in azureTable save (e.g. when waiting for internet connection)
   Future close() async {
     await cancel();
     await box.close();
   }
 
+  // dont' interrupt waiting in azureTable save (e.g. when waiting for internet connection)
   Future flush() async {
     if (azureTable != null) await azureTable!.flush();
     await box.flush();
   }
 
   Future cancel() async {
-    _canceled = true;
+    _canceled = true; // => interrup waiting
     try {
-      if (azureTable != null) await azureTable!.flush();
-      await box.flush();
+      await flush();
     } finally {
       _canceled = false;
     }
@@ -94,7 +101,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
   bool _canceled = false;
 
   void seed() {
-    if (box.length > 0) return;
+    print('*** SEED');
     box.put(BoxKey.eTagHiveKey.boxKey, '');
     allGroups.forEach((e) => e.seed());
   }
@@ -107,14 +114,15 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
 
     // first row
     if (rowGroups.length == 0 && !allowSingleRow) return null;
-    final firstRow = BatchRow(rowId: BoxKey.eTagHiveKey.rowId, data: _initAzureRowData(BoxKey.eTagHiveKey.rowId), method: BatchMethod.put)
-      ..eTag = box.get(BoxKey.eTagHiveKey.boxKey);
+    final firstRow =
+        BatchRow(rowId: BoxKey.eTagHiveKey.rowId, data: _initAzureRowData(partitionKey, BoxKey.eTagHiveKey.rowId), method: BatchMethod.put)
+          ..eTag = box.get(BoxKey.eTagHiveKey.boxKey);
     firstRow.data['aa'] = '';
     final rows = <BatchRow>[firstRow];
     // final rows = <BatchRow>[];
     // finish rows
     for (final r in rowGroups.entries) {
-      final data = _initAzureRowData(r.key);
+      final data = _initAzureRowData(partitionKey, r.key);
       // row with delete
       BatchRow row;
       if (r.value.any((rr) => rr.isDeleted)) {
@@ -142,8 +150,8 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     return AzureDataUpload(rows: rows);
   }
 
-  Map<String, dynamic> _initAzureRowData(int rowId) =>
-      <String, dynamic>{'PartitionKey': Encoder.keys.encode(dbId.partitionKey(email)), 'RowKey': Encoder.keys.encode(BoxKey.byte2HexRow(rowId))};
+  static Map<String, dynamic> _initAzureRowData(String partitionKey, int rowId) =>
+      <String, dynamic>{'PartitionKey': Encoder.keys.encode(partitionKey), 'RowKey': Encoder.keys.encode(BoxKey.byte2HexRow(rowId))};
 
   Future fromAzureUploadedETag(String eTag) => box.put(BoxKey.eTagHiveKey.boxKey, eTag);
 
@@ -183,17 +191,22 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     await box.clear();
     final rows = await azureTable!.getAllRows(partitionKey);
     if (rows == null) return;
-    final boxes = <BoxItem>[];
+    await _wholeAzureDownload(rows);
+  }
+
+  Future _wholeAzureDownload(WholeAzureDownload rows) async {
     box.put(BoxKey.eTagHiveKey.boxKey, rows.eTag);
-    for (var row in rows.rows) {
-      for (var prop in (row as Map<String, dynamic>).entries) {
+    // final azureItemsCount = rows.rows.cast<Map<String, dynamic>>().map((row) => row.length).reduce((value, element) => value + element);
+    final boxes = <int, BoxItem>{};
+    for (var row in rows.rows.cast<Map<String, dynamic>>()) {
+      for (var prop in row.entries) {
         if (ignoreKeys.containsKey(prop.key)) continue;
         final key = BoxKey.azure(row['RowKey'], prop.key);
         final messageGroup = row2Group[key.rowId]!;
-        boxes.add(messageGroup.wholeAzureDownload(key.boxKey, prop.value));
+        boxes[key.boxKey] = messageGroup.wholeAzureDownload(key.boxKey, prop.value)..version = Day.nowMilisecUtc;
       }
     }
-    saveBoxItems(boxes);
+    box.putAll(boxes);
   }
 
   static const ignoreKeys = <String, bool>{'RowKey': true, 'PartitionKey': true, 'Timestamp': true};
@@ -239,16 +252,15 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     return 'deleted=$deleted, defered=$defered';
   }
 
-  Future debugDeleteAzureAll() async {
-    if (azureTable == null) return;
-    final rowKeys = await azureTable!.getAllRowKeys(partitionKey);
+  static Future debugDeleteAzureAll(String partitionKey, TableStorage azureTable) async {
+    final rowKeys = await azureTable.getAllRowKeys(partitionKey);
     if (rowKeys == null) return null;
     final rowIds = rowKeys.map((key) => BoxKey.hex2Byte(key));
-    final rows = rowIds.map((rowId) => BatchRow(rowId: rowId, data: _initAzureRowData(rowId), method: BatchMethod.delete)).toList();
+    final rows = rowIds.map((rowId) => BatchRow(rowId: rowId, data: _initAzureRowData(partitionKey, rowId), method: BatchMethod.delete)).toList();
     assert(dpAzureMsg('Storage.toAzureDeleteAll: ${rows.map((e) => '${e.rowId.toString()}-${e.method.toString()}').join(',')}')());
     final azureDataUpload = AzureDataUpload(rows: rows);
-    await azureTable!.saveToCloud(DeleteAllStorage(azureDataUpload));
-    await azureTable!.flush();
+    await azureTable.saveToCloud(DeleteAllStorage(azureDataUpload));
+    await azureTable.flush();
   }
 
   Iterable<T> getItems<T extends BoxItem>(int startKey, int endKey, [bool filter(BoxItem item)?]) sync* {

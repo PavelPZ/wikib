@@ -13,18 +13,58 @@ import 'package:wikib_providers/wikb_providers.dart';
 
 const createDBWithProviders = true;
 
+class Logger extends ProviderObserver {
+  @override
+  void didUpdateProvider(ProviderBase provider, Object? previousValue, Object? newValue, ProviderContainer container) =>
+      print('UPDATE ${provider.name ?? provider.runtimeType} = $newValue');
+
+  @override
+  void didAddProvider(
+    ProviderBase provider,
+    Object? value,
+    ProviderContainer container,
+  ) =>
+      print('ADD ${provider.name ?? provider.runtimeType} = $value');
+
+  @override
+  void didDisposeProvider(
+    ProviderBase provider,
+    ProviderContainer container,
+  ) =>
+      print('DISPOSE ${provider.name ?? provider.runtimeType}');
+}
+
 Future<RewiseStorage> createDB(
+  ProviderContainer cont,
   String? email, {
   bool debugClear = true,
 }) async {
+  final res = await createDBLow(cont, email, debugClear: debugClear);
+  return res!;
+}
+
+Future<RewiseStorage?> createDBLow(
+  ProviderContainer cont,
+  String? email, {
+  bool? debugClear = true,
+}) async {
   RewiseStorage storage;
   if (createDBWithProviders) {
-    final cont = ProviderContainer();
     cont.read(emailProvider.notifier).state = email;
+    print('*** emailOrEmptyProvider: ${cont.read(emailOrEmptyProvider)}');
     cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
     cont.read(debugHivePath.notifier).state = r'd:\temp\hive';
-    // if (email != null) cont.read(azureRewiseUsersTableProvider.notifier).state = null;
-    storage = (await cont.read((debugClear ? rewiseProviderDebugClear : rewiseProvider).storage.future))!;
+    if (debugClear != false) {
+      cont.read(debugDeleteProvider.notifier).state = true;
+      try {
+        await cont.read(rewiseProvider.storage.future);
+      } finally {
+        cont.read(debugDeleteProvider.notifier).state = false;
+      }
+    }
+    if (debugClear == null) return null;
+    storage = (await cont.read(rewiseProvider.storage.future))!;
+    await storage.flush();
   } else {
     final rewiseId = DBRewiseId(learn: 'en', speak: 'cs');
     storage = RewiseStorage(
@@ -33,7 +73,7 @@ Future<RewiseStorage> createDB(
       rewiseId,
       email ?? emptyEMail,
     );
-    await storage.initialize(debugClear);
+    await storage.initialize();
   }
   return storage;
 }
@@ -42,24 +82,53 @@ void main() {
   Hive.init('');
   hiveRewiseStorageAdapters();
   dpIgnore = false; // DEBUG prints
+  group('emptyEMail to email', () {
+    test('basic', () async {
+      final cont = ProviderContainer(observers: [Logger()]);
+      // clear
+      final clearDB = await createDBLow(cont, 'fromEmpty@m.c', debugClear: null);
+
+      // create new
+      final db = await createDB(cont, null, debugClear: false);
+      print('*** test: await createDB');
+      db.facts.addItems(range(0, 3).map((e) => dom.Fact()..nextInterval = e));
+      print('*** test: before db.flush: ${cont.read(emailProvider)}');
+      await db.flush();
+      print('*** test: db.flush: ${cont.read(emailProvider)}');
+      // await db.close();
+      assert(cont.read(emailProvider) == null);
+      cont.read(emailProvider.notifier).state = 'fromEmpty@m.c';
+      final db2 = await cont.read(rewiseProvider.storage.future);
+      final facts = db2!.facts.getMsgs().map((m) => m.msg).toList();
+      return;
+    });
+  });
   group('rewise_storage', () {
     test('basic', () async {
-      print('=========== 0 ================');
-      final db = await createDB('email@10.en');
-      await db.flush();
-      await db.close();
-      print('=========== 1 ================');
-      final db2 = await createDB('email@10.en', debugClear: false); // CHANGE eTagRow here => test eTagConflict
-      await db2.flush();
-      print('=========== 2 ================');
-      final db3 = await createDB('email@10.en', debugClear: false);
-      await db3.flush();
-      print('=========== 3 ================');
-      expect(db2.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, 0);
+      final cont = ProviderContainer(observers: [Logger()]);
+      for (var i = 0; i < 2; i++) {
+        final email = i == 0 ? null : 'email@10.en';
+        final db = await createDB(cont, email);
+        print('=========== 0 ================');
+        await db.flush();
+        await db.close();
+        print('=========== 1 ================');
+        // CHANGE eTagRow here => test eTagConflict
+        final db2 = await createDB(cont, email, debugClear: false);
+        await db2.flush();
+        await db2.close();
+        print('=========== 2 ================');
+        final db3 = await createDB(cont, email, debugClear: false);
+        await db3.flush();
+        print('=========== 3 ================');
+        print(db3.debugDump());
+        expect(db3.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, db3.azureTable == null ? 4 : 0);
+      }
       return;
     });
     test('whole database download', () async {
-      final db = await createDB('email@11.en');
+      final cont = ProviderContainer(observers: [Logger()]);
+      final db = await createDB(cont, 'email@11.en');
       db.facts.addItems(range(0, 300).map((e) => dom.Fact()..nextInterval = e));
       await db.flush();
       await db.wholeAzureDownload();
@@ -67,23 +136,33 @@ void main() {
       return;
     });
     test('update', () async {
-      final db = await createDB('email@12.en');
-      db.facts.addItems([dom.Fact()..nextInterval = 1]);
-      await db.flush();
+      final cont = ProviderContainer(observers: [Logger()]);
+      for (var i = 0; i < 2; i++) {
+        final email = i == 0 ? null : 'email@12.en';
+        final db = await createDB(cont, email);
+        await db.flush();
+        db.facts.addItems([dom.Fact()..nextInterval = 1]);
+        await db.flush();
+      }
       return;
     });
     test('delete', () async {
-      final db = await createDB('email@13.en');
-      db.facts.addItems([dom.Fact()..nextInterval = 1]);
-      await db.flush();
-      db.facts.clear();
-      await db.flush();
+      final cont = ProviderContainer(observers: [Logger()]);
+      for (var i = 0; i < 2; i++) {
+        final email = i == 0 ? null : 'email@13.en';
+        final db = await createDB(cont, email);
+        db.facts.addItems([dom.Fact()..nextInterval = 1]);
+        await db.flush();
+        db.facts.clear(); // remove all facts
+        await db.flush();
+      }
       return;
     });
     test('facts', () async {
+      final cont = ProviderContainer(observers: [Logger()]);
       for (var i = 0; i < 2; i++) {
         final email = i == 0 ? null : 'email@1.en';
-        final db = await createDB(email);
+        final db = await createDB(cont, email);
         print(db.box.values);
         expect(db.box.length, 5);
         if (db.azureTable == null) db.debugFromAzureAllUploaded(db.toAzureUpload());
@@ -137,9 +216,10 @@ void main() {
       return;
     });
     test('daylies', () async {
+      final cont = ProviderContainer(observers: [Logger()]);
       for (var i = 0; i < 2; i++) {
         final email = i == 0 ? null : 'email@2.en';
-        final db = await createDB(email);
+        final db = await createDB(cont, email);
         // save to azure
         if (db.azureTable == null)
           db.debugFromAzureAllUploaded(db.toAzureUpload());
@@ -199,15 +279,19 @@ void main() {
       return;
     });
     test('bootstrap', () async {
-      final db = await createDB('email@3.en');
-      expect(db.box.length, 5); // with aTag first row
-      await db.flush();
-      await db.close();
+      final cont = ProviderContainer(observers: [Logger()]);
+      for (var i = 0; i < 2; i++) {
+        final email = i == 0 ? null : 'email@3.en';
+        final db = await createDB(cont, email);
+        expect(db.box.length, 5); // with aTag first row
+        await db.flush();
+        await db.close();
 
-      final db2 = await createDB('email@3.en', debugClear: false);
-      expect(db2.box.length, 5); // with aTag first row
-      await db2.flush();
-      await db2.close();
+        final db2 = await createDB(cont, email, debugClear: false);
+        expect(db2.box.length, 5); // with aTag first row
+        await db2.flush();
+        await db2.close();
+      }
       return;
     });
   });

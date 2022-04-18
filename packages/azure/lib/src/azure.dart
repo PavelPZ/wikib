@@ -120,7 +120,7 @@ class Azure extends Sender {
           resp.result = Tuple2<Map<String, dynamic>, String>(map, resp.response!.headers['etag']!);
           return ContinueResult.doBreak;
         });
-    return res!.result;
+    return res?.result;
   }
 
   static const nextPartitionName = 'NextPartitionKey';

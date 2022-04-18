@@ -14,6 +14,7 @@ Iterable<int> range(int start, int len) sync* {
 }
 
 abstract class DBId {
+  bool eq(DBId id);
   String partitionKey(String email);
 }
 
@@ -21,11 +22,15 @@ class DBRewiseId implements DBId {
   const DBRewiseId({required this.learn, required this.speak});
   final String learn;
   final String speak;
+  @override
+  bool eq(DBId id) => id is DBRewiseId && id.learn == learn && id.speak == speak;
   String partitionKey(String email) => '$email!rewise!$speak!$learn';
 }
 
 class DBUserId implements DBId {
   const DBUserId();
+  @override
+  bool eq(DBId id) => id is DBUserId;
   String partitionKey(String email) => '$email!user';
 }
 
