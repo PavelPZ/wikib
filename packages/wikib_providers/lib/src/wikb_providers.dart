@@ -37,7 +37,7 @@ class StorageProviders<TStorage extends Storage> {
     _hive = FutureProvider<Box?>((ref) async {
       final dbId = ref.watch(dbIdProvider);
       final email = ref.watch(emailOrEmptyProvider);
-      print('*** StorageProviders._hive emailOrEmptyProvider: ${ref.read(emailOrEmptyProvider)}');
+      // print('*** StorageProviders._hive emailOrEmptyProvider: ${ref.read(emailOrEmptyProvider)}');
       final res = dbId == null
           ? null
           : await Hive.openBox(
@@ -60,7 +60,7 @@ class StorageProviders<TStorage extends Storage> {
       }
       final table = ref.watch(emailProvider) == null ? null : ref.watch(azureRewiseUsersTableProvider);
       final email = ref.watch(emailOrEmptyProvider);
-      print('*** StorageProviders.storage emailOrEmptyProvider: ${ref.read(emailOrEmptyProvider)}');
+      // print('*** StorageProviders.storage emailOrEmptyProvider: ${ref.read(emailOrEmptyProvider)}');
       if (ref.watch(debugDeleteProvider)) {
         if (table != null) await Storage.debugDeleteAzureAll(dbId.partitionKey(email), table);
         await ref.watch(_hive.future);

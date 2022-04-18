@@ -13,26 +13,7 @@ import 'package:wikib_providers/wikb_providers.dart';
 
 const createDBWithProviders = true;
 
-class Logger extends ProviderObserver {
-  @override
-  void didUpdateProvider(ProviderBase provider, Object? previousValue, Object? newValue, ProviderContainer container) =>
-      print('UPDATE ${provider.name ?? provider.runtimeType} = $newValue');
-
-  @override
-  void didAddProvider(
-    ProviderBase provider,
-    Object? value,
-    ProviderContainer container,
-  ) =>
-      print('ADD ${provider.name ?? provider.runtimeType} = $value');
-
-  @override
-  void didDisposeProvider(
-    ProviderBase provider,
-    ProviderContainer container,
-  ) =>
-      print('DISPOSE ${provider.name ?? provider.runtimeType}');
-}
+ProviderContainer getCont() => ProviderContainer(); //observers: [Logger()]);
 
 Future<RewiseStorage> createDB(
   ProviderContainer cont,
@@ -51,7 +32,7 @@ Future<RewiseStorage?> createDBLow(
   RewiseStorage storage;
   if (createDBWithProviders) {
     cont.read(emailProvider.notifier).state = email;
-    print('*** emailOrEmptyProvider: ${cont.read(emailOrEmptyProvider)}');
+    // print('*** emailOrEmptyProvider: ${cont.read(emailOrEmptyProvider)}');
     cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
     cont.read(debugHivePath.notifier).state = r'd:\temp\hive';
     if (debugClear != false) {
@@ -84,7 +65,7 @@ void main() {
   dpIgnore = false; // DEBUG prints
   group('emptyEMail to email', () {
     test('basic', () async {
-      final cont = ProviderContainer(observers: [Logger()]);
+      final cont = getCont();
       // clear
       final clearDB = await createDBLow(cont, 'fromEmpty@m.c', debugClear: null);
 
@@ -105,8 +86,8 @@ void main() {
   });
   group('rewise_storage', () {
     test('basic', () async {
-      final cont = ProviderContainer(observers: [Logger()]);
       for (var i = 0; i < 2; i++) {
+        final cont = getCont();
         final email = i == 0 ? null : 'email@10.en';
         final db = await createDB(cont, email);
         print('=========== 0 ================');
@@ -127,7 +108,7 @@ void main() {
       return;
     });
     test('whole database download', () async {
-      final cont = ProviderContainer(observers: [Logger()]);
+      final cont = getCont();
       final db = await createDB(cont, 'email@11.en');
       db.facts.addItems(range(0, 300).map((e) => dom.Fact()..nextInterval = e));
       await db.flush();
@@ -136,8 +117,8 @@ void main() {
       return;
     });
     test('update', () async {
-      final cont = ProviderContainer(observers: [Logger()]);
       for (var i = 0; i < 2; i++) {
+        final cont = getCont();
         final email = i == 0 ? null : 'email@12.en';
         final db = await createDB(cont, email);
         await db.flush();
@@ -147,8 +128,8 @@ void main() {
       return;
     });
     test('delete', () async {
-      final cont = ProviderContainer(observers: [Logger()]);
       for (var i = 0; i < 2; i++) {
+        final cont = getCont();
         final email = i == 0 ? null : 'email@13.en';
         final db = await createDB(cont, email);
         db.facts.addItems([dom.Fact()..nextInterval = 1]);
@@ -159,8 +140,8 @@ void main() {
       return;
     });
     test('facts', () async {
-      final cont = ProviderContainer(observers: [Logger()]);
       for (var i = 0; i < 2; i++) {
+        final cont = getCont();
         final email = i == 0 ? null : 'email@1.en';
         final db = await createDB(cont, email);
         print(db.box.values);
@@ -216,8 +197,8 @@ void main() {
       return;
     });
     test('daylies', () async {
-      final cont = ProviderContainer(observers: [Logger()]);
       for (var i = 0; i < 2; i++) {
+        final cont = getCont();
         final email = i == 0 ? null : 'email@2.en';
         final db = await createDB(cont, email);
         // save to azure
@@ -279,8 +260,8 @@ void main() {
       return;
     });
     test('bootstrap', () async {
-      final cont = ProviderContainer(observers: [Logger()]);
       for (var i = 0; i < 2; i++) {
+        final cont = getCont();
         final email = i == 0 ? null : 'email@3.en';
         final db = await createDB(cont, email);
         expect(db.box.length, 5); // with aTag first row
@@ -295,4 +276,25 @@ void main() {
       return;
     });
   });
+}
+
+class Logger extends ProviderObserver {
+  @override
+  void didUpdateProvider(ProviderBase provider, Object? previousValue, Object? newValue, ProviderContainer container) =>
+      print('UPDATE ${provider.name ?? provider.runtimeType} = $newValue');
+
+  @override
+  void didAddProvider(
+    ProviderBase provider,
+    Object? value,
+    ProviderContainer container,
+  ) =>
+      print('ADD ${provider.name ?? provider.runtimeType} = $value');
+
+  @override
+  void didDisposeProvider(
+    ProviderBase provider,
+    ProviderContainer container,
+  ) =>
+      print('DISPOSE ${provider.name ?? provider.runtimeType}');
 }
