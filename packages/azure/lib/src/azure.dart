@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:azure/azure.dart';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
+import 'package:tuple/tuple.dart';
 import 'package:utils/utils.dart';
 
 import 'lib.dart';
@@ -105,6 +106,23 @@ class Azure extends Sender {
     return sendRes?.result;
   }
 
+  Future<Tuple2<Map<String, dynamic>, String>?> readLow(Key key, {SendPar? sendPar}) async {
+    final request = queryRequest(key: key);
+
+    final res = await send<Tuple2<Map<String, dynamic>, String>>(
+        request: request,
+        sendPar: sendPar,
+        finalizeResponse: (resp) async {
+          if (resp.error == ErrorCodes.notFound) return ContinueResult.doBreak; // => doBreak with null result
+          if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
+          final json = await resp.response!.stream.bytesToString();
+          final map = jsonDecode(json);
+          resp.result = Tuple2<Map<String, dynamic>, String>(map, resp.response!.headers['etag']!);
+          return ContinueResult.doBreak;
+        });
+    return res!.result;
+  }
+
   static const nextPartitionName = 'NextPartitionKey';
   static const nextRowName = 'NextRowKey';
   static const msContinuation = 'x-ms-continuation-';
@@ -182,6 +200,7 @@ class Query {
   Query({String? filter, List<String>? select, int? top}) : this._(filter, select, top);
   Query.partition(String partitionKey, {int? top}) : this._('${Q.p(partitionKey)}', null, top);
   Query.property(String partitionKey, String rowKey, String propName) : this._('${Q.p(partitionKey)} and ${Q.r(rowKey)}', [propName], null);
+  Query.row(String partitionKey, String rowKey) : this._('${Q.p(partitionKey)} and ${Q.r(rowKey)}', null, null);
   Query._(this._filter, this.select, this._top);
   final String? _filter;
   List<String>? select;

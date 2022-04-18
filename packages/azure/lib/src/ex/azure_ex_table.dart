@@ -18,23 +18,6 @@ class Table<T extends RowData> extends Azure {
     return res as T?;
   }
 
-  Future<Tuple2<Map<String, dynamic>, String>?> readLow(Key key, {SendPar? sendPar}) async {
-    final request = queryRequest(key: key);
-
-    final res = await send<Tuple2<Map<String, dynamic>, String>>(
-        request: request,
-        sendPar: sendPar,
-        finalizeResponse: (resp) async {
-          if (resp.error == ErrorCodes.notFound) return ContinueResult.doBreak; // => doBreak with null result
-          if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
-          final json = await resp.response!.stream.bytesToString();
-          final map = jsonDecode(json);
-          resp.result = Tuple2<Map<String, dynamic>, String>(map, resp.response!.headers['etag']!);
-          return ContinueResult.doBreak;
-        });
-    return res!.result;
-  }
-
   Future insert(T data) async =>
       data.eTag = await writeBytesRequest(data.toJsonBytes(), 'POST', finishHttpRequest: (req) => req.headers['Prefer'] = 'return-no-content');
 

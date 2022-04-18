@@ -20,3 +20,5 @@ Future<bool> connectedByOne4() async {
 }
 
 const maxInt = (1 << 53) - 1;
+
+bool isNullOrEmpty(String? s) => s == null || s.isEmpty;

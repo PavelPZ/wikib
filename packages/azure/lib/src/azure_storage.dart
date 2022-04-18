@@ -8,9 +8,9 @@ class TableStorage extends Azure {
   Future<AzureDataDownload> loadAll() => Future.value(AzureDataDownload());
 
   Future saveToCloud(IStorage storage, {ICancelToken? token}) async {
-    List<AzureRequest>? getRequests(IStorage storage) {
+    List<AzureRequest>? getRequests(IStorage storage, {required bool alowFirstRowOnly}) {
       final data = storage.toAzureUpload();
-      if (data == null) return null;
+      if (data == null || (!alowFirstRowOnly && data.rows.length <= 1)) return null;
 
       var nextIndex = 0;
       final requests = <AzureRequest>[];
@@ -61,23 +61,30 @@ class TableStorage extends Azure {
     }
 
     final sendRes = await send<void>(
-      getRequests: () => getRequests(storage),
+      getRequests: (alowFirstRowOnly) => getRequests(storage, alowFirstRowOnly: alowFirstRowOnly),
       token: token,
       finalizeResponse: (resp) async {
-        // reponse OK, parse response string:
         final respStr = await resp.response!.stream.bytesToString();
         final AzureDataUpload data = resp.myRequest!.finalizeData;
         resp.error = ErrorCodes.computeStatusCode(await finishBatchRows(respStr, data));
-        // await box
-        if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
-        return ContinueResult.doBreak;
+        switch (resp.error) {
+          case ErrorCodes.eTagConflict:
+            return ContinueResult.doBreak;
+          case ErrorCodes.no:
+            return ContinueResult.doContinue;
+          default:
+            return ContinueResult.doRethrow;
+        }
       },
     );
     if (token?.canceled == true) return null;
-    if (sendRes != null && sendRes.error >= 400) throw sendRes;
+    if (sendRes == null) return;
+    if (sendRes.error == ErrorCodes.eTagConflict)
+      await storage.onETagConflict();
+    else if (sendRes.error >= 400) throw sendRes;
   }
 
-  Future<List<String>?> getAllRows(String partitionKey, {ICancelToken? token}) async {
+  Future<List<String>?> getAllRowKeys(String partitionKey, {ICancelToken? token}) async {
     final query = Query.partition(partitionKey);
     query.select = <String>['RowKey'];
     final res = await queryLow(query);
@@ -85,6 +92,20 @@ class TableStorage extends Azure {
     final data = res.map((m) => m['RowKey'] as String).toList();
     assert(dpAzureMsg('TableStorage.getAllRows: ${data.join(',')}')());
     return data;
+  }
+
+  Future<WholeAzureDownload?> getAllRows(String partitionKey, {ICancelToken? token}) async {
+    final res = WholeAzureDownload();
+    final row = await readLow(Key(partitionKey, BoxKey.eTagHiveKey.rowKey));
+    if (row != null) res.eTag = row.item2;
+    final query = Query.partition(partitionKey);
+    final rows = await queryLow(query);
+    if (rows == null || rows.isEmpty) return null;
+    for (var row in rows) {
+      if (row['RowKey'] == BoxKey.eTagHiveKey.rowKey) continue;
+      res.rows.add(row);
+    }
+    return res;
   }
 }
 
@@ -115,7 +136,7 @@ class BatchStorage {
     final method = data.method;
     final methodName = batchMethodName[method];
     subSb.writeln('$methodName $_innerBatchUri${batchKeyUrlPart(data)} HTTP/1.1');
-    if (method == BatchMethod.delete) subSb.writeln('If-Match: ${data.eTag ?? '*'}');
+    if (method == BatchMethod.delete || !isNullOrEmpty(data.eTag)) subSb.writeln('If-Match: ${data.eTag ?? '*'}');
     subSb.writeln('Content-ID: ${data.batchDataId}');
     subSb.writeln('Accept: application/json;odata=nometadata');
     subSb.writeln('Content-Type: application/json');

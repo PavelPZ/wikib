@@ -90,10 +90,10 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
   final PlaceValue<int> actDay;
 
   @override
-  BoxItem fromAzureDownload(int key, dynamic value) {
+  BoxItem wholeAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
     if (boxKey.rowId == rowStart && boxKey.propId == 1) return actDay.createFromValue(key, value);
-    return super.fromAzureDownload(key, value);
+    return super.wholeAzureDownload(key, value);
   }
 
   @override

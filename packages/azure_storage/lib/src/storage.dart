@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
@@ -48,18 +49,20 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     if (debugClear) {
       assert(dpAzureMsg('Storage.initialize: debugClear START')());
       if (azureTable != null) await azureTable!.flush();
-      await toAzureDeleteAll();
+      await debugDeleteAzureAll();
       await box.clear();
       assert(dpAzureMsg('Storage.initialize: debugClear END')());
     } else {
       if (azureTable != null) {
         assert(dpAzureMsg('Storage.initialize: saveToCloud START')());
-        await azureTable!.saveToCloud(this);
+        azureTable!.saveToCloud(this);
+        await flush();
         assert(dpAzureMsg('Storage.initialize: saveToCloud END')());
       }
     }
     assert(dpAzureMsg('Storage.initialize: seed RUN')());
-    _seed();
+    seed();
+    print(debugDump());
     await flush();
   }
 
@@ -86,7 +89,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
   bool get canceled => _canceled;
   bool _canceled = false;
 
-  void _seed() {
+  void seed() {
     if (box.length > 0) return;
     box.put(BoxKey.eTagHiveKey.boxKey, '');
     allGroups.forEach((e) => e.seed());
@@ -108,12 +111,21 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     // finish rows
     for (final r in rowGroups.entries) {
       final data = _initAzureRowData(r.key);
+      // row with delete
       BatchRow row;
-      if (r.value.every((b) => b.isDeleted)) {
-        rows.add(row = BatchRow(rowId: r.key, data: data, method: BatchMethod.delete));
+      if (r.value.any((rr) => rr.isDeleted)) {
+        final allRowItems = getItems(BoxKey.getBoxKey(r.key, 0), BoxKey.getBoxKey(r.key, BoxKey.maxPropId)).toList();
+        if (allRowItems.length == r.value.length && r.value.every((b) => b.isDeleted)) {
+          // all items in row are deleted
+          rows.add(row = BatchRow(rowId: r.key, data: data, method: BatchMethod.delete));
+        } else {
+          // some of item is deleted => PUT not deleted items
+          for (final item in allRowItems.where((b) => !b.isDeleted)) item.toAzureUpload(data);
+          rows.add(row = BatchRow(rowId: r.key, data: data, method: BatchMethod.put));
+        }
       } else {
         for (final item in r.value.where((b) => !b.isDeleted)) item.toAzureUpload(data);
-        rows.add(row = BatchRow(rowId: r.key, data: data, method: r.value.any((b) => b.isDeleted) ? BatchMethod.put : BatchMethod.merge));
+        rows.add(row = BatchRow(rowId: r.key, data: data, method: BatchMethod.merge));
       }
       for (var item in r.value) row.versions[item.key] = item.version;
     }
@@ -153,18 +165,30 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     return box.flush();
   }
 
-  Future fromAzureDownload(AzureDataDownload rows) async {
-    await box.clear();
-    final puts = <MapEntry<dynamic, dynamic>>[];
-    for (var row in rows.entries)
-      for (var prop in rows.entries) {
-        final key = BoxKey.azure(row.key, prop.key);
-        final messageGroup = row2Group[key.rowId]!;
-        puts.add(MapEntry(key.boxKey, messageGroup.fromAzureDownload(key.boxKey, prop.value)));
-      }
-    final entries = Map.fromEntries(puts);
-    await box.putAll(entries);
+  Future onETagConflict() async {
+    await wholeAzureDownload();
+    await flush();
   }
+
+  Future wholeAzureDownload() async {
+    await cancel();
+    await box.clear();
+    final rows = await azureTable!.getAllRows(partitionKey);
+    if (rows == null) return;
+    final boxes = <BoxItem>[];
+    box.put(BoxKey.eTagHiveKey.boxKey, rows.eTag);
+    for (var row in rows.rows) {
+      for (var prop in (row as Map<String, dynamic>).entries) {
+        if (ignoreKeys.containsKey(prop.key)) continue;
+        final key = BoxKey.azure(row['RowKey'], prop.key);
+        final messageGroup = row2Group[key.rowId]!;
+        boxes.add(messageGroup.wholeAzureDownload(key.boxKey, prop.value));
+      }
+    }
+    saveBoxItems(boxes);
+  }
+
+  static const ignoreKeys = <String, bool>{'RowKey': true, 'PartitionKey': true, 'Timestamp': true};
 
   void saveBoxItem(BoxItem boxItem) {
     boxItem.version = Day.nowMilisecUtc;
@@ -174,11 +198,12 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
   }
 
   void saveBoxItems(Iterable<BoxItem> boxItems) {
-    box.putAll(Map.fromEntries(boxItems.map((boxItem) {
+    final entries = Map.fromEntries(boxItems.map((boxItem) {
       boxItem.version = Day.nowMilisecUtc;
       boxItem.isDefered = true;
       return MapEntry(boxItem.key, boxItem);
-    })));
+    }));
+    box.putAll(entries);
     azureTable?.saveToCloud(this, token: this);
   }
 
@@ -206,9 +231,9 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     return 'deleted=$deleted, defered=$defered';
   }
 
-  Future toAzureDeleteAll() async {
+  Future debugDeleteAzureAll() async {
     if (azureTable == null) return;
-    final rowKeys = await azureTable!.getAllRows(partitionKey);
+    final rowKeys = await azureTable!.getAllRowKeys(partitionKey);
     if (rowKeys == null) return null;
     final rowIds = rowKeys.map((key) => BoxKey.hex2Byte(key));
     final rows = rowIds.map((rowId) => BatchRow(rowId: rowId, data: _initAzureRowData(rowId), method: BatchMethod.delete)).toList();
@@ -217,15 +242,32 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     await azureTable!.saveToCloud(DeleteAllStorage(azureDataUpload));
     await azureTable!.flush();
   }
+
+  Iterable<T> getItems<T extends BoxItem>(int startKey, int endKey, [bool filter(BoxItem item)?]) sync* {
+    final lastKey = box.keys.last;
+    for (var i = startKey; i <= min(endKey, lastKey); i++) {
+      final it = box.get(i);
+      if (it == null || it is! T || (filter != null && !filter(it))) continue;
+      yield it;
+    }
+  }
 }
 
 class DeleteAllStorage implements IStorage {
   DeleteAllStorage(this._data);
-  final AzureDataUpload _data;
+  AzureDataUpload? _data;
 
-  AzureDataUpload? toAzureUpload() => _data;
+  AzureDataUpload? toAzureUpload() {
+    try {
+      return _data;
+    } finally {
+      _data = null;
+    }
+  }
+
   Future fromAzureRowUploaded(Map<int, int> versions) => Future.value();
   Future fromAzureETagUploaded(String eTag) => Future.value();
+  Future onETagConflict() => throw UnimplementedError();
 }
 
 // ***************************************
@@ -400,8 +442,11 @@ abstract class ItemsGroup {
   final int rowStart;
   final int rowEnd;
 
-  BoxItem fromAzureDownload(int key, dynamic value);
+  BoxItem wholeAzureDownload(int key, dynamic value);
   void seed() {}
+
+  Iterable<BoxItem> getItems() =>
+      storage.getItems(BoxKey.getBoxKey(rowStart, 0), BoxKey.getBoxKey(rowEnd, BoxKey.maxPropId), (item) => !item.isDeleted);
 }
 
 class SinglesGroup extends ItemsGroup {
@@ -410,7 +455,7 @@ class SinglesGroup extends ItemsGroup {
   final List<Place> singles;
 
   @override
-  BoxItem fromAzureDownload(int key, dynamic value) {
+  BoxItem wholeAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
     assert(boxKey.propId < singles.length);
     return singles[boxKey.propId].createFromValue(key, value);
@@ -428,22 +473,17 @@ abstract class MessagesGroup<T extends $pb.GeneratedMessage> extends ItemsGroup 
   final PlaceMsg<T> itemsPlace;
 
   @override
-  BoxItem fromAzureDownload(int key, dynamic value) => itemsPlace.createFromValue(key, value);
+  BoxItem wholeAzureDownload(int key, dynamic value) => itemsPlace.createFromValue(key, base64Decode(value));
 
-  Iterable<BoxItem> getItems() {
-    final endKey = BoxKey.getBoxKey(rowEnd, BoxKey.maxPropId);
-    return storage.box
-        .valuesBetween(
-          startKey: BoxKey.getBoxKey(rowStart, 0),
-        )
-        .cast<BoxItem>()
-        .where((f) => !f.isDeleted && f.key <= endKey);
+  Iterable<BoxMsg<T>> getMsgs() =>
+      storage.getItems<BoxMsg<T>>(BoxKey.getBoxKey(rowStart, 0), BoxKey.getBoxKey(rowEnd, BoxKey.maxPropId), (item) => !item.isDeleted);
+
+  void clear({bool startItemsIncluded = false}) {
+    final items = (startItemsIncluded ? getItems() : getMsgs()).toList();
+    storage.saveBoxItems(items.map((e) => e
+      ..isDeleted = true
+      ..isDefered = true));
   }
-
-  Iterable<BoxMsg<T>> getMsgs() => getItems().whereType<BoxMsg<T>>();
-
-  void clear({bool startItemsIncluded = false}) =>
-      storage.saveBoxItems((startItemsIncluded ? getItems() : getMsgs()).map((e) => e..isDeleted = true));
 }
 
 abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends MessagesGroup<T> {
@@ -458,10 +498,10 @@ abstract class MessagesGroupWithCounter<T extends $pb.GeneratedMessage> extends 
   final PlaceValue<int> uniqueCounter;
 
   @override
-  BoxItem fromAzureDownload(int key, dynamic value) {
+  BoxItem wholeAzureDownload(int key, dynamic value) {
     final boxKey = BoxKey(key);
     if (boxKey.rowId == rowStart && boxKey.propId == 0) return uniqueCounter.createFromValue(key, value);
-    return super.fromAzureDownload(key, value);
+    return super.wholeAzureDownload(key, value);
   }
 
   void addItems(Iterable<T> msgs) {

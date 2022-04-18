@@ -113,7 +113,7 @@ abstract class Sender {
 
   Future<AzureResponse<T>?> send<T>({
     AzureRequest? request,
-    List<AzureRequest>? getRequests()?,
+    List<AzureRequest>? getRequests(bool alowFirstRowOnly)?,
     AzureRequest? getRequest()?,
     required FinalizeResponse<T> finalizeResponse,
     SendPar? sendPar,
@@ -147,7 +147,7 @@ abstract class Sender {
 
   Future<AzureResponse<T>?> _send<T>({
     AzureRequest? request,
-    List<AzureRequest>? getRequests()?,
+    List<AzureRequest>? getRequests(bool alowFirstRowOnly)?,
     AzureRequest? getRequest()?,
     required FinalizeResponse<T> finalizeResponse,
     required SendPar sendPar,
@@ -197,6 +197,7 @@ abstract class Sender {
     }
 
     AzureResponse<T>? resp;
+    var isFirstGetRequests = true;
 
     while (true) {
       if (token?.canceled == true) return null;
@@ -204,9 +205,15 @@ abstract class Sender {
       final internetOK = await connectedByOne4();
       if (token?.canceled == true) return null;
 
+      if (!internetOK) {
+        resp = AzureResponse<T>();
+        resp.error = ErrorCodes.noInternet;
+      }
+
       var max = ContinueResult.doBreak.index;
       if (getRequests != null) {
-        final requests = getRequests();
+        final requests = getRequests(isFirstGetRequests);
+        isFirstGetRequests = false;
         if (requests == null || requests.isEmpty) return null;
         final resp0 = await getContinueResult(requests[0], AzureResponse<T>()..myRequest = requests[0], internetOK);
         if (token?.canceled == true) return null;
@@ -227,7 +234,7 @@ abstract class Sender {
         if (getRequest != null) {
           req = getRequest();
           assert(req != null);
-          resp ??= AzureResponse<T>();
+          resp ??= AzureResponse<T>(); // large query => agregate subqueries in the same AzureResponse
         } else {
           req = request;
           resp = AzureResponse<T>();

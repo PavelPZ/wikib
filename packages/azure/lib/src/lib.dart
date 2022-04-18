@@ -28,14 +28,18 @@ class BatchRow {
 class AzureDataUpload {
   AzureDataUpload({required this.rows});
   final List<BatchRow> rows;
-  // String? newETag;
-  // Map<int, int> debugAllRowVersions() => Map<int, int>.fromEntries(rows.map((r) => r.versions.entries).expand((e) => e));
+}
+
+class WholeAzureDownload {
+  late String eTag;
+  final rows = <dynamic>[];
 }
 
 abstract class IStorage {
   AzureDataUpload? toAzureUpload();
   Future fromAzureRowUploaded(Map<int, int> versions);
   Future fromAzureETagUploaded(String eTag);
+  Future onETagConflict();
 }
 
 typedef AzureDataDownload = Map<String, Map<String, dynamic>>;
@@ -75,7 +79,7 @@ class BoxKey {
   static String byte2Hex(int b) => hexMap[(b >> 4) & 0xf] + hexMap[b & 0xf];
   static String byte2HexRow(int b) => hexMap[(b >> 12) & 0xf] + hexMap[(b >> 8) & 0xf] + hexMap[(b >> 4) & 0xf] + hexMap[b & 0xf];
   static int hex2Byte(String hex) {
-    var res = (byteMap[hex[0]]! << 8) + byteMap[hex[1]]!;
+    var res = (byteMap[hex[0]]! << 4) + byteMap[hex[1]]!;
     if (hex.length == 4) res = (res << 16) + (byteMap[hex[2]]! << 8) + byteMap[hex[3]]!;
     return res;
   }
