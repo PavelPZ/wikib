@@ -12,10 +12,9 @@ import 'package:utils/utils.dart';
 import 'package:wikib_providers/wikb_providers.dart';
 
 const createDBWithProviders = true;
-var withoutAzure = false;
 
 Future<RewiseStorage> createDB(
-  String email, {
+  String? email, {
   bool debugClear = true,
 }) async {
   RewiseStorage storage;
@@ -24,15 +23,15 @@ Future<RewiseStorage> createDB(
     cont.read(emailProvider.notifier).state = email;
     cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
     cont.read(debugHivePath.notifier).state = r'd:\temp\hive';
-    if (withoutAzure) cont.read(azureRewiseUsersTableProvider.notifier).state = null;
+    // if (email != null) cont.read(azureRewiseUsersTableProvider.notifier).state = null;
     storage = (await cont.read((debugClear ? rewiseProviderDebugClear : rewiseProvider).storage.future))!;
   } else {
     final rewiseId = DBRewiseId(learn: 'en', speak: 'cs');
     storage = RewiseStorage(
-      await Hive.openBox(rewiseId.partitionKey(email), path: r'd:\temp\hive'),
-      withoutAzure ? null : TableStorage(account: TableAccount(azureAccounts: AzureAccounts(), tableName: 'users')),
+      await Hive.openBox(rewiseId.partitionKey(email ?? emptyEMail), path: r'd:\temp\hive'),
+      email == null ? null : TableStorage(account: TableAccount(azureAccounts: AzureAccounts(), tableName: 'users')),
       rewiseId,
-      email,
+      email ?? emptyEMail,
     );
     await storage.initialize(debugClear);
   }
@@ -56,7 +55,7 @@ void main() {
       final db3 = await createDB('email@10.en', debugClear: false);
       await db3.flush();
       print('=========== 3 ================');
-      if (!withoutAzure) expect(db2.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, 0);
+      expect(db2.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, 0);
       return;
     });
     test('whole database download', () async {
@@ -83,11 +82,11 @@ void main() {
     });
     test('facts', () async {
       for (var i = 0; i < 2; i++) {
-        withoutAzure = i == 0;
-        final db = await createDB('email@1.en');
+        final email = i == 0 ? null : 'email@1.en';
+        final db = await createDB(email);
         print(db.box.values);
         expect(db.box.length, 5);
-        if (withoutAzure) db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.azureTable == null) db.debugFromAzureAllUploaded(db.toAzureUpload());
 
         db.facts.addItems([
           dom.Fact()..nextInterval = 1,
@@ -99,7 +98,7 @@ void main() {
 
         // =====================
         // await db.debugReopen();
-        if (withoutAzure)
+        if (db.azureTable == null)
           db.debugFromAzureAllUploaded(db.toAzureUpload());
         else
           await db.flush();
@@ -138,11 +137,11 @@ void main() {
       return;
     });
     test('daylies', () async {
-      for (var i = 1; i < 2; i++) {
-        withoutAzure = i == 0;
-        final db = await createDB('email@2.en');
+      for (var i = 0; i < 2; i++) {
+        final email = i == 0 ? null : 'email@2.en';
+        final db = await createDB(email);
         // save to azure
-        if (withoutAzure)
+        if (db.azureTable == null)
           db.debugFromAzureAllUploaded(db.toAzureUpload());
         else
           await db.flush();
@@ -152,7 +151,7 @@ void main() {
         expect(db.daylies.getMsgs().length, 5);
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=6');
         final d1 = db.debugDump();
-        if (withoutAzure)
+        if (db.azureTable == null)
           db.debugFromAzureAllUploaded(db.toAzureUpload());
         else
           await db.flush();
@@ -164,7 +163,7 @@ void main() {
         db.daylies.addDaylies(Day.now + 1, range(0, 2).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 2);
         expect(db.debugDeletedAndDefered(), 'deleted=3, defered=7');
-        if (withoutAzure)
+        if (db.azureTable == null)
           db.debugFromAzureAllUploaded(db.toAzureUpload());
         else
           await db.flush();
@@ -173,7 +172,7 @@ void main() {
         // addDaylies 510x
         db.daylies.addDaylies(Day.now + 2, range(0, 510).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 510);
-        if (withoutAzure)
+        if (db.azureTable == null)
           db.debugFromAzureAllUploaded(db.toAzureUpload());
         else
           await db.flush();
@@ -181,7 +180,14 @@ void main() {
         // addDaylies 10x, the same day
         db.daylies.addDaylies(Day.now + 2, range(0, 10).map((e) => dom.Daily()));
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=11');
-        if (withoutAzure)
+        if (db.azureTable == null)
+          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        else
+          await db.flush();
+
+        db.daylies.addDaylies(Day.now + 3, range(0, 10).map((e) => dom.Daily()));
+        expect(db.debugDeletedAndDefered(), 'deleted=510, defered=522');
+        if (db.azureTable == null)
           db.debugFromAzureAllUploaded(db.toAzureUpload());
         else
           await db.flush();
@@ -194,13 +200,13 @@ void main() {
     });
     test('bootstrap', () async {
       final db = await createDB('email@3.en');
-      db.debugFromAzureAllUploaded(db.toAzureUpload());
       expect(db.box.length, 5); // with aTag first row
+      await db.flush();
       await db.close();
 
       final db2 = await createDB('email@3.en', debugClear: false);
-      await db2.flush();
       expect(db2.box.length, 5); // with aTag first row
+      await db2.flush();
       await db2.close();
       return;
     });

@@ -1,3 +1,5 @@
+const emptyEMail = '@empty_email';
+
 bool isDigit(int c) {
   return c >= 0x30 && c <= 0x39;
 }

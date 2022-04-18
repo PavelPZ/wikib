@@ -66,6 +66,10 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     await flush();
   }
 
+  Future<Storage> rename(Box newBox, TableStorage? newTable, String newEmail) {
+    return Future.value(this);
+  }
+
   Future close() async {
     await cancel();
     await box.close();
@@ -114,6 +118,10 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
       // row with delete
       BatchRow row;
       if (r.value.any((rr) => rr.isDeleted)) {
+        // if (r.value.length == BoxKey.maxPropId + 1 && r.value.every((b) => b.isDeleted)) {
+        //   // all items in row are deleted
+        //   rows.add(row = BatchRow(rowId: r.key, data: data, method: BatchMethod.delete));
+        // } else {
         final allRowItems = getItems(BoxKey.getBoxKey(r.key, 0), BoxKey.getBoxKey(r.key, BoxKey.maxPropId)).toList();
         if (allRowItems.length == r.value.length && r.value.every((b) => b.isDeleted)) {
           // all items in row are deleted
@@ -123,6 +131,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
           for (final item in allRowItems.where((b) => !b.isDeleted)) item.toAzureUpload(data);
           rows.add(row = BatchRow(rowId: r.key, data: data, method: BatchMethod.put));
         }
+        //}
       } else {
         for (final item in r.value.where((b) => !b.isDeleted)) item.toAzureUpload(data);
         rows.add(row = BatchRow(rowId: r.key, data: data, method: BatchMethod.merge));
@@ -136,10 +145,9 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
   Map<String, dynamic> _initAzureRowData(int rowId) =>
       <String, dynamic>{'PartitionKey': Encoder.keys.encode(dbId.partitionKey(email)), 'RowKey': Encoder.keys.encode(BoxKey.byte2HexRow(rowId))};
 
-  Future fromAzureETagUploaded(String eTag) => box.put(BoxKey.eTagHiveKey.boxKey, eTag);
+  Future fromAzureUploadedETag(String eTag) => box.put(BoxKey.eTagHiveKey.boxKey, eTag);
 
-  Future fromAzureRowUploaded(Map<int, int> versions) {
-    // TODO(pz): eTagPlace.getBox()!..value = newETag];
+  Future fromAzureUploadedRow(Map<int, int> versions) {
     final modified = <BoxItem>[];
     for (var kv in versions.entries) {
       final item = box.get(kv.key) as BoxItem?;
@@ -158,9 +166,9 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     if (azureDataUpload == null) return Future.value();
     for (var row in azureDataUpload.rows) {
       if (row.rowId == BoxKey.eTagHiveKey.rowId)
-        fromAzureETagUploaded(DateTime.now().millisecondsSinceEpoch.toString());
+        fromAzureUploadedETag(DateTime.now().millisecondsSinceEpoch.toString());
       else
-        fromAzureRowUploaded(row.versions);
+        fromAzureUploadedRow(row.versions);
     }
     return box.flush();
   }
@@ -265,8 +273,8 @@ class DeleteAllStorage implements IStorage {
     }
   }
 
-  Future fromAzureRowUploaded(Map<int, int> versions) => Future.value();
-  Future fromAzureETagUploaded(String eTag) => Future.value();
+  Future fromAzureUploadedRow(Map<int, int> versions) => Future.value();
+  Future fromAzureUploadedETag(String eTag) => Future.value();
   Future onETagConflict() => throw UnimplementedError();
 }
 

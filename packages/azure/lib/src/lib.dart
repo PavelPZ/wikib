@@ -37,8 +37,8 @@ class WholeAzureDownload {
 
 abstract class IStorage {
   AzureDataUpload? toAzureUpload();
-  Future fromAzureRowUploaded(Map<int, int> versions);
-  Future fromAzureETagUploaded(String eTag);
+  Future fromAzureUploadedRow(Map<int, int> versions);
+  Future fromAzureUploadedETag(String eTag);
   Future onETagConflict();
 }
 

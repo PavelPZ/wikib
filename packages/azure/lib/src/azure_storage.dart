@@ -46,13 +46,10 @@ class TableStorage extends Azure {
           row.batchResponse = resp;
           row.eTag = resp.headers['ETag'];
           if (!isError) {
-            if (row.eTag != null) {
-              // not DELETE
-              if (rowId == BoxKey.eTagHiveKey.rowId) {
-                await storage.fromAzureETagUploaded(row.eTag!);
-              } else
-                await storage.fromAzureRowUploaded(row.versions);
-            }
+            if (row.eTag != null && rowId == BoxKey.eTagHiveKey.rowId)
+              await storage.fromAzureUploadedETag(row.eTag!);
+            else
+              await storage.fromAzureUploadedRow(row.versions);
           }
         }
         code = max(code, resp.statusCode);
