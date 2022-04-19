@@ -76,9 +76,9 @@ class TableStorage extends Azure {
     );
     if (token?.canceled == true) return null;
     if (sendRes == null) return;
-    if (sendRes.error == ErrorCodes.eTagConflict)
-      await storage.onETagConflict();
-    else if (sendRes.error >= 400) throw sendRes;
+    // if (sendRes.error == ErrorCodes.eTagConflict)
+    //   await storage.onETagConflict();
+    if (sendRes.error >= 400 && sendRes.error != ErrorCodes.eTagConflict) throw sendRes;
   }
 
   Future<List<String>?> getAllRowKeys(String partitionKey, {ICancelToken? token}) async {

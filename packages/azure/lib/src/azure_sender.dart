@@ -107,9 +107,9 @@ class SendPar {
 }
 
 abstract class Sender {
-  Future? _running;
-  Completer? _runningCompleter;
-  Future flush() => _running ?? Future.value();
+  Future<AzureResponse?>? _running;
+  Completer<AzureResponse?>? _runningCompleter;
+  Future<AzureResponse?> flush() => _running ?? Future.value(null);
 
   Future<AzureResponse<T>?> send<T>({
     AzureRequest? request,
@@ -121,12 +121,13 @@ abstract class Sender {
   }) async {
     assert(((request == null ? 0 : 1) + (getRequest == null ? 0 : 1) + (getRequests == null ? 0 : 1)) == 1);
     if (_runningCompleter != null) return null;
-    _runningCompleter = Completer();
+    _runningCompleter = Completer<AzureResponse?>();
     _running = _runningCompleter!.future;
     final sp = sendPar ?? SendPar();
     sp.retries ??= RetriesSimple._instance;
+    AzureResponse<T>? res;
     try {
-      final res = await Future.microtask(() async {
+      res = await Future.microtask(() async {
         final ress = await _send<T>(
           request: request,
           getRequests: getRequests,
@@ -139,7 +140,7 @@ abstract class Sender {
       });
       return res;
     } finally {
-      _runningCompleter!.complete();
+      _runningCompleter!.complete(res);
       _runningCompleter = null;
       _running = null;
     }

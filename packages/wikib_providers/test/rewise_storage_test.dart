@@ -38,8 +38,8 @@ Future<RewiseStorage?> createDBLow(
     cont.read(emailProvider.notifier).state = email;
     // print('*** emailOrEmptyProvider: ${cont.read(emailOrEmptyProvider)}');
     cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
-    cont.read(debugHivePath.notifier).state = r'd:\temp\hive';
-    cont.read(debugDeviceId.notifier).state = deviceId;
+    cont.read(debugHivePathProvider.notifier).state = r'd:\temp\hive';
+    cont.read(debugDeviceIdProvider.notifier).state = deviceId;
     if (debugClear != false) {
       cont.read(debugDeleteProvider.notifier).state = true;
       try {
@@ -76,7 +76,7 @@ void main() {
       await createDBLow(cont1, email, debugClear: null, deviceId: 'd1');
       final db1 = await createDB(cont1, email, debugClear: false, deviceId: 'd1');
       expect(db1.box.length, 5);
-      db1.facts.addItems(range(0, 3).map((e) => dom.Fact()..nextInterval = e));
+      db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       await db1.flush();
       expect(db1.box.length, 8);
 
@@ -84,15 +84,26 @@ void main() {
       final fn = File(db1.box.path!.replaceFirst('\\d1-', '\\d2-'));
       if (fn.existsSync()) fn.deleteSync();
       final db2 = await createDB(cont2, email, debugClear: false, deviceId: 'd2');
-      db2.facts.addItems(range(4, 3).map((e) => dom.Fact()..nextInterval = e));
-      await db2.flush();
+      expect(db2.box.length, 8);
+      db2.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       expect(db2.box.length, 11);
+      await db2.flush();
 
-      db1.facts.addItems(range(7, 3).map((e) => dom.Fact()..nextInterval = e));
+      db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       await db1.flush();
       expect(db1.box.length, 11);
+
+      db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
+      expect(db1.box.length, 14);
+      await Future.delayed(Duration(milliseconds: 100));
+      expect(db1.box.length, 14);
+      db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
+      expect(db1.box.length, 17);
+      // await db1.flush();
+      expect(db1.box.length, 17);
+
       return;
-    });
+    }, skip: false);
     test('emptyEMail', () async {
       final cont = getCont();
       // clear
@@ -114,6 +125,20 @@ void main() {
     });
   });
   group('rewise_storage', () {
+    test('save stress', () async {
+      final cont = getCont();
+      final db = await createDB(cont, 'save stress');
+
+      for (var i = 0; i < 6; i++) {
+        db.facts.addItems([dom.Fact()..nextInterval = i]);
+        expect(db.box.length, 6 + i);
+        await Future.delayed(Duration(milliseconds: i * 250));
+      }
+      await db.flush();
+
+      await db.wholeAzureDownload();
+      expect(db.box.length, 11);
+    });
     test('basic', () async {
       for (var i = 0; i < 2; i++) {
         final cont = getCont();
@@ -121,12 +146,10 @@ void main() {
         final db = await createDB(cont, email);
         print('=========== 0 ================');
         await db.flush();
-        await db.close();
         print('=========== 1 ================');
         // CHANGE eTagRow here => test eTagConflict
         final db2 = await createDB(cont, email, debugClear: false);
         await db2.flush();
-        await db2.close();
         print('=========== 2 ================');
         final db3 = await createDB(cont, email, debugClear: false);
         await db3.flush();
@@ -283,7 +306,6 @@ void main() {
           await db.flush();
 
         await db.flush();
-        await db.close();
         continue;
       }
       return;
@@ -295,12 +317,10 @@ void main() {
         final db = await createDB(cont, email);
         expect(db.box.length, 5); // with aTag first row
         await db.flush();
-        await db.close();
 
         final db2 = await createDB(cont, email, debugClear: false);
         expect(db2.box.length, 5); // with aTag first row
         await db2.flush();
-        await db2.close();
       }
       return;
     });

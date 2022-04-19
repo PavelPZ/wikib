@@ -79,8 +79,10 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
   bool _canceled = false;
 
   Future seed() async {
-    await wholeAzureDownload();
-    if (!isNullOrEmpty(box.get(BoxKey.eTagHiveKey.boxKey))) return;
+    if (azureTable != null) {
+      await wholeAzureDownload();
+      if (!isNullOrEmpty(box.get(BoxKey.eTagHiveKey.boxKey))) return;
+    } else if (box.length > 0) return;
     box.put(BoxKey.eTagHiveKey.boxKey, '');
     allGroups.forEach((e) => e.seed());
   }
@@ -195,6 +197,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage, ICancelToken {
     assert(newStorage.azureTable != null);
     assert(newStorage.box.isEmpty);
     assert(newStorage.email != emptyEMail);
+    assert(newStorage.box != box);
     // get content of newStorage.partitionKey cloud
     final newRows = await newStorage.azureTable!.getAllRows(newStorage.partitionKey);
     final newRowsCount =
