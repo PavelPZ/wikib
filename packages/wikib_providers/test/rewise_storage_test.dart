@@ -1,6 +1,8 @@
 // ignore_for_file: unused_local_variable
 @Timeout(Duration(seconds: 3600))
 
+import 'dart:io';
+
 import 'package:azure/azure.dart';
 import 'package:azure_storage/azure_storage.dart';
 import 'package:hive/hive.dart';
@@ -19,8 +21,9 @@ Future<RewiseStorage> createDB(
   ProviderContainer cont,
   String? email, {
   bool debugClear = true,
+  String? deviceId,
 }) async {
-  final res = await createDBLow(cont, email, debugClear: debugClear);
+  final res = await createDBLow(cont, email, debugClear: debugClear, deviceId: deviceId);
   return res!;
 }
 
@@ -28,6 +31,7 @@ Future<RewiseStorage?> createDBLow(
   ProviderContainer cont,
   String? email, {
   bool? debugClear = true,
+  String? deviceId,
 }) async {
   RewiseStorage storage;
   if (createDBWithProviders) {
@@ -35,6 +39,7 @@ Future<RewiseStorage?> createDBLow(
     // print('*** emailOrEmptyProvider: ${cont.read(emailOrEmptyProvider)}');
     cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
     cont.read(debugHivePath.notifier).state = r'd:\temp\hive';
+    cont.read(debugDeviceId.notifier).state = deviceId;
     if (debugClear != false) {
       cont.read(debugDeleteProvider.notifier).state = true;
       try {
@@ -63,11 +68,35 @@ void main() {
   Hive.init('');
   hiveRewiseStorageAdapters();
   dpIgnore = false; // DEBUG prints
-  group('emptyEMail to email', () {
-    test('basic', () async {
+  group('emptyEMail and devices', () {
+    test('more devices', () async {
+      final email = 'devices@m.c';
+
+      final cont1 = getCont();
+      await createDBLow(cont1, email, debugClear: null, deviceId: 'd1');
+      final db1 = await createDB(cont1, email, debugClear: false, deviceId: 'd1');
+      expect(db1.box.length, 5);
+      db1.facts.addItems(range(0, 3).map((e) => dom.Fact()..nextInterval = e));
+      await db1.flush();
+      expect(db1.box.length, 8);
+
+      final cont2 = getCont();
+      final fn = File(db1.box.path!.replaceFirst('\\d1-', '\\d2-'));
+      if (fn.existsSync()) fn.deleteSync();
+      final db2 = await createDB(cont2, email, debugClear: false, deviceId: 'd2');
+      db2.facts.addItems(range(4, 3).map((e) => dom.Fact()..nextInterval = e));
+      await db2.flush();
+      expect(db2.box.length, 11);
+
+      db1.facts.addItems(range(7, 3).map((e) => dom.Fact()..nextInterval = e));
+      await db1.flush();
+      expect(db1.box.length, 11);
+      return;
+    });
+    test('emptyEMail', () async {
       final cont = getCont();
       // clear
-      final clearDB = await createDBLow(cont, 'fromEmpty@m.c', debugClear: null);
+      await createDBLow(cont, 'fromEmpty@m.c', debugClear: null);
 
       // create new
       final db = await createDB(cont, null, debugClear: false);

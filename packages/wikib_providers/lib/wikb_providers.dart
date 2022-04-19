@@ -1,2 +1,2 @@
-// export 'src/rewise_storage.dart_';
+export 'src/storage.dart';
 export 'src/wikb_providers.dart';

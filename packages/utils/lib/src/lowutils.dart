@@ -10,7 +10,7 @@ void rAssert(bool cond, [String? msg]) {
 }
 
 Iterable<int> range(int start, int len) sync* {
-  for (var i = 0; i < start + len; i++) yield i;
+  for (var i = start; i < start + len; i++) yield i;
 }
 
 abstract class DBId {

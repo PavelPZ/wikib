@@ -91,10 +91,16 @@ class TableStorage extends Azure {
     return data;
   }
 
+  Future<String?> getETag(String partitionKey) async {
+    final row = await readLow(Key(partitionKey, BoxKey.eTagHiveKey.rowKey));
+    return row == null ? null : row.item2;
+  }
+
   Future<WholeAzureDownload?> getAllRows(String partitionKey, {ICancelToken? token}) async {
     final res = WholeAzureDownload();
-    final row = await readLow(Key(partitionKey, BoxKey.eTagHiveKey.rowKey));
-    if (row != null) res.eTag = row.item2;
+    final etag = await getETag(partitionKey);
+    if (etag == null) return null;
+    res.eTag = etag;
     final query = Query.partition(partitionKey);
     final rows = await queryLow(query);
     if (rows == null || rows.isEmpty) return null;
