@@ -3,14 +3,12 @@ import 'dart:io';
 
 import 'package:analyzer/dart/analysis/analysis_context.dart';
 import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
-import 'package:analyzer/dart/analysis/session.dart' as sessions;
 import 'package:analyzer/dart/analysis/results.dart';
-import 'package:protobuf_for_dart/algorithm.dart';
-
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/syntactic_entity.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:path/path.dart' as p;
+import 'package:protobuf/protobuf.dart';
+import 'package:protobuf_for_dart/algorithm.dart';
 
 const drive = r'd:';
 const root = '$drive\\wikibulary\\localize\\data';
@@ -39,16 +37,16 @@ final projects = <TransDB_Project>[
     }),
 ];
 
-List<SyntacticEntity> _flatten_tree(AstNode n, [int depth = 9999999]) {
-  var que = [];
+List<SyntacticEntity> _flattenTree(AstNode n, [int depth = 9999999]) {
+  final que = [];
   que.add(n);
-  var nodes = <SyntacticEntity>[];
-  int nodes_count = que.length;
+  final nodes = <SyntacticEntity>[];
+  int nodesCount = que.length;
   int dep = 0;
   int c = 0;
   if (depth == 0) return [n];
   while (que.isNotEmpty) {
-    var node = que.removeAt(0);
+    final node = que.removeAt(0);
     if (node is! AstNode) continue;
     for (var cn in node.childEntities) {
       nodes.add(cn);
@@ -56,11 +54,11 @@ List<SyntacticEntity> _flatten_tree(AstNode n, [int depth = 9999999]) {
     }
     //Keeping track of how deep in the tree
     ++c;
-    if (c == nodes_count) {
+    if (c == nodesCount) {
       ++dep; // One layer done
       if (depth <= dep) return nodes;
       c = 0;
-      nodes_count = que.length;
+      nodesCount = que.length;
     }
   }
   return nodes;
@@ -81,7 +79,7 @@ class MethodCalls {
 }
 
 MethodCalls _parseDart(CompilationUnit unit) {
-  final nodes = _flatten_tree(unit);
+  final nodes = _flattenTree(unit);
   final res = MethodCalls();
   for (var node in nodes) {
     if (node is! MethodInvocation || !node.methodName.name.startsWith('Lo\$')) continue;
@@ -104,7 +102,7 @@ MethodCalls _parseDart(CompilationUnit unit) {
   return res;
 }
 
-void main() async {
+Future main() async {
   final transDB = TransDB();
   for (var p in projects) {
     final project = p.deepCopy();
@@ -112,7 +110,7 @@ void main() async {
     final prefix = '$drive\\${project.dir}';
     if (project.id == 'cldr') {
       for (var fn in project.files.values) {
-        var f = File('$prefix\\${fn.path}');
+        final f = File('$prefix\\${fn.path}');
         final bytes = f.readAsBytesSync();
         final data = TransDB()..mergeFromBuffer(bytes);
         transDB.items.addAll(data.items);
@@ -120,11 +118,11 @@ void main() async {
       continue;
     }
     //https://github.com/dart-lang/sdk/blob/master/pkg/analyzer/doc/tutorial/analysis.md
-    AnalysisContextCollection collection = new AnalysisContextCollection(includedPaths: [prefix]);
+    final collection = AnalysisContextCollection(includedPaths: [prefix]);
     for (AnalysisContext context in collection.contexts) {
       for (String path in context.contextRoot.analyzedFiles()) {
-        sessions.AnalysisSession session = context.currentSession;
-        final pp = await session.getParsedLibrary(path);
+        final session = context.currentSession;
+        final pp = session.getParsedLibrary(path);
         if (pp is! ParsedLibraryResult) continue;
         final filePath = path.substring(prefix.length + 1);
         TransDB_File? file;

@@ -14,7 +14,7 @@ dependencies:
     path: ../azure_storage  
   # flutter:
   #  sdk: flutter
-  hive:
+  hive: 
   protobuf:
   protobuf_for_dart:
     path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
@@ -23,6 +23,6 @@ dependencies:
     path: ../utils 
 
 dev_dependencies:
-  test:
-  hive_generator:
   build_runner: 
+  # hive_generator:
+  test:

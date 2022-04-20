@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:protobuf/protobuf.dart' as $pb;
 
 abstract class Protobuf {
+  Protobuf._();
   static T fromStr<T extends $pb.GeneratedMessage>(String data, T create()) {
     final res = create();
     res.mergeFromProto3Json(jsonDecode(data));

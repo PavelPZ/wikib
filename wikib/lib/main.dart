@@ -14,7 +14,7 @@ import 'world/world.dart';
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'main.g.dart';
 
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   // TODO(pz): will be modified by download from azure etc.
@@ -41,7 +41,7 @@ Widget myApp(BuildContext context, WidgetRef ref) {
 
 class HomeSegment extends TypedSegment {
   const HomeSegment();
-  // ignore: avoid_ unused_constructor_parameters
+  // ignore: avoid_unused_constructor_parameters
   factory HomeSegment.fromUrlPars(UrlPars pars) => const HomeSegment();
 }
 

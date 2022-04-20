@@ -11,9 +11,9 @@ environment:
 dependencies:
   azure_storage:
     path: ../packages/azure_storage  
+  cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
   flutter_hooks:
   flutter_spinkit:
   functional_widget_annotation: ^0.9.2
@@ -22,10 +22,10 @@ dependencies:
   hooks_riverpod: 2.0.0-dev.5
   localization:     
     path: ../packages/localization
+  meta: ^1.7.0
   protobuf:
   protobuf_for_dart:
     path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
-  meta: ^1.7.0
   rewise_storage:
     path: ../packages/rewise_storage
   riverpod_navigator: 
@@ -39,8 +39,8 @@ dev_dependencies:
   # flutter_test:
     # sdk: flutter
   # flutter_lints: ^1.0.0
-  functional_widget: ^0.9.2
   build_runner: 
+  functional_widget: ^0.9.2
   test:
 
 dependency_overrides:

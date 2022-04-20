@@ -10,12 +10,12 @@ environment:
 dependencies:
   azure:
     path: ../azure
+  azure_storage:
+    path: ../azure_storage
   hive:
   rewise_storage:
     path: ../rewise_storage
   riverpod: 2.0.0-dev.5
-  azure_storage:
-    path: ../azure_storage
   utils:
     path: ../utils 
 

@@ -5,8 +5,8 @@ import 'dart:typed_data';
 import 'package:azure/azure.dart';
 import 'package:azure_storage/azure_storage.dart';
 import 'package:hive/hive.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:protobuf_for_dart/algorithm.dart' as dom;
+import 'package:riverpod/riverpod.dart';
 import 'package:utils/utils.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
@@ -26,7 +26,7 @@ void hiveRewiseStorageAdapters() {
 typedef TRows = Map<String, Map<String, dynamic>>;
 
 class RewiseStorage extends Storage<DBRewiseId> {
-  RewiseStorage(Box storage, TableStorage? azureTable, DBId dbId, String email) : super(storage, azureTable, dbId, email) {
+  RewiseStorage(Box storage, TableAccount? tableAccount, DBId dbId, String email) : super(storage, tableAccount, dbId, email) {
     setAllGroups([
       //systemRow,
       row1 = SinglesGroup(this, row: 1, singles: [
@@ -160,7 +160,7 @@ class BoxFact extends BoxMsg<dom.Fact> {
   dom.Fact msgCreator() => dom.Fact();
 
   @override
-  void setMsgId(dom.Fact f, int id) => f.id = id;
+  void setMsgId(dom.Fact msg, int id) => msg.id = id;
 }
 
 @HiveType(typeId: 11)
@@ -169,7 +169,7 @@ class BoxDaily extends BoxMsg<dom.Daily> {
   dom.Daily msgCreator() => dom.Daily();
 
   @override
-  void setMsgId(dom.Daily d, int id) => d.id = id;
+  void setMsgId(dom.Daily msg, int id) => msg.id = id;
 }
 
 @HiveType(typeId: 12)
@@ -178,7 +178,7 @@ class BoxBook extends BoxMsg<dom.Book> {
   dom.Book msgCreator() => dom.Book();
 
   @override
-  void setMsgId(dom.Book b, int id) => b.id = id;
+  void setMsgId(dom.Book msg, int id) => msg.id = id;
 }
 
 @HiveType(typeId: 13)
@@ -187,7 +187,7 @@ class BoxConfig extends BoxMsg<dom.Config> {
   dom.Config msgCreator() => dom.Config();
 
   @override
-  void setMsgId(dom.Config c, int id) => c.id = id;
+  void setMsgId(dom.Config msg, int id) => msg.id = id;
 }
 
 // DEVICEID = 0; // 1 rows (max 1*252 items)

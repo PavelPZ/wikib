@@ -24,6 +24,7 @@ class DBRewiseId implements DBId {
   final String speak;
   @override
   bool eq(DBId id) => id is DBRewiseId && id.learn == learn && id.speak == speak;
+  @override
   String partitionKey(String email) => '$email!rewise!$speak!$learn';
 }
 
@@ -31,6 +32,7 @@ class DBUserId implements DBId {
   const DBUserId();
   @override
   bool eq(DBId id) => id is DBUserId;
+  @override
   String partitionKey(String email) => '$email!user';
 }
 
@@ -40,7 +42,9 @@ abstract class ICancelToken {
 }
 
 class CancelToken implements ICancelToken {
+  @override
   void cancel() => _canceled = true;
+  @override
   bool get canceled => _canceled;
   bool _canceled = false;
 }

@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 @Timeout(Duration(seconds: 3600))
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:azure/azure.dart';
@@ -38,24 +39,24 @@ Future<RewiseStorage?> createDBLow(
     cont.read(emailProvider.notifier).state = email;
     // print('*** emailOrEmptyProvider: ${cont.read(emailOrEmptyProvider)}');
     cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
-    cont.read(debugHivePathProvider.notifier).state = r'd:\temp\hive';
+    // cont.read(debugHivePathProvider.notifier).state = r'd:\temp\hive';
     cont.read(debugDeviceIdProvider.notifier).state = deviceId;
     if (debugClear != false) {
       cont.read(debugDeleteProvider.notifier).state = true;
       try {
-        await cont.read(rewiseProvider.storage.future);
+        await cont.read(rewiseProvider.storageProvider.future);
       } finally {
         cont.read(debugDeleteProvider.notifier).state = false;
       }
     }
     if (debugClear == null) return null;
-    storage = (await cont.read(rewiseProvider.storage.future))!;
-    await storage.flush();
+    storage = (await cont.read(rewiseProvider.storageProvider.future))!;
+    await storage.debugFlush();
   } else {
     final rewiseId = DBRewiseId(learn: 'en', speak: 'cs');
     storage = RewiseStorage(
       await Hive.openBox(rewiseId.partitionKey(email ?? emptyEMail), path: r'd:\temp\hive'),
-      email == null ? null : TableStorage(account: TableAccount(azureAccounts: AzureAccounts(), tableName: 'users')),
+      email == null ? null : TableAccount(azureAccounts: AzureAccounts(), tableName: 'users'),
       rewiseId,
       email ?? emptyEMail,
     );
@@ -65,32 +66,31 @@ Future<RewiseStorage?> createDBLow(
 }
 
 void main() {
-  Hive.init('');
+  Hive.init(r'd:\temp\hive');
   hiveRewiseStorageAdapters();
-  dpIgnore = false; // DEBUG prints
   group('emptyEMail and devices', () {
-    test('more devices', () async {
-      final email = 'devices@m.c';
+    test('more_devices', () async {
+      const name = 'more_devices';
 
       final cont1 = getCont();
-      await createDBLow(cont1, email, debugClear: null, deviceId: 'd1');
-      final db1 = await createDB(cont1, email, debugClear: false, deviceId: 'd1');
+      await createDBLow(cont1, name, debugClear: null, deviceId: '$name-1-');
+      final db1 = await createDB(cont1, name, debugClear: false, deviceId: '$name-1-');
       expect(db1.box.length, 5);
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
-      await db1.flush();
+      await db1.debugFlush();
       expect(db1.box.length, 8);
 
       final cont2 = getCont();
-      final fn = File(db1.box.path!.replaceFirst('\\d1-', '\\d2-'));
+      final fn = File(db1.box.path!.replaceFirst('-1-', '-2-'));
       if (fn.existsSync()) fn.deleteSync();
-      final db2 = await createDB(cont2, email, debugClear: false, deviceId: 'd2');
+      final db2 = await createDB(cont2, name, debugClear: false, deviceId: '$name-2-');
       expect(db2.box.length, 8);
       db2.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       expect(db2.box.length, 11);
-      await db2.flush();
+      await db2.debugFlush();
 
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
-      await db1.flush();
+      await db1.debugFlush();
       expect(db1.box.length, 11);
 
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
@@ -102,103 +102,112 @@ void main() {
       // await db1.flush();
       expect(db1.box.length, 17);
 
+      await db1.close();
       return;
-    }, skip: false);
-    test('emptyEMail', () async {
+    }, skip: true);
+    test('testEmptyEMail', () async {
       final cont = getCont();
+      const name = 'testEmptyEMail';
       // clear
-      await createDBLow(cont, 'fromEmpty@m.c', debugClear: null);
+      await createDBLow(cont, emptyEMail, debugClear: null, deviceId: name);
+      await createDBLow(cont, name, debugClear: null, deviceId: name);
 
       // create new
-      final db = await createDB(cont, null, debugClear: false);
+      final db = await createDB(cont, null, debugClear: false, deviceId: name);
       print('*** test: await createDB');
       db.facts.addItems(range(0, 3).map((e) => dom.Fact()..nextInterval = e));
       print('*** test: before db.flush: ${cont.read(emailProvider)}');
-      await db.flush();
+      await db.debugFlush();
+
       print('*** test: db.flush: ${cont.read(emailProvider)}');
       // await db.close();
       assert(cont.read(emailProvider) == null);
-      cont.read(emailProvider.notifier).state = 'fromEmpty@m.c';
-      final db2 = await cont.read(rewiseProvider.storage.future);
+      cont.read(emailProvider.notifier).state = name;
+      final db2 = await cont.read(rewiseProvider.storageProvider.future);
       final facts = db2!.facts.getMsgs().map((m) => m.msg).toList();
+      await db2.debugFlush();
       return;
-    });
+    }, skip: true);
   });
   group('rewise_storage', () {
-    test('save stress', () async {
+    test('save_stress', () async {
+      const name = 'save_stress';
       final cont = getCont();
-      final db = await createDB(cont, 'save stress');
+      final db = await createDB(cont, name, deviceId: name);
 
       for (var i = 0; i < 6; i++) {
         db.facts.addItems([dom.Fact()..nextInterval = i]);
         expect(db.box.length, 6 + i);
         await Future.delayed(Duration(milliseconds: i * 250));
       }
-      await db.flush();
+      await db.debugFlush();
 
       await db.wholeAzureDownload();
       expect(db.box.length, 11);
-    });
+    }, skip: false);
     test('basic', () async {
+      const name = 'basic';
       for (var i = 0; i < 2; i++) {
         final cont = getCont();
-        final email = i == 0 ? null : 'email@10.en';
-        final db = await createDB(cont, email);
+        final email = i == 0 ? null : name;
+        final db = await createDB(cont, email, deviceId: name);
         print('=========== 0 ================');
-        await db.flush();
+        await db.debugFlush();
         print('=========== 1 ================');
         // CHANGE eTagRow here => test eTagConflict
-        final db2 = await createDB(cont, email, debugClear: false);
-        await db2.flush();
+        final db2 = await createDB(cont, email, debugClear: false, deviceId: name);
+        await db2.debugFlush();
         print('=========== 2 ================');
-        final db3 = await createDB(cont, email, debugClear: false);
-        await db3.flush();
+        final db3 = await createDB(cont, email, debugClear: false, deviceId: name);
+        await db3.debugFlush();
         print('=========== 3 ================');
         print(db3.debugDump());
-        expect(db3.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, db3.azureTable == null ? 4 : 0);
+        expect(db3.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, db3.saveToCloudTable == null ? 4 : 0);
       }
       return;
-    });
-    test('whole database download', () async {
+    }, skip: false);
+    test('whole_database_download', () async {
+      const name = 'whole_database_download';
       final cont = getCont();
-      final db = await createDB(cont, 'email@11.en');
+      final db = await createDB(cont, name, deviceId: name);
       db.facts.addItems(range(0, 300).map((e) => dom.Fact()..nextInterval = e));
-      await db.flush();
+      await db.debugFlush();
       await db.wholeAzureDownload();
-      await db.flush();
+      await db.debugFlush();
       return;
-    });
+    }, skip: false);
     test('update', () async {
+      const name = 'update';
       for (var i = 0; i < 2; i++) {
         final cont = getCont();
-        final email = i == 0 ? null : 'email@12.en';
-        final db = await createDB(cont, email);
-        await db.flush();
+        final db = await createDB(cont, i == 0 ? null : name, deviceId: name);
+        await db.debugFlush();
         db.facts.addItems([dom.Fact()..nextInterval = 1]);
-        await db.flush();
+        await db.debugFlush();
       }
       return;
-    });
+    }, skip: false);
     test('delete', () async {
+      const name = 'delete';
       for (var i = 0; i < 2; i++) {
         final cont = getCont();
-        final email = i == 0 ? null : 'email@13.en';
-        final db = await createDB(cont, email);
+        final db = await createDB(cont, i == 0 ? null : name, deviceId: name);
         db.facts.addItems([dom.Fact()..nextInterval = 1]);
-        await db.flush();
+        await db.debugFlush();
         db.facts.clear(); // remove all facts
-        await db.flush();
+        await db.debugFlush();
       }
       return;
-    });
+    }, skip: false);
     test('facts', () async {
+      const name = 'facts';
       for (var i = 0; i < 2; i++) {
         final cont = getCont();
-        final email = i == 0 ? null : 'email@1.en';
-        final db = await createDB(cont, email);
+        final email = i == 0 ? null : name;
+        final db = await createDB(cont, email, deviceId: name);
         print(db.box.values);
         expect(db.box.length, 5);
-        if (db.azureTable == null) db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.saveToCloudTable == null) unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
 
         db.facts.addItems([
           dom.Fact()..nextInterval = 1,
@@ -210,10 +219,10 @@ void main() {
 
         // =====================
         // await db.debugReopen();
-        if (db.azureTable == null)
-          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
         else
-          await db.flush();
+          await db.debugFlush();
 
         expect(db.facts.getItems().where((f) => f.isDefered).length, 0);
 
@@ -233,7 +242,7 @@ void main() {
         f3.nextInterval = 6;
         db.facts.itemsPlace.saveValue(f3, key: f3.id);
         expect(db.facts.getMsgs().map((f) => f.msg!.nextInterval).join(','), '5,4,6');
-        await db.flush();
+        await db.debugFlush();
 
         print(db.debugDump());
 
@@ -242,32 +251,33 @@ void main() {
         //db.facts.clear(startItemsIncluded: true);
         //expect(db.facts.getItems().length, 0);
 
-        await db.flush();
+        await db.debugFlush();
         await db.close();
         continue;
       }
       return;
-    });
+    }, skip: false);
     test('daylies', () async {
+      const name = 'daylies';
       for (var i = 0; i < 2; i++) {
         final cont = getCont();
-        final email = i == 0 ? null : 'email@2.en';
-        final db = await createDB(cont, email);
+        final email = i == 0 ? null : name;
+        final db = await createDB(cont, email, deviceId: name);
         // save to azure
-        if (db.azureTable == null)
-          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
         else
-          await db.flush();
+          await db.debugFlush();
 
         // ==== addDaylies 2x
         db.daylies.addDaylies(Day.now, range(0, 5).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 5);
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=6');
         final d1 = db.debugDump();
-        if (db.azureTable == null)
-          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
         else
-          await db.flush();
+          await db.debugFlush();
         await db.debugReopen();
         final d11 = db.debugDump();
         expect(db.box.values.whereType<BoxItem>().where((f) => f.isDefered).length, 0);
@@ -276,54 +286,57 @@ void main() {
         db.daylies.addDaylies(Day.now + 1, range(0, 2).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 2);
         expect(db.debugDeletedAndDefered(), 'deleted=3, defered=7');
-        if (db.azureTable == null)
-          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
         else
-          await db.flush();
+          await db.debugFlush();
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
 
         // addDaylies 510x
         db.daylies.addDaylies(Day.now + 2, range(0, 510).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 510);
-        if (db.azureTable == null)
-          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
         else
-          await db.flush();
+          await db.debugFlush();
 
         // addDaylies 10x, the same day
         db.daylies.addDaylies(Day.now + 2, range(0, 10).map((e) => dom.Daily()));
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=11');
-        if (db.azureTable == null)
-          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
         else
-          await db.flush();
+          await db.debugFlush();
 
         db.daylies.addDaylies(Day.now + 3, range(0, 10).map((e) => dom.Daily()));
         expect(db.debugDeletedAndDefered(), 'deleted=510, defered=522');
-        if (db.azureTable == null)
-          db.debugFromAzureAllUploaded(db.toAzureUpload());
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
         else
-          await db.flush();
+          await db.debugFlush();
 
-        await db.flush();
+        await db.debugFlush();
         continue;
       }
       return;
-    });
+    }, skip: false);
     test('bootstrap', () async {
-      for (var i = 0; i < 2; i++) {
+      const name = 'bootstrap';
+      for (var i = 0; i < 1; i++) {
         final cont = getCont();
-        final email = i == 0 ? null : 'email@3.en';
-        final db = await createDB(cont, email);
+        final email = i == 0 ? null : name;
+        final db = await createDB(cont, email, deviceId: name);
         expect(db.box.length, 5); // with aTag first row
-        await db.flush();
+        await db.debugFlush();
+        await db.close();
 
-        final db2 = await createDB(cont, email, debugClear: false);
+        final db2 = await createDB(cont, email, debugClear: false, deviceId: name);
         expect(db2.box.length, 5); // with aTag first row
-        await db2.flush();
+        await db2.debugFlush();
+        await db2.close();
       }
       return;
-    });
+    }, skip: false);
   });
 }
 

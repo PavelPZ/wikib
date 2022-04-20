@@ -81,7 +81,7 @@ class Azure extends Sender {
   }
 
   Future<String?> writeBytesRequest(List<int>? bytes, String method,
-      {String? eTag, SendPar? sendPar, String? uriAppend, void finishHttpRequest(AzureRequest req)?, ICancelToken? token}) async {
+      {String? eTag, SendPar? sendPar, String? uriAppend, void finishHttpRequest(AzureRequest req)?}) async {
     final String uri = account.uriConfig[0] + (uriAppend ?? '');
     // Web request
     final request = AzureRequest(method, Uri.parse(uri));
@@ -95,13 +95,12 @@ class Azure extends Sender {
     final sendRes = await send<String>(
         request: request,
         sendPar: sendPar,
-        token: token,
         finalizeResponse: (resp) {
           if (resp.error != ErrorCodes.no) return Future.value(ContinueResult.doRethrow);
           resp.result = resp.response!.headers['etag'];
           return Future.value(ContinueResult.doBreak);
         });
-    if (token?.canceled == true) return null;
+    if (canceled) return null;
 
     return sendRes?.result;
   }
@@ -129,7 +128,7 @@ class Azure extends Sender {
   static final nextPartitionPar = msContinuation + nextPartitionName.toLowerCase();
   static final nextRowPar = msContinuation + nextRowName.toLowerCase();
 
-  Future<List<dynamic>?> queryLow<T>(Query? query, {SendPar? sendPar, ICancelToken? token}) async {
+  Future<List<dynamic>?> queryLow<T>(Query? query, {SendPar? sendPar}) async {
     final request = queryRequest(query: query);
     var nextPartition = '';
     var nextRow = '';
@@ -147,7 +146,6 @@ class Azure extends Sender {
     final resp = await send<List<dynamic>>(
         sendPar: sendPar,
         getRequest: getRequest,
-        token: token,
         finalizeResponse: (resp) async {
           if (resp.error != ErrorCodes.no) return ContinueResult.doRethrow;
           final resStr = await resp.response!.stream.bytesToString();
@@ -158,7 +156,7 @@ class Azure extends Sender {
           nextRow = resp.response!.headers[nextRowPar] ?? '';
           return nextPartition == '' && nextRow == '' ? ContinueResult.doBreak : ContinueResult.doContinue;
         });
-    if (token?.canceled == true) return <dynamic>[];
+    if (canceled) return <dynamic>[];
 
     return resp?.result;
   }

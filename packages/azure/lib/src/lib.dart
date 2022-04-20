@@ -39,10 +39,8 @@ abstract class IStorage {
   AzureDataUpload? toAzureUpload();
   Future fromAzureUploadedRow(Map<int, int> versions);
   Future fromAzureUploadedETag(String eTag);
-  Future onETagConflict();
+  void onETagConflict(WholeAzureDownload download);
 }
-
-typedef AzureDataDownload = Map<String, Map<String, dynamic>>;
 
 // ***************************************
 // BOX KEY
@@ -72,12 +70,12 @@ class BoxKey {
   static int getRowId(int key) => key >> 8;
   static int getPropId(int key) => key & 0xff;
   static final eTagHiveKey = BoxKey.idx(0, 0);
-  static final eTagKeyFakeVersion = 0xffffff;
+  static const eTagKeyFakeVersion = 0xffffff;
 
   static const maxPropId = 251;
-  static const hexMap = <String>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'];
-  static String byte2Hex(int b) => hexMap[(b >> 4) & 0xf] + hexMap[b & 0xf];
-  static String byte2HexRow(int b) => hexMap[(b >> 12) & 0xf] + hexMap[(b >> 8) & 0xf] + hexMap[(b >> 4) & 0xf] + hexMap[b & 0xf];
+  static const _hexMap = <String>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'];
+  static String byte2Hex(int b) => _hexMap[(b >> 4) & 0xf] + _hexMap[b & 0xf];
+  static String byte2HexRow(int b) => _hexMap[(b >> 12) & 0xf] + _hexMap[(b >> 8) & 0xf] + _hexMap[(b >> 4) & 0xf] + _hexMap[b & 0xf];
   static int hex2Byte(String hex) {
     var res = (byteMap[hex[0]]! << 4) + byteMap[hex[1]]!;
     if (hex.length == 4) res = (res << 16) + (byteMap[hex[2]]! << 8) + byteMap[hex[3]]!;

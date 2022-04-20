@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'media_query.g.dart';

@@ -1,6 +1,10 @@
 {
 	"folders": [
 		{
+			"name": "wikib",
+			"path": "."
+		},
+		{
 			"name": "utils",
 			"path": "packages\\utils"
 		},

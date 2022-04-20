@@ -8,9 +8,9 @@ import 'storage_provider.dart';
 // final emailProvider = StateProvider<String?>((_) => 'pzika@langmaster.cz');
 final emailProvider = StateProvider<String?>((_) => null, name: 'emailProvider');
 final rewiseIdProvider = StateProvider<DBRewiseId?>((_) => null, name: 'rewiseIdProvider'); // null => close RewiseStorage
-final eTagConflictProvider = StateProvider<int>((_) => 0, name: 'eTagConflictProvider'); // increases when eTagConflict found
+// final eTagConflictProvider = StateProvider<int>((_) => 0, name: 'eTagConflictProvider'); // increases when eTagConflict found
 
-final debugHivePathProvider = StateProvider<String?>((_) => null, name: 'debugHivePath'); // e.g. r'd:\temp\hive'
+// final debugHivePathProvider = StateProvider<String?>((_) => null, name: 'debugHivePath'); // e.g. r'd:\temp\hive'
 final debugIsAzureEmulator = StateProvider<bool>((_) => false, name: 'debugIsAzureEmulator');
 final debugDeleteProvider = StateProvider<bool>((_) => false, name: 'debugDeleteProvider');
 final debugDeviceIdProvider = StateProvider<String?>((_) => null, name: 'debugDeviceId');
@@ -19,16 +19,18 @@ final debugDeviceIdProvider = StateProvider<String?>((_) => null, name: 'debugDe
 final azureAccountProvider = Provider<AzureAccounts>((_) => const AzureAccounts(), name: 'azureAccountProvider');
 
 // Azure account + 'users'
-final azureRewiseUsersTableAccountProvider = Provider<TableAccount>(
-  (ref) => TableAccount(azureAccounts: ref.watch(azureAccountProvider), tableName: 'users', isEmulator: ref.watch(debugIsAzureEmulator)),
+final azureRewiseUsersTableAccountProvider = Provider<TableAccount?>(
+  (ref) => ref.watch(emailProvider) == null
+      ? null
+      : TableAccount(azureAccounts: ref.watch(azureAccountProvider), tableName: 'users', isEmulator: ref.watch(debugIsAzureEmulator)),
   name: 'azureRewiseUsersTableAccountProvider',
 );
 
 // Azure users table
-final azureRewiseUsersTableProvider = StateProvider<TableStorage?>(
-  (ref) => TableStorage(account: ref.watch(azureRewiseUsersTableAccountProvider)),
-  name: 'azureRewiseUsersTableProvider',
-);
+// final azureRewiseUsersTableProvider = StateProvider<TableStorage?>(
+//   (ref) => TableStorage(account: ref.watch(azureRewiseUsersTableAccountProvider)),
+//   name: 'azureRewiseUsersTableProvider',
+// );
 
 final emailOrEmptyProvider = Provider<String>((ref) => ref.watch(emailProvider) ?? emptyEMail, name: 'emailOrEmptyProvider');
 

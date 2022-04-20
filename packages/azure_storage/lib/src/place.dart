@@ -9,7 +9,7 @@ abstract class Place<T> {
   BoxItem createBoxItem();
   BoxItem createFromValueOrMsg(int? key, T value);
 
-  T getValueOrMsg([int? key]) => (getBox(key)!.value);
+  T getValueOrMsg([int? key]) => getBox(key)!.value;
   BoxItem setValueOrMsg(T value, [int? key]) => getBox(key)!..value = value;
 
   int getKey([int? key]) => key ?? boxKey;
@@ -72,12 +72,12 @@ abstract class PlaceMsg<T extends $pb.GeneratedMessage> extends Place<T> {
   }
 
   @override
-  BoxItem createFromValueOrMsg(int? key, T msg) {
+  BoxItem createFromValueOrMsg(int? key, T value) {
     key ??= getKey(key);
     return (createBoxItem() as BoxMsg<T>)
-      ..setMsgId(msg, key) // must be first: following "msg = msg" saves msg to uint8 value
+      ..setMsgId(value, key) // must be first: following "msg = msg" saves msg to uint8 value
       ..key = key
-      ..msg = msg;
+      ..msg = value;
   }
 
   @override

@@ -9,8 +9,8 @@ environment:
 
 dependencies:
   analyzer: ^3.3.0
+  path:
   protobuf_for_dart:
     path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
-  path:
   tuple:
 

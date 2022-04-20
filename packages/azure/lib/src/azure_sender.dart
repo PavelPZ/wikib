@@ -71,7 +71,7 @@ class ErrorCodes {
       case 504:
         return bussy;
       default:
-        return statusCode < 400 ? 0 : throw (otherHttpSend);
+        return statusCode < 400 ? 0 : throw otherHttpSend;
     }
   }
 
@@ -106,10 +106,17 @@ class SendPar {
   final void Function(AzureResponse resp, Exception e)? exceptionToResponse;
 }
 
-abstract class Sender {
+abstract class Sender implements ICancelToken {
   Future<AzureResponse?>? _running;
   Completer<AzureResponse?>? _runningCompleter;
   Future<AzureResponse?> flush() => _running ?? Future.value(null);
+
+  @override
+  void cancel() => _canceled = true;
+
+  @override
+  bool get canceled => _canceled;
+  bool _canceled = false;
 
   Future<AzureResponse<T>?> send<T>({
     AzureRequest? request,
@@ -117,7 +124,6 @@ abstract class Sender {
     AzureRequest? getRequest()?,
     required FinalizeResponse<T> finalizeResponse,
     SendPar? sendPar,
-    ICancelToken? token,
   }) async {
     assert(((request == null ? 0 : 1) + (getRequest == null ? 0 : 1) + (getRequests == null ? 0 : 1)) == 1);
     if (_runningCompleter != null) return null;
@@ -134,7 +140,6 @@ abstract class Sender {
           getRequest: getRequest,
           finalizeResponse: finalizeResponse,
           sendPar: sp,
-          token: token,
         );
         return ress;
       });
@@ -152,7 +157,6 @@ abstract class Sender {
     AzureRequest? getRequest()?,
     required FinalizeResponse<T> finalizeResponse,
     required SendPar sendPar,
-    ICancelToken? token,
   }) async {
     // not cancelable between "await client.send" and "await finalizeResponse(resp)"
     Future<AzureResponse<T>> getContinueResult(AzureRequest req, AzureResponse<T> resp, bool internetOK) async {
@@ -165,6 +169,7 @@ abstract class Sender {
             assert(dpCounter('send attempts'));
 
             resp.response = await client.send(req.toHttpRequest());
+            if (canceled) return resp;
 
             if (sendPar.debugSimulateLongRequest > 0) await Future.delayed(Duration(milliseconds: sendPar.debugSimulateLongRequest));
             ErrorCodes.statusCodeToResponse(resp);
@@ -201,28 +206,28 @@ abstract class Sender {
     var isFirstGetRequests = true;
 
     while (true) {
-      if (token?.canceled == true) return null;
+      if (canceled) return null;
 
       final internetOK = await connectedByOne4();
-      if (token?.canceled == true) return null;
+      if (canceled) return null;
 
       if (!internetOK) {
         resp = AzureResponse<T>();
         resp.error = ErrorCodes.noInternet;
       }
 
-      var max = ContinueResult.doBreak.index;
       if (getRequests != null) {
+        var max = ContinueResult.doBreak.index;
         final requests = getRequests(isFirstGetRequests);
         isFirstGetRequests = false;
         if (requests == null || requests.isEmpty) return null;
         final resp0 = await getContinueResult(requests[0], AzureResponse<T>()..myRequest = requests[0], internetOK);
-        if (token?.canceled == true) return null;
+        if (canceled) return null;
         if (requests.length == 1 || resp0.error != ErrorCodes.no) {
           resp = resp0;
         } else {
           final resps = await Future.wait(requests.skip(1).map((r) => getContinueResult(r, AzureResponse<T>()..myRequest = r, internetOK)));
-          if (token?.canceled == true) return null;
+          if (canceled) return null;
           resp = null;
           for (var rs in resps) {
             if (rs.continueResult.index < max) continue;
@@ -243,7 +248,7 @@ abstract class Sender {
         resp.myRequest = req;
 
         resp = await getContinueResult(req!, resp, internetOK);
-        if (token?.canceled == true) return null;
+        if (canceled) return null;
       }
 
       switch (resp!.continueResult) {
@@ -253,7 +258,7 @@ abstract class Sender {
           continue; // continue due more requests while cycle (e.g. multi part query)
         case ContinueResult.doWait: // recoverable error ()
           final res = await sendPar.retries!.delay();
-          if (token?.canceled == true) return null;
+          if (canceled) return null;
           if (res != 0) return Future.error(res);
           resp = null; // continue due error
           continue;

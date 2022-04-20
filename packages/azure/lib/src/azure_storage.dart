@@ -1,13 +1,14 @@
 part of 'azure.dart';
 
 class TableStorage extends Azure {
-  TableStorage({required TableAccount account}) : super(account: account);
+  TableStorage({required TableAccount account, required this.partitionKey}) : super(account: account);
 
+  String partitionKey;
   Future<bool> checkDeviceConflict() => Future.value(false);
 
-  Future<AzureDataDownload> loadAll() => Future.value(AzureDataDownload());
+  Future<Map<String, Map<String, dynamic>>> loadAll() => Future.value(<String, Map<String, dynamic>>{});
 
-  Future saveToCloud(IStorage storage, {ICancelToken? token}) async {
+  Future saveToCloud(IStorage storage) async {
     List<AzureRequest>? getRequests(IStorage storage, {required bool alowFirstRowOnly}) {
       final data = storage.toAzureUpload();
       if (data == null || (!alowFirstRowOnly && data.rows.length <= 1)) return null;
@@ -57,15 +58,16 @@ class TableStorage extends Azure {
       return code;
     }
 
-    final sendRes = await send<void>(
+    final sendRes = await send<dynamic>(
       getRequests: (alowFirstRowOnly) => getRequests(storage, alowFirstRowOnly: alowFirstRowOnly),
-      token: token,
       finalizeResponse: (resp) async {
         final respStr = await resp.response!.stream.bytesToString();
         final AzureDataUpload data = resp.myRequest!.finalizeData;
         resp.error = ErrorCodes.computeStatusCode(await finishBatchRows(respStr, data));
         switch (resp.error) {
           case ErrorCodes.eTagConflict:
+            resp.result = await getAllRows(partitionKey);
+            if (canceled) return ContinueResult.doBreak;
             return ContinueResult.doBreak;
           case ErrorCodes.no:
             return ContinueResult.doContinue;
@@ -74,14 +76,13 @@ class TableStorage extends Azure {
         }
       },
     );
-    if (token?.canceled == true) return null;
+    if (canceled) return null;
     if (sendRes == null) return;
-    // if (sendRes.error == ErrorCodes.eTagConflict)
-    //   await storage.onETagConflict();
-    if (sendRes.error >= 400 && sendRes.error != ErrorCodes.eTagConflict) throw sendRes;
+    if (sendRes.error == ErrorCodes.eTagConflict) storage.onETagConflict(sendRes.result);
+    if (sendRes.error >= 400) throw sendRes;
   }
 
-  Future<List<String>?> getAllRowKeys(String partitionKey, {ICancelToken? token}) async {
+  Future<List<String>?> getAllRowKeys(String partitionKey) async {
     final query = Query.partition(partitionKey);
     query.select = <String>['RowKey'];
     final res = await queryLow(query);
@@ -96,7 +97,7 @@ class TableStorage extends Azure {
     return row == null ? null : row.item2;
   }
 
-  Future<WholeAzureDownload?> getAllRows(String partitionKey, {ICancelToken? token}) async {
+  Future<WholeAzureDownload?> getAllRows(String partitionKey) async {
     final res = WholeAzureDownload();
     final etag = await getETag(partitionKey);
     if (etag == null) return null;

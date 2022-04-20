@@ -2,6 +2,7 @@ part of 'storage.dart';
 
 abstract class BoxItem<T> extends HiveObject {
   @HiveField(0, defaultValue: 0)
+  @override
   int key = 0;
 
   T get value;

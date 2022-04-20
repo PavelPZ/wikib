@@ -12,10 +12,11 @@ final worldRoutes = [
 
 class RegionSegment extends TypedSegment with AsyncSegment<void> {
   RegionSegment({this.id = '001'});
+  factory RegionSegment.fromUrlPars(UrlPars pars) => RegionSegment(id: pars.getString('id'));
+
   final String id;
 
   void toUrlPars(UrlPars pars) => pars.setString('id', id);
-  factory RegionSegment.fromUrlPars(UrlPars pars) => RegionSegment(id: pars.getString('id'));
 
   bool get isRoot => id == '001';
   bool get isTeritory => isDigit(id.codeUnitAt(0));
