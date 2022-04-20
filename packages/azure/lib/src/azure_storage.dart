@@ -66,8 +66,8 @@ class TableStorage extends Azure {
         resp.error = ErrorCodes.computeStatusCode(await finishBatchRows(respStr, data));
         switch (resp.error) {
           case ErrorCodes.eTagConflict:
-            resp.result = await getAllRows(partitionKey);
-            if (canceled) return ContinueResult.doBreak;
+            await storage.onETagConflict();
+            // if (canceled) return ContinueResult.doBreak;
             return ContinueResult.doBreak;
           case ErrorCodes.no:
             return ContinueResult.doContinue;
@@ -78,8 +78,7 @@ class TableStorage extends Azure {
     );
     if (canceled) return null;
     if (sendRes == null) return;
-    if (sendRes.error == ErrorCodes.eTagConflict) storage.onETagConflict(sendRes.result);
-    if (sendRes.error >= 400) throw sendRes;
+    if (sendRes.error != ErrorCodes.eTagConflict && sendRes.error >= 400) throw sendRes;
   }
 
   Future<List<String>?> getAllRowKeys(String partitionKey) async {

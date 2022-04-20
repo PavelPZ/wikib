@@ -99,35 +99,38 @@ void main() {
       expect(db1.box.length, 14);
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       expect(db1.box.length, 17);
-      // await db1.flush();
+      await db1.debugFlush();
       expect(db1.box.length, 17);
+
+      expect(db2.box.length, 11);
+      db2.facts.addItems(range(0, 3).map((e) => dom.Fact()));
+      await db2.debugFlush();
+      expect(db2.box.length, 17);
 
       await db1.close();
       return;
-    }, skip: true);
-    test('testEmptyEMail', () async {
+    }, skip: false);
+    test('gromEmptyEMail', () async {
       final cont = getCont();
-      const name = 'testEmptyEMail';
+      const name = 'gromEmptyEMail';
       // clear
       await createDBLow(cont, emptyEMail, debugClear: null, deviceId: name);
       await createDBLow(cont, name, debugClear: null, deviceId: name);
 
       // create new
       final db = await createDB(cont, null, debugClear: false, deviceId: name);
-      print('*** test: await createDB');
       db.facts.addItems(range(0, 3).map((e) => dom.Fact()..nextInterval = e));
-      print('*** test: before db.flush: ${cont.read(emailProvider)}');
-      await db.debugFlush();
+      // await db.debugFlush();
 
-      print('*** test: db.flush: ${cont.read(emailProvider)}');
-      // await db.close();
-      assert(cont.read(emailProvider) == null);
+      // change email => new Storage
       cont.read(emailProvider.notifier).state = name;
       final db2 = await cont.read(rewiseProvider.storageProvider.future);
+
       final facts = db2!.facts.getMsgs().map((m) => m.msg).toList();
+      expect(facts.length, 3);
       await db2.debugFlush();
       return;
-    }, skip: true);
+    }, skip: false);
   });
   group('rewise_storage', () {
     test('save_stress', () async {

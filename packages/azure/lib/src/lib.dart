@@ -39,7 +39,7 @@ abstract class IStorage {
   AzureDataUpload? toAzureUpload();
   Future fromAzureUploadedRow(Map<int, int> versions);
   Future fromAzureUploadedETag(String eTag);
-  void onETagConflict(WholeAzureDownload download);
+  Future onETagConflict();
 }
 
 // ***************************************

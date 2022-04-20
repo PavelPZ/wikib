@@ -27,7 +27,9 @@ const initialETag = 'initialETag';
 // ***************************************
 
 abstract class Storage<TDBId extends DBId> implements IStorage {
-  Storage(this.box, this.tableAccount, this.dbId, this.email);
+  Storage(this.box, this.tableAccount, this.dbId, this.email) {
+    saveToCloudTable = getTableStorage();
+  }
 
   void setAllGroups(List<ItemsGroup> allGroups) {
     this.allGroups = allGroups;
@@ -51,7 +53,6 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
   String get partitionKey => dbId.partitionKey(email);
 
   Future initialize() async {
-    saveToCloudTable = getTableStorage();
     final tableAndInet = saveToCloudTable != null && await connectedByOne4();
     if (box.length > 0) {
       if (tableAndInet) await saveToCloudTable!.saveToCloud(this);
@@ -162,9 +163,10 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
   }
 
   @override
-  void onETagConflict(WholeAzureDownload download) {
-    unawaited(box.clear());
-    _wholeAzureDownload(download);
+  Future onETagConflict() async {
+    final rows = await getTableStorage()!.getAllRows(partitionKey);
+    if (rows != null) _wholeAzureDownload(rows);
+    cancel();
   }
 
   Future wholeAzureDownload() async {
@@ -199,7 +201,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
     assert(newStorage.email != emptyEMail);
     assert(newStorage.box != box);
     // get content of newStorage.partitionKey cloud
-    final newRows = await getTableStorage()!.getAllRows(newStorage.partitionKey);
+    final newRows = await newStorage.getTableStorage()!.getAllRows(newStorage.partitionKey);
     final newRowsCount =
         newRows == null ? 0 : newRows.rows.cast<Map<String, dynamic>>().map((row) => row.length).reduce((value, element) => value + element);
     if (newRowsCount > box.length) {
@@ -209,7 +211,8 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
       // newStorage.partitionKey databaze is smaller than local databaze => take DB from local db
       unawaited(newStorage.box.put(BoxKey.eTagHiveKey.boxKey, newRows?.eTag ?? ''));
       final olds = box.values.whereType<BoxItem>().toList();
-      unawaited(box.clear());
+      await box
+          .clear(); // must be await otherwise saveBoxItems raises error "The same instance of an HiveObject cannot be stored in two different boxes"
       newStorage.saveBoxItems(olds);
     }
     unawaited(box.deleteFromDisk());
@@ -298,5 +301,5 @@ class DeleteAllStorage implements IStorage {
   @override
   Future fromAzureUploadedETag(String eTag) => Future.value();
   @override
-  void onETagConflict(WholeAzureDownload download) => throw UnimplementedError();
+  Future onETagConflict() => throw UnimplementedError();
 }
