@@ -20,7 +20,7 @@ abstract class Place<T> {
     ..value = value;
 
   BoxItem? getBox([int? key]) {
-    final boxItem = storage.info.hiveBox.get(getBoxKey(key));
+    final boxItem = storage.box.get(getBoxKey(key));
     return boxItem == null || boxItem.isDeleted ? null : boxItem;
   }
 

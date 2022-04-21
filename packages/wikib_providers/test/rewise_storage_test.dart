@@ -54,37 +54,37 @@ void main() {
       final cont1 = getCont();
       await createDBLow(cont1, name, debugClear: null, deviceId: '$name-1-');
       final db1 = await createDB(cont1, name, debugClear: false, deviceId: '$name-1-');
-      expect(db1.info.hiveBox.length, 5);
+      expect(db1.box.length, 5);
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       await db1.debugFlush();
-      expect(db1.info.hiveBox.length, 8);
+      expect(db1.box.length, 8);
 
       final cont2 = getCont();
-      final fn = File(db1.info.hiveBox.path!.replaceFirst('-1-', '-2-'));
+      final fn = File(db1.box.path!.replaceFirst('-1-', '-2-'));
       if (fn.existsSync()) fn.deleteSync();
       final db2 = await createDB(cont2, name, debugClear: false, deviceId: '$name-2-');
-      expect(db2.info.hiveBox.length, 8);
+      expect(db2.box.length, 8);
       db2.facts.addItems(range(0, 3).map((e) => dom.Fact()));
-      expect(db2.info.hiveBox.length, 11);
+      expect(db2.box.length, 11);
       await db2.debugFlush();
 
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       await db1.debugFlush();
-      expect(db1.info.hiveBox.length, 11);
+      expect(db1.box.length, 11);
 
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
-      expect(db1.info.hiveBox.length, 14);
+      expect(db1.box.length, 14);
       await Future.delayed(Duration(milliseconds: 100));
-      expect(db1.info.hiveBox.length, 14);
+      expect(db1.box.length, 14);
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
-      expect(db1.info.hiveBox.length, 17);
+      expect(db1.box.length, 17);
       await db1.debugFlush();
-      expect(db1.info.hiveBox.length, 17);
+      expect(db1.box.length, 17);
 
-      expect(db2.info.hiveBox.length, 11);
+      expect(db2.box.length, 11);
       db2.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       await db2.debugFlush();
-      expect(db2.info.hiveBox.length, 17);
+      expect(db2.box.length, 17);
 
       await db1.close();
       return;
@@ -119,13 +119,13 @@ void main() {
 
       for (var i = 0; i < 6; i++) {
         db.facts.addItems([dom.Fact()..nextInterval = i]);
-        expect(db.info.hiveBox.length, 6 + i);
+        expect(db.box.length, 6 + i);
         await Future.delayed(Duration(milliseconds: i * 250));
       }
       await db.debugFlush();
 
       await db.wholeAzureDownload();
-      expect(db.info.hiveBox.length, 11);
+      expect(db.box.length, 11);
     }, skip: false);
     test('basic', () async {
       const name = 'basic';
@@ -144,7 +144,7 @@ void main() {
         await db3.debugFlush();
         print('=========== 3 ================');
         print(db3.debugDump());
-        expect(db3.info.hiveBox.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, db3.saveToCloudTable == null ? 4 : 0);
+        expect(db3.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, db3.saveToCloudTable == null ? 4 : 0);
       }
       return;
     }, skip: false);
@@ -187,8 +187,8 @@ void main() {
         final cont = getCont();
         final email = i == 0 ? null : name;
         final db = await createDB(cont, email, deviceId: name);
-        print(db.info.hiveBox.values);
-        expect(db.info.hiveBox.length, 5);
+        print(db.box.values);
+        expect(db.box.length, 5);
         if (db.saveToCloudTable == null) unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
 
         db.facts.addItems([
@@ -262,7 +262,7 @@ void main() {
           await db.debugFlush();
         await db.debugReopen();
         final d11 = db.debugDump();
-        expect(db.info.hiveBox.values.whereType<BoxItem>().where((f) => f.isDefered).length, 0);
+        expect(db.box.values.whereType<BoxItem>().where((f) => f.isDefered).length, 0);
 
         // ==== change day
         db.daylies.addDaylies(Day.now + 1, range(0, 2).map((e) => dom.Daily()));
@@ -308,12 +308,12 @@ void main() {
         final cont = getCont();
         final email = i == 0 ? null : name;
         final db = await createDB(cont, email, deviceId: name);
-        expect(db.info.hiveBox.length, 5); // with aTag first row
+        expect(db.box.length, 5); // with aTag first row
         await db.debugFlush();
         await db.close();
 
         final db2 = await createDB(cont, email, debugClear: false, deviceId: name);
-        expect(db2.info.hiveBox.length, 5); // with aTag first row
+        expect(db2.box.length, 5); // with aTag first row
         await db2.debugFlush();
         await db2.close();
       }

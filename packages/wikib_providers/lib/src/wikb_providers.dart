@@ -1,6 +1,5 @@
 import 'package:azure/azure.dart';
 import 'package:azure_storage/azure_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:rewise_storage/rewise_storage.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:utils/utils.dart';
@@ -12,18 +11,18 @@ final rewiseIdProvider = StateProvider<DBRewiseId?>((_) => null, name: 'rewiseId
 final debugIsAzureEmulator = StateProvider<bool>((_) => false, name: 'debugIsAzureEmulator');
 final debugDeviceIdProvider = StateProvider<String?>((_) => null, name: 'debugDeviceId');
 
+final emailOrEmptyProvider = Provider<String>((ref) => ref.watch(emailProvider) ?? emptyEMail, name: 'emailOrEmptyProvider');
+
 // Azure account
 final azureAccountProvider = Provider<AzureAccounts>((_) => const AzureAccounts(), name: 'azureAccountProvider');
 
-// Azure account + 'users'
+// Azure account + 'users'3+
 final azureRewiseUsersTableAccountProvider = Provider<TableAccount?>(
   (ref) => ref.watch(emailProvider) == null
       ? null
       : TableAccount(azureAccounts: ref.watch(azureAccountProvider), tableName: 'users', isEmulator: ref.watch(debugIsAzureEmulator)),
   name: 'azureRewiseUsersTableAccountProvider',
 );
-
-final emailOrEmptyProvider = Provider<String>((ref) => ref.watch(emailProvider) ?? emptyEMail, name: 'emailOrEmptyProvider');
 
 // Rewise Storage
 final rewiseStorageProvider = getStorageProvider<RewiseStorage>(RewiseStorage.new, _rewiseStorageInfoProvider, _oldRewiseStorageProvider);
