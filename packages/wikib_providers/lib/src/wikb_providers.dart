@@ -1,18 +1,15 @@
 import 'package:azure/azure.dart';
+import 'package:azure_storage/azure_storage.dart';
+import 'package:hive/hive.dart';
 import 'package:rewise_storage/rewise_storage.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:utils/utils.dart';
 
-import 'storage_provider.dart';
+part 'storage_provider.dart';
 
-// final emailProvider = StateProvider<String?>((_) => 'pzika@langmaster.cz');
 final emailProvider = StateProvider<String?>((_) => null, name: 'emailProvider');
 final rewiseIdProvider = StateProvider<DBRewiseId?>((_) => null, name: 'rewiseIdProvider'); // null => close RewiseStorage
-// final eTagConflictProvider = StateProvider<int>((_) => 0, name: 'eTagConflictProvider'); // increases when eTagConflict found
-
-// final debugHivePathProvider = StateProvider<String?>((_) => null, name: 'debugHivePath'); // e.g. r'd:\temp\hive'
 final debugIsAzureEmulator = StateProvider<bool>((_) => false, name: 'debugIsAzureEmulator');
-final debugDeleteProvider = StateProvider<bool>((_) => false, name: 'debugDeleteProvider');
 final debugDeviceIdProvider = StateProvider<String?>((_) => null, name: 'debugDeviceId');
 
 // Azure account
@@ -26,12 +23,10 @@ final azureRewiseUsersTableAccountProvider = Provider<TableAccount?>(
   name: 'azureRewiseUsersTableAccountProvider',
 );
 
-// Azure users table
-// final azureRewiseUsersTableProvider = StateProvider<TableStorage?>(
-//   (ref) => TableStorage(account: ref.watch(azureRewiseUsersTableAccountProvider)),
-//   name: 'azureRewiseUsersTableProvider',
-// );
-
 final emailOrEmptyProvider = Provider<String>((ref) => ref.watch(emailProvider) ?? emptyEMail, name: 'emailOrEmptyProvider');
 
-final rewiseProvider = StorageProviders<RewiseStorage>(rewiseIdProvider, RewiseStorage.new);
+// Rewise Storage
+final rewiseStorageProvider = getStorageProvider<RewiseStorage>(RewiseStorage.new, _rewiseStorageInfoProvider, _oldRewiseStorageProvider);
+final debugRewiseStorageDeleteProvider = getDebugStorageDeleteProvider<RewiseStorage>(_rewiseStorageInfoProvider);
+final _rewiseStorageInfoProvider = getStorageInfoProvider<RewiseStorage>(rewiseIdProvider, azureRewiseUsersTableAccountProvider);
+final _oldRewiseStorageProvider = getOldStorageProvider<RewiseStorage>();

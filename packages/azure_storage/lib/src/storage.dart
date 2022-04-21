@@ -22,13 +22,26 @@ void initStorage() {
 
 const initialETag = 'initialETag';
 
-// ***************************************
-// STORAGE
-// ***************************************
+class StorageInfo {
+  StorageInfo({required this.dbId, required this.emailOrEmpty, required this.debugDeviceId, required this.tableAccount});
+  final DBId? dbId;
+  final String emailOrEmpty;
+  final String? debugDeviceId;
+  final TableAccount? tableAccount;
+  DBId get id => dbId!;
+  bool get isEmpty => dbId == null;
+  String get hiveName => '${debugDeviceId == null ? '' : debugDeviceId! + '-'}$partitionKey';
+  String get partitionKey => id.partitionKey(emailOrEmpty);
+  Future initHiveBox() async => _hiveBox = await Hive.openBox(hiveName);
+  Box get hiveBox => _hiveBox!;
+  Box? _hiveBox;
+  TableStorage? getTableStorage() => tableAccount == null ? null : TableStorage(account: tableAccount!, partitionKey: partitionKey);
+  void debugChangeBox(Box box) => _hiveBox = box;
+}
 
 abstract class Storage<TDBId extends DBId> implements IStorage {
-  Storage(this.box, this.tableAccount, this.dbId, this.email) {
-    saveToCloudTable = getTableStorage();
+  Storage(this.info) {
+    saveToCloudTable = info.getTableStorage();
   }
 
   void setAllGroups(List<ItemsGroup> allGroups) {
@@ -41,27 +54,23 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
       }
   }
 
-  final DBId dbId;
-  final String email;
-  Box box; // due to debugReopen
-  final TableAccount? tableAccount;
+  final StorageInfo info;
   late TableStorage? saveToCloudTable;
   late Map<int, ItemsGroup> row2Group;
   late List<ItemsGroup> allGroups;
 
-  TableStorage? getTableStorage() => tableAccount == null ? null : TableStorage(account: tableAccount!, partitionKey: partitionKey);
-  String get partitionKey => dbId.partitionKey(email);
+  Box get box => info._hiveBox!;
 
   Future initialize() async {
     final tableAndInet = saveToCloudTable != null && await connectedByOne4();
-    if (box.length > 0) {
+    if (info.hiveBox.length > 0) {
       if (tableAndInet) await saveToCloudTable!.saveToCloud(this);
     } else {
       if (tableAndInet) {
         await wholeAzureDownload();
-        if (!isNullOrEmpty(box.get(BoxKey.eTagHiveKey.boxKey))) return;
+        if (!isNullOrEmpty(info.hiveBox.get(BoxKey.eTagHiveKey.boxKey))) return;
       }
-      unawaited(box.put(BoxKey.eTagHiveKey.boxKey, ''));
+      unawaited(info.hiveBox.put(BoxKey.eTagHiveKey.boxKey, ''));
       // ignore: avoid_function_literals_in_foreach_calls
       allGroups.forEach((e) => e.seed());
     }
@@ -70,38 +79,38 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
   // cancel waiting in azureTable save (e.g. when waiting for internet connection)
   Future close() async {
     cancel();
-    await box.close();
+    await info.hiveBox.close();
   }
 
   // wait in azureTable save (e.g. when waiting for internet connection)
   Future debugFlush() async {
     if (saveToCloudTable != null) await saveToCloudTable!.flush();
-    await box.flush();
+    await info.hiveBox.flush();
   }
 
   void cancel() {
     saveToCloudTable?.cancel();
-    saveToCloudTable = getTableStorage();
+    saveToCloudTable = info.getTableStorage();
   }
 
   @override
   AzureDataUpload? toAzureUpload({bool allowSingleRow = true}) {
     //if (!namePlace.exists()) return null;
     final rowGroups = <int, List<BoxItem>>{};
-    for (var item in box.values.whereType<BoxItem>().where((b) => b.isDefered))
+    for (var item in info.hiveBox.values.whereType<BoxItem>().where((b) => b.isDefered))
       rowGroups.update(BoxKey.getRowId(item.key), (value) => value..add(item), ifAbsent: () => <BoxItem>[item]);
 
     // first row
     if (rowGroups.isEmpty && !allowSingleRow) return null;
     final firstRow =
-        BatchRow(rowId: BoxKey.eTagHiveKey.rowId, data: _initAzureRowData(partitionKey, BoxKey.eTagHiveKey.rowId), method: BatchMethod.put)
-          ..eTag = box.get(BoxKey.eTagHiveKey.boxKey);
+        BatchRow(rowId: BoxKey.eTagHiveKey.rowId, data: _initAzureRowData(info.partitionKey, BoxKey.eTagHiveKey.rowId), method: BatchMethod.put)
+          ..eTag = info.hiveBox.get(BoxKey.eTagHiveKey.boxKey);
     firstRow.data['aa'] = '';
     final rows = <BatchRow>[firstRow];
     // final rows = <BatchRow>[];
     // finish rows
     for (final r in rowGroups.entries) {
-      final data = _initAzureRowData(partitionKey, r.key);
+      final data = _initAzureRowData(info.partitionKey, r.key);
       // row with delete
       BatchRow row;
       if (r.value.any((rr) => rr.isDeleted)) {
@@ -133,13 +142,13 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
       <String, dynamic>{'PartitionKey': Encoder.keys.encode(partitionKey), 'RowKey': Encoder.keys.encode(BoxKey.byte2HexRow(rowId))};
 
   @override
-  Future fromAzureUploadedETag(String eTag) => box.put(BoxKey.eTagHiveKey.boxKey, eTag);
+  Future fromAzureUploadedETag(String eTag) => info.hiveBox.put(BoxKey.eTagHiveKey.boxKey, eTag);
 
   @override
   Future fromAzureUploadedRow(Map<int, int> versions) {
     final modified = <BoxItem>[];
     for (var kv in versions.entries) {
-      final item = box.get(kv.key) as BoxItem?;
+      final item = info.hiveBox.get(kv.key) as BoxItem?;
       if (item == null || item.version != kv.value) continue;
       assert(item.isDefered || item.key == BoxKey.eTagHiveKey.boxKey);
       if (item.isDeleted)
@@ -147,8 +156,8 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
       else
         modified.add(item..isDefered = false);
     }
-    if (modified.isNotEmpty) box.putAll(Map.fromEntries(modified.map((e) => MapEntry(e.key, e))));
-    return box.flush();
+    if (modified.isNotEmpty) info.hiveBox.putAll(Map.fromEntries(modified.map((e) => MapEntry(e.key, e))));
+    return info.hiveBox.flush();
   }
 
   Future debugFromAzureAllUploaded(AzureDataUpload? azureDataUpload) {
@@ -159,26 +168,26 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
       else
         fromAzureUploadedRow(row.versions);
     }
-    return box.flush();
+    return info.hiveBox.flush();
   }
 
   @override
   Future onETagConflict() async {
-    final rows = await getTableStorage()!.getAllRows(partitionKey);
+    final rows = await info.getTableStorage()!.getAllRows(info.partitionKey);
     if (rows != null) _wholeAzureDownload(rows);
     cancel();
   }
 
   Future wholeAzureDownload() async {
     cancel();
-    unawaited(box.clear());
-    final rows = await getTableStorage()!.getAllRows(partitionKey);
+    unawaited(info.hiveBox.clear());
+    final rows = await info.getTableStorage()!.getAllRows(info.partitionKey);
     if (rows == null) return;
     _wholeAzureDownload(rows);
   }
 
   void _wholeAzureDownload(WholeAzureDownload rows) {
-    unawaited(box.put(BoxKey.eTagHiveKey.boxKey, rows.eTag));
+    unawaited(info.hiveBox.put(BoxKey.eTagHiveKey.boxKey, rows.eTag));
     // final azureItemsCount = rows.rows.cast<Map<String, dynamic>>().map((row) => row.length).reduce((value, element) => value + element);
     final boxes = <int, BoxItem>{};
     for (var row in rows.rows.cast<Map<String, dynamic>>()) {
@@ -189,33 +198,33 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
         boxes[key.boxKey] = messageGroup.wholeAzureDownload(key.boxKey, prop.value)..version = Day.nowMilisecUtc;
       }
     }
-    unawaited(box.putAll(boxes));
+    unawaited(info.hiveBox.putAll(boxes));
   }
 
   // move local 'emptyEMail' DB to user email DB.
   // try email DB from cloud first.
   Future moveTo(Storage newStorage) async {
-    assert(tableAccount == null);
-    assert(newStorage.tableAccount != null);
-    assert(newStorage.box.isEmpty);
-    assert(newStorage.email != emptyEMail);
-    assert(newStorage.box != box);
+    assert(info.tableAccount == null);
+    assert(newStorage.info.tableAccount != null);
+    assert(newStorage.info.hiveBox.isEmpty);
+    assert(newStorage.info.emailOrEmpty != emptyEMail);
+    assert(newStorage.info.hiveBox != info.hiveBox);
     // get content of newStorage.partitionKey cloud
-    final newRows = await newStorage.getTableStorage()!.getAllRows(newStorage.partitionKey);
+    final newRows = await newStorage.info.getTableStorage()!.getAllRows(newStorage.info.partitionKey);
     final newRowsCount =
         newRows == null ? 0 : newRows.rows.cast<Map<String, dynamic>>().map((row) => row.length).reduce((value, element) => value + element);
-    if (newRowsCount > box.length) {
+    if (newRowsCount > info.hiveBox.length) {
       // newStorage.partitionKey cloud databaze is greater than local databaze => take DB from cloud
       newStorage._wholeAzureDownload(newRows!);
     } else {
       // newStorage.partitionKey databaze is smaller than local databaze => take DB from local db
-      unawaited(newStorage.box.put(BoxKey.eTagHiveKey.boxKey, newRows?.eTag ?? ''));
-      final olds = box.values.whereType<BoxItem>().toList();
-      await box
+      unawaited(newStorage.info.hiveBox.put(BoxKey.eTagHiveKey.boxKey, newRows?.eTag ?? ''));
+      final olds = info.hiveBox.values.whereType<BoxItem>().toList();
+      await info.hiveBox
           .clear(); // must be await otherwise saveBoxItems raises error "The same instance of an HiveObject cannot be stored in two different boxes"
       newStorage.saveBoxItems(olds);
     }
-    unawaited(box.deleteFromDisk());
+    unawaited(info.hiveBox.deleteFromDisk());
   }
 
   static const ignoreKeys = <String, bool>{'RowKey': true, 'PartitionKey': true, 'Timestamp': true};
@@ -223,7 +232,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
   void saveBoxItem(BoxItem boxItem) {
     boxItem.version = Day.nowMilisecUtc;
     boxItem.isDefered = true;
-    box.put(boxItem.key, boxItem);
+    info.hiveBox.put(boxItem.key, boxItem);
     saveToCloudTable?.saveToCloud(this);
   }
 
@@ -233,17 +242,17 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
       boxItem.isDefered = true;
       return MapEntry(boxItem.key, boxItem);
     }));
-    box.putAll(entries);
+    info.hiveBox.putAll(entries);
     saveToCloudTable?.saveToCloud(this);
   }
 
   Future debugReopen() async {
     await close();
-    box = await Hive.openBox(box.name, path: box.path!.split('\\${box.name}.hive')[0]);
+    info.debugChangeBox(await Hive.openBox(info.hiveBox.name, path: info.hiveBox.path!.split('\\${info.hiveBox.name}.hive')[0]));
   }
 
   String debugDump([bool filter(BoxItem item)?]) {
-    var all = box.values.whereType<BoxItem>();
+    var all = info.hiveBox.values.whereType<BoxItem>();
     if (filter != null) all = all.where(filter);
     return all
         .map((e) => '${e.isDeleted ? '-' : ''}${e.isDefered ? '*' : ''}${e.key}${e.value is Uint8List ? '' : '=' + e.value.toString()}')
@@ -251,7 +260,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
   }
 
   String debugDeletedAndDefered([bool filter(BoxItem item)?]) {
-    var all = box.values.whereType<BoxItem>();
+    var all = info.hiveBox.values.whereType<BoxItem>();
     if (filter != null) all = all.where(filter);
     var deleted = 0, defered = 0;
     all.forEach((e) {
@@ -274,9 +283,9 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
   }
 
   Iterable<T> getItems<T extends BoxItem>(int startKey, int endKey, [bool filter(BoxItem item)?]) sync* {
-    final lastKey = box.keys.last;
+    final lastKey = info.hiveBox.keys.last;
     for (var i = startKey; i <= min(endKey, lastKey); i++) {
-      final it = box.get(i);
+      final it = info.hiveBox.get(i);
       if (it == null || it is! T || (filter != null && !filter(it))) continue;
       yield it;
     }
