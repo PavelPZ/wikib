@@ -14,13 +14,12 @@ dependencies:
   desktop_webview_auth:
   firebase_auth:
   firebase_auth_desktop: 
-  firebase_auth_web: 
   firebase_core:
   firebase_core_desktop: 
-  firebase_core_web: 
 
   flutter:
     sdk: flutter
+  flutter_facebook_auth:
   flutter_signin_button:
 
   functional_widget_annotation:  
@@ -33,6 +32,12 @@ dependencies:
 dev_dependencies:
   build_runner: 
   functional_widget:
+
+dependency_overrides:
+  desktop_webview_auth:
+    path: d:/github/flutter_desktop_webview_auth
+  firebase_auth_desktop:
+    path: d:/github/flutterfire_desktop/packages/firebase_auth/firebase_auth_desktop
 
 flutter:
   uses-material-design: true

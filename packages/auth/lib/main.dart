@@ -13,8 +13,8 @@ Future main() async {
   runApp(ProviderScope(child: const MyApp()));
 }
 
-@cwidget
-Widget myApp(BuildContext context, WidgetRef ref) {
+@swidget
+Widget myApp() {
   return MaterialApp(
     home: Scaffold(
       body: Center(
@@ -26,23 +26,23 @@ Widget myApp(BuildContext context, WidgetRef ref) {
               SizedBox(height: 20),
               SignInButton(
                 Buttons.Google,
-                onPressed: onGoogleSignIn,
+                onPressed: SignIns.googlePlatformSignIn,
               ),
               SizedBox(height: 20),
               SignInButton(
                 Buttons.Facebook,
-                onPressed: onFacebookSignIn,
+                onPressed: SignIns.facebookPlatformSignIn,
               ),
               SizedBox(height: 20),
               ElevatedButton(onPressed: FirebaseAuth.instance.signOut, child: Text('logout')),
               SizedBox(height: 20),
-              ElevatedButton(onPressed: getRecaptchaVerification, child: Text('recaptcha')),
+              ElevatedButton(onPressed: SignIns.getRecaptchaVerification, child: Text('recaptcha')),
               SizedBox(height: 50),
               Consumer(
-                builder: (_, ref, __) => ref.watch(authUserProvider).when(
+                builder: (_, ref, __) => ref.watch(emailProvider).when(
                       loading: () => const CircularProgressIndicator(),
                       error: (err, stack) => Text('Error: $err'),
-                      data: (user) => Text(user?.email ?? '-- empty --'),
+                      data: (email) => Text(email),
                     ),
               ),
             ],
@@ -52,3 +52,9 @@ Widget myApp(BuildContext context, WidgetRef ref) {
     ),
   );
 }
+
+final emailProvider = FutureProvider<String>((ref) async {
+  final user = await ref.watch(authUserProvider.future);
+  if (user == null) return '-- empty --';
+  return '${user.displayName} (${user.email})';
+});
