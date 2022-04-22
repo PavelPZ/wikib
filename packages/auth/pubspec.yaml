@@ -1,0 +1,39 @@
+name: auth
+description: A new Flutter project.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.16.2 <3.0.0"
+
+dependencies:
+
+  cupertino_icons: ^1.0.2
+
+  desktop_webview_auth:
+  firebase_auth:
+  firebase_auth_desktop: 
+  firebase_auth_web: 
+  firebase_core:
+  firebase_core_desktop: 
+  firebase_core_web: 
+
+  flutter:
+    sdk: flutter
+  flutter_signin_button:
+
+  functional_widget_annotation:  
+
+  googleapis: 
+  googleapis_auth: 
+
+  hooks_riverpod: 2.0.0-dev.5
+
+dev_dependencies:
+  build_runner: 
+  functional_widget:
+
+flutter:
+  uses-material-design: true
+

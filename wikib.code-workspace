@@ -37,6 +37,10 @@
 			"path": "packages\\rewise_storage"
 		},
 		{
+			"name": "auth",
+			"path": "packages\\auth"
+		},
+		{
 			"name": "wikib_providers",
 			"path": "packages\\wikib_providers"
 		},
