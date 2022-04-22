@@ -1,10 +1,16 @@
+import 'dart:async';
+
 import 'package:desktop_webview_auth/desktop_webview_auth.dart';
 import 'package:desktop_webview_auth/facebook.dart';
 import 'package:desktop_webview_auth/google.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart' as pi;
 import 'package:flutter/foundation.dart';
 import 'package:googleapis/identitytoolkit/v3.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
+
+import 'debug_user.dart';
+import 'init_app.dart';
 
 // See example: github\flutter_desktop_webview_auth\example\lib\main.dart
 
@@ -44,7 +50,7 @@ final facebookSignInArgs = FacebookSignInArgs(
 );
 
 // *************************************************************************************************
-typedef SignIn = Future<UserCredential?> Function();
+typedef SignIn = Future Function();
 
 class SignIns {
   SignIns._();
@@ -80,7 +86,7 @@ class SignIns {
     }
   }
 
-  static Future<UserCredential?> desktopGoogleSignIn() async {
+  static Future desktopGoogleSignIn() async {
     final result = await DesktopWebviewAuth.signIn(googleSignInArgs);
     if (result == null) return null;
     final credential = GoogleAuthProvider.credential(
@@ -90,7 +96,7 @@ class SignIns {
     return FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  static Future<UserCredential?> desktopFacebookSignIn() async {
+  static Future desktopFacebookSignIn() async {
     final result = await DesktopWebviewAuth.signIn(facebookSignInArgs);
     if (result == null) return null;
     final credential = FacebookAuthProvider.credential(result.accessToken!);
@@ -98,23 +104,28 @@ class SignIns {
   }
 
 // https://github.com/firebase/flutterfire/blob/master/docs/auth/social.mdx
-  static Future<UserCredential?> webGoogleSignIn() {
+  static Future webGoogleSignIn() {
     final googleProvider = GoogleAuthProvider();
-    googleProvider.addScope('https://www.googleapis.com/auth/plus.me');
-    // Once signed in, return the UserCredential
+    googleProvider.addScope('https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email');
     return FirebaseAuth.instance.signInWithPopup(googleProvider);
   }
 
-  static Future<UserCredential?> webFacebookSignIn() {
+  static Future webFacebookSignIn() {
     final facebookProvider = FacebookAuthProvider();
     facebookProvider.addScope('email');
     facebookProvider.setCustomParameters({'display': 'popup'});
-
     return FirebaseAuth.instance.signInWithPopup(facebookProvider);
-    // final loginResult = await FacebookAuth.instance.login();
-    // if (loginResult.accessToken == null) return null;
-    // final facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
-    // return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  }
+
+  static Future debugSignIn() {
+    assert(debugMode);
+    debugController.add(DebugUser());
+    return Future.value();
+  }
+
+  static void signOut() {
+    if (debugMode) debugController.add(null);
+    FirebaseAuth.instance.signOut();
   }
 
   static Future<String?> getRecaptchaVerification() async {

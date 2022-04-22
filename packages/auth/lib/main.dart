@@ -30,17 +30,22 @@ Widget myApp() {
               ),
               SizedBox(height: 20),
               SignInButton(
-                Buttons.Facebook,
+                Buttons.FacebookNew,
                 onPressed: SignIns.facebookPlatformSignIn,
               ),
               SizedBox(height: 20),
-              ElevatedButton(onPressed: FirebaseAuth.instance.signOut, child: Text('logout')),
+              SignInButton(
+                Buttons.Email,
+                onPressed: SignIns.debugSignIn,
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(onPressed: SignIns.signOut, child: Text('logout')),
               SizedBox(height: 20),
               ElevatedButton(onPressed: SignIns.getRecaptchaVerification, child: Text('recaptcha')),
               SizedBox(height: 50),
               Consumer(
                 builder: (_, ref, __) => ref.watch(emailProvider).when(
-                      loading: () => const CircularProgressIndicator(),
+                      loading: () => Text('-- empty --'),
                       error: (err, stack) => Text('Error: $err'),
                       data: (email) => Text(email),
                     ),
