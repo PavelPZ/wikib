@@ -240,8 +240,35 @@ void main() {
       }
       return;
     }, skip: false);
+    test('daylies_change_day', () async {
+      final now = Day.now;
+      Day.mockSet(now);
+      const name = 'daylies_change_day';
+      for (var i = 0; i < 2; i++) {
+        final cont = getCont();
+        final email = i == 0 ? null : name;
+        final db = await createDB(cont, email, deviceId: name);
+
+        db.daylies.addDaylies(range(0, 5).map((e) => dom.Daily()));
+        // save to azure
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
+        else
+          await db.debugFlush();
+
+        Day.mockSet(now + 1);
+        db.facts.addItems([dom.Fact()]);
+
+        if (db.saveToCloudTable == null)
+          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
+        else
+          await db.debugFlush();
+      }
+    });
     test('daylies', () async {
       const name = 'daylies';
+      final now = Day.now;
+      Day.mockSet(now);
       for (var i = 0; i < 2; i++) {
         final cont = getCont();
         final email = i == 0 ? null : name;
@@ -253,7 +280,7 @@ void main() {
           await db.debugFlush();
 
         // ==== addDaylies 2x
-        db.daylies.addDaylies(Day.now, range(0, 5).map((e) => dom.Daily()));
+        db.daylies.addDaylies(range(0, 5).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 5);
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=6');
         final d1 = db.debugDump();
@@ -266,7 +293,8 @@ void main() {
         expect(db.box.values.whereType<BoxItem>().where((f) => f.isDefered).length, 0);
 
         // ==== change day
-        db.daylies.addDaylies(Day.now + 1, range(0, 2).map((e) => dom.Daily()));
+        Day.mockSet(now + 1);
+        db.daylies.addDaylies(range(0, 2).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 2);
         expect(db.debugDeletedAndDefered(), 'deleted=3, defered=7');
         if (db.saveToCloudTable == null)
@@ -276,7 +304,8 @@ void main() {
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
 
         // addDaylies 510x
-        db.daylies.addDaylies(Day.now + 2, range(0, 510).map((e) => dom.Daily()));
+        Day.mockSet(now + 2);
+        db.daylies.addDaylies(range(0, 510).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 510);
         if (db.saveToCloudTable == null)
           unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
@@ -284,14 +313,16 @@ void main() {
           await db.debugFlush();
 
         // addDaylies 10x, the same day
-        db.daylies.addDaylies(Day.now + 2, range(0, 10).map((e) => dom.Daily()));
+        Day.mockSet(now + 2);
+        db.daylies.addDaylies(range(0, 10).map((e) => dom.Daily()));
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=11');
         if (db.saveToCloudTable == null)
           unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
         else
           await db.debugFlush();
 
-        db.daylies.addDaylies(Day.now + 3, range(0, 10).map((e) => dom.Daily()));
+        Day.mockSet(now + 3);
+        db.daylies.addDaylies(range(0, 10).map((e) => dom.Daily()));
         expect(db.debugDeletedAndDefered(), 'deleted=510, defered=522');
         if (db.saveToCloudTable == null)
           unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));

@@ -87,7 +87,10 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
 
   // wait in azureTable save (e.g. when waiting for internet connection)
   Future debugFlush() async {
-    if (saveToCloudTable != null) await saveToCloudTable!.flush();
+    if (saveToCloudTable != null)
+      await saveToCloudTable!.flush();
+    else
+      unawaited(debugFromAzureAllUploaded(toAzureUpload()));
     await box.flush();
   }
 
@@ -177,7 +180,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
   @override
   Future onETagConflict() async {
     final rows = await info.getTableStorage()!.getAllRows(info.partitionKey);
-    if (rows != null) _wholeAzureDownload(rows);
+    if (rows != null) wholeAzureDownloadLow(rows);
     cancel();
   }
 
@@ -186,10 +189,10 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
     unawaited(box.clear());
     final rows = await info.getTableStorage()!.getAllRows(info.partitionKey);
     if (rows == null) return;
-    _wholeAzureDownload(rows);
+    wholeAzureDownloadLow(rows);
   }
 
-  void _wholeAzureDownload(WholeAzureDownload rows) {
+  void wholeAzureDownloadLow(WholeAzureDownload rows) {
     unawaited(box.put(BoxKey.eTagHiveKey.boxKey, rows.eTag));
     // final azureItemsCount = rows.rows.cast<Map<String, dynamic>>().map((row) => row.length).reduce((value, element) => value + element);
     final boxes = <int, BoxItem>{};
@@ -218,7 +221,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
         newRows == null ? 0 : newRows.rows.cast<Map<String, dynamic>>().map((row) => row.length).reduce((value, element) => value + element);
     if (newRowsCount > box.length) {
       // newStorage.partitionKey cloud databaze is greater than local databaze => take DB from cloud
-      newStorage._wholeAzureDownload(newRows!);
+      newStorage.wholeAzureDownloadLow(newRows!);
     } else {
       // newStorage.partitionKey databaze is smaller than local databaze => take DB from local db
       unawaited(newStorage.box.put(BoxKey.eTagHiveKey.boxKey, newRows?.eTag ?? ''));

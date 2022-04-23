@@ -61,6 +61,18 @@ class RewiseStorage extends Storage<DBRewiseId> {
   late MessagesGroupDaily daylies;
   late MessagesGroupBook books;
   late MessagesGroupFact facts;
+
+  @override
+  AzureDataUpload? toAzureUpload({bool allowSingleRow = true}) {
+    daylies.adjustActDay();
+    return super.toAzureUpload(allowSingleRow: allowSingleRow);
+  }
+
+  @override
+  void wholeAzureDownloadLow(WholeAzureDownload rows) {
+    super.wholeAzureDownloadLow(rows);
+    daylies.adjustActDay();
+  }
 }
 
 class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
@@ -90,18 +102,17 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
 
   int get actDayValue => actDay.getValueOrMsg();
 
-  void addDaylies(int newActDay, Iterable<dom.Daily> msgs) {
-    if (newActDay != actDayValue) {
-      clear(startItemsIncluded: true);
-      // final a1 = storage.debugDump();
-      seed();
-      // final a2 = storage.debugDump();
-      // final c = uniqueCounter.getValueOrMsg();
-      actDay.saveValue(newActDay);
-    }
-    // final a3 = storage.debugDump();
-    addItems(msgs.map((e) => e..day = newActDay));
-    // final a4 = storage.debugDump();
+  void adjustActDay([int newActDay = 0]) {
+    if (newActDay == 0) newActDay = Day.now;
+    if (newActDay == actDayValue) return;
+    clear(startItemsIncluded: true);
+    seed();
+    actDay.saveValue(newActDay);
+  }
+
+  void addDaylies(Iterable<dom.Daily> msgs) {
+    adjustActDay();
+    addItems(msgs.map((e) => e..day = Day.now));
   }
 }
 
