@@ -1,8 +1,8 @@
 import 'package:auth/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:wikib_providers/wikb_providers.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'main.g.dart';
@@ -10,11 +10,17 @@ part 'main.g.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await firebaseInit();
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(ProviderScope(
+    overrides: [
+      authSignInsProvider.overrideWithProvider(Provider<AuthSignIns>((ref) => AuthSignIns(ref))),
+    ],
+    child: const MyApp(),
+  ));
 }
 
-@swidget
-Widget myApp() {
+@cwidget
+Widget myApp(WidgetRef ref) {
+  final authSignIns = ref.watch(authSignInsProvider);
   return MaterialApp(
     home: Scaffold(
       body: Center(
@@ -26,30 +32,25 @@ Widget myApp() {
               SizedBox(height: 20),
               SignInButton(
                 Buttons.Google,
-                onPressed: SignIns.googlePlatformSignIn,
+                onPressed: authSignIns.googlePlatformSignIn,
               ),
               SizedBox(height: 20),
               SignInButton(
                 Buttons.FacebookNew,
-                onPressed: SignIns.facebookPlatformSignIn,
+                onPressed: authSignIns.facebookPlatformSignIn,
               ),
               SizedBox(height: 20),
               SignInButton(
                 Buttons.Email,
-                onPressed: SignIns.debugSignIn,
+                text: 'Debug sign in',
+                onPressed: authSignIns.debugSignIn,
               ),
               SizedBox(height: 20),
-              ElevatedButton(onPressed: SignIns.signOut, child: Text('logout')),
+              ElevatedButton(onPressed: authSignIns.signOut, child: Text('logout')),
               SizedBox(height: 20),
-              ElevatedButton(onPressed: SignIns.getRecaptchaVerification, child: Text('recaptcha')),
+              ElevatedButton(onPressed: authSignIns.getRecaptchaVerification, child: Text('recaptcha')),
               SizedBox(height: 50),
-              Consumer(
-                builder: (_, ref, __) => ref.watch(emailProvider).when(
-                      loading: () => Text('-- empty --'),
-                      error: (err, stack) => Text('Error: $err'),
-                      data: (email) => Text(email),
-                    ),
-              ),
+              Consumer(builder: (_, ref, __) => Text(ref.watch(emailProvider))),
             ],
           ),
         ),
@@ -58,8 +59,8 @@ Widget myApp() {
   );
 }
 
-final emailProvider = FutureProvider<String>((ref) async {
-  final user = await ref.watch(authUserProvider.future);
+final emailProvider = Provider<String>((ref) {
+  final user = ref.watch(authProfileProvider);
   if (user == null) return '-- empty --';
   return '${user.displayName} (${user.email})';
 });

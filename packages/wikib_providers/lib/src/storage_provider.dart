@@ -66,6 +66,7 @@ Provider<Future Function()?> getDebugStorageDeleteProvider<TStorage extends Stor
         return () async {
           await storageInfo.initHiveBox();
           await storageInfo.hiveBox!.deleteFromDisk();
+          storageInfo.hiveBox = null;
           await Storage.debugDeleteAzureAll(storageInfo.getTableStorage());
         };
       },

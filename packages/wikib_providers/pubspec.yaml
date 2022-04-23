@@ -13,6 +13,8 @@ dependencies:
   azure_storage:
     path: ../azure_storage
   hive:
+  protobuf_for_dart:
+    path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
   rewise_storage:
     path: ../rewise_storage
   riverpod: 2.0.0-dev.5

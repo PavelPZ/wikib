@@ -13,6 +13,7 @@ dependencies:
   http:
   path:
   protobuf:
+  riverpod: 2.0.0-dev.5
   tuple:
 
 dev_dependencies:

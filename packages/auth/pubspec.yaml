@@ -29,6 +29,12 @@ dependencies:
 
   hooks_riverpod: 2.0.0-dev.5
 
+  protobuf_for_dart:
+    path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
+
+  wikib_providers:
+    path: ../wikib_providers 
+
 dev_dependencies:
   build_runner: 
   functional_widget:

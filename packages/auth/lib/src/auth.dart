@@ -4,13 +4,18 @@ import 'package:desktop_webview_auth/desktop_webview_auth.dart';
 import 'package:desktop_webview_auth/facebook.dart';
 import 'package:desktop_webview_auth/google.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart' as pi;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:googleapis/identitytoolkit/v3.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:protobuf_for_dart/algorithm.dart';
+import 'package:wikib_providers/wikb_providers.dart';
 
-import 'debug_user.dart';
-import 'init_app.dart';
+import 'firebase_options.dart';
+
+part 'init_app.dart';
+part 'to_auth_profile.dart';
 
 // See example: github\flutter_desktop_webview_auth\example\lib\main.dart
 
@@ -52,14 +57,19 @@ final facebookSignInArgs = FacebookSignInArgs(
 // *************************************************************************************************
 typedef SignIn = Future Function();
 
-class SignIns {
-  SignIns._();
-  static SignIn get googlePlatformSignIn {
-    if (kIsWeb) return webGoogleSignIn;
+class AuthSignIns {
+  AuthSignIns(this.ref) : _auth = FirebaseAuth.instance {
+    _auth.authStateChanges().listen((user) => ref.read(authProfileProvider.notifier).state = convert2AuthoProfile(user));
+  }
+  final Ref ref;
+  final FirebaseAuth _auth;
+
+  SignIn get googlePlatformSignIn {
+    if (kIsWeb) return _webGoogleSignIn;
     switch (defaultTargetPlatform) {
       case TargetPlatform.windows:
       case TargetPlatform.linux:
-        return desktopGoogleSignIn;
+        return _desktopGoogleSignIn;
       case TargetPlatform.android:
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
@@ -70,12 +80,12 @@ class SignIns {
     }
   }
 
-  static SignIn get facebookPlatformSignIn {
-    if (kIsWeb) return webFacebookSignIn;
+  SignIn get facebookPlatformSignIn {
+    if (kIsWeb) return _webFacebookSignIn;
     switch (defaultTargetPlatform) {
       case TargetPlatform.windows:
       case TargetPlatform.linux:
-        return desktopFacebookSignIn;
+        return _desktopFacebookSignIn;
       case TargetPlatform.android:
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
@@ -86,49 +96,49 @@ class SignIns {
     }
   }
 
-  static Future desktopGoogleSignIn() async {
+  Future _desktopGoogleSignIn() async {
     final result = await DesktopWebviewAuth.signIn(googleSignInArgs);
     if (result == null) return null;
     final credential = GoogleAuthProvider.credential(
       idToken: result.idToken,
       accessToken: result.accessToken,
     );
-    return FirebaseAuth.instance.signInWithCredential(credential);
+    return _auth.signInWithCredential(credential);
   }
 
-  static Future desktopFacebookSignIn() async {
+  Future _desktopFacebookSignIn() async {
     final result = await DesktopWebviewAuth.signIn(facebookSignInArgs);
     if (result == null) return null;
     final credential = FacebookAuthProvider.credential(result.accessToken!);
-    return FirebaseAuth.instance.signInWithCredential(credential);
+    return _auth.signInWithCredential(credential);
   }
 
 // https://github.com/firebase/flutterfire/blob/master/docs/auth/social.mdx
-  static Future webGoogleSignIn() {
+  Future _webGoogleSignIn() {
     final googleProvider = GoogleAuthProvider();
     googleProvider.addScope('https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email');
-    return FirebaseAuth.instance.signInWithPopup(googleProvider);
+    return _auth.signInWithPopup(googleProvider);
   }
 
-  static Future webFacebookSignIn() {
+  Future _webFacebookSignIn() {
     final facebookProvider = FacebookAuthProvider();
     facebookProvider.addScope('email');
     facebookProvider.setCustomParameters({'display': 'popup'});
-    return FirebaseAuth.instance.signInWithPopup(facebookProvider);
+    return _auth.signInWithPopup(facebookProvider);
   }
 
-  static Future debugSignIn() {
-    assert(debugMode);
-    debugController.add(DebugUser());
-    return Future.value();
+  void debugSignIn() {
+    ref.watch(authProfileProvider.notifier).state = AuthProfile()
+      ..displayName = 'Debug Name'
+      ..email = 'debug@name.xx';
   }
 
-  static void signOut() {
-    if (debugMode) debugController.add(null);
-    FirebaseAuth.instance.signOut();
+  Future signOut() {
+    ref.watch(authProfileProvider.notifier).state = null;
+    return _auth.signOut();
   }
 
-  static Future<String?> getRecaptchaVerification() async {
+  Future<String?> getRecaptchaVerification() async {
     final client = clientViaApiKey(GOOGLE_API_KEY);
     final identityToolkit = IdentityToolkitApi(client);
     final res = identityToolkit.relyingparty;
@@ -148,3 +158,5 @@ class SignIns {
     return result?.verificationId;
   }
 }
+
+final authSignInsProvider = Provider<AuthSignIns>((_) => throw UnimplementedError());

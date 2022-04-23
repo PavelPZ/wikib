@@ -31,7 +31,8 @@ Future<RewiseStorage?> createDBLow(
   bool? debugClear = true,
   String? deviceId,
 }) async {
-  cont.read(emailProvider.notifier).state = email;
+  cont.read(authProfileProvider.notifier).state = email == null ? null : (dom.AuthProfile()..email = email);
+  final xxx = cont.read(emailProvider);
   cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
   cont.read(debugDeviceIdProvider.notifier).state = deviceId;
   if (debugClear != false) {
@@ -89,9 +90,9 @@ void main() {
       await db1.close();
       return;
     }, skip: false);
-    test('gromEmptyEMail', () async {
+    test('fromEmptyEMail', () async {
       final cont = getCont();
-      const name = 'gromEmptyEMail';
+      const name = 'fromEmptyEMail';
       // clear
       await createDBLow(cont, emptyEMail, debugClear: null, deviceId: name);
       await createDBLow(cont, name, debugClear: null, deviceId: name);
@@ -102,7 +103,7 @@ void main() {
       // await db.debugFlush();
 
       // change email => new Storage
-      cont.read(emailProvider.notifier).state = name;
+      cont.read(authProfileProvider.notifier).state = dom.AuthProfile()..email = name;
       final db2 = await cont.read(rewiseStorageProvider.future);
 
       final facts = db2!.facts.getMsgs().map((m) => m.msg).toList();

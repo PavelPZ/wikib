@@ -5,20 +5,28 @@
 			"path": "."
 		},
 		{
-			"name": "utils",
-			"path": "packages\\utils"
+			"name": "protobuf_design",
+			"path": "..\\wikibulary\\shared\\protobufs\\protobuf_design"
+		},
+		{
+			"name": "protobuf_include",
+			"path": "..\\wikibulary\\shared\\protobufs\\protobuf_include"
 		},
 		{
 			"name": "protobuf_for_dart",
 			"path": "..\\wikibulary\\shared\\protobufs\\protobuf_for_dart"
 		},
 		{
-			"name": "riverpod_navigator",
-			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator"
+			"name": "utils",
+			"path": "packages\\utils"
 		},
 		{
 			"name": "riverpod_navigator_core",
 			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator_core"
+		},
+		{
+			"name": "riverpod_navigator",
+			"path": "..\\riverpod_navigator\\packages\\riverpod_navigator"
 		},
 		{
 			"name": "localization",
@@ -37,12 +45,12 @@
 			"path": "packages\\rewise_storage"
 		},
 		{
-			"name": "auth",
-			"path": "packages\\auth"
-		},
-		{
 			"name": "wikib_providers",
 			"path": "packages\\wikib_providers"
+		},
+		{
+			"name": "auth",
+			"path": "packages\\auth"
 		},
 		{
 			"name": "wikib",
