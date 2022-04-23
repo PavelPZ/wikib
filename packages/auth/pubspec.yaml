@@ -32,7 +32,8 @@ dependencies:
 
   protobuf_for_dart:
     path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
-
+  rewise_storage:
+    path: ../rewise_storage 
   wikib_providers:
     path: ../wikib_providers 
 

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:azure_storage/azure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:protobuf_for_dart/algorithm.dart' as dom;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rewise_storage/rewise_storage.dart';
 import 'package:wikib_providers/wikib_providers.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
@@ -11,6 +12,7 @@ part 'main.g.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await firebaseInit();
+  hiveRewiseStorageAdapters();
   await Hive.initFlutter();
   runApp(ProviderScope(
     overrides: [
