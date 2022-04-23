@@ -10,7 +10,7 @@ import 'package:googleapis/identitytoolkit/v3.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:protobuf_for_dart/algorithm.dart';
-import 'package:wikib_providers/wikb_providers.dart';
+import 'package:wikib_providers/wikib_providers.dart';
 
 import 'firebase_options.dart';
 
@@ -58,9 +58,8 @@ final facebookSignInArgs = FacebookSignInArgs(
 typedef SignIn = Future Function();
 
 class AuthSignIns {
-  AuthSignIns(this.ref) : _auth = FirebaseAuth.instance {
-    _auth.authStateChanges().listen((user) => ref.read(authProfileProvider.notifier).state = convert2AuthoProfile(user));
-  }
+  AuthSignIns(this.ref) : _auth = FirebaseAuth.instance;
+
   final Ref ref;
   final FirebaseAuth _auth;
 
@@ -98,43 +97,43 @@ class AuthSignIns {
 
   Future _desktopGoogleSignIn() async {
     final result = await DesktopWebviewAuth.signIn(googleSignInArgs);
-    if (result == null) return null;
+    if (result == null) return _userCredential(null);
     final credential = GoogleAuthProvider.credential(
       idToken: result.idToken,
       accessToken: result.accessToken,
     );
-    return _auth.signInWithCredential(credential);
+    return _userCredential(_auth.signInWithCredential(credential));
   }
 
   Future _desktopFacebookSignIn() async {
     final result = await DesktopWebviewAuth.signIn(facebookSignInArgs);
-    if (result == null) return null;
+    if (result == null) return _userCredential(null);
     final credential = FacebookAuthProvider.credential(result.accessToken!);
-    return _auth.signInWithCredential(credential);
+    return _userCredential(_auth.signInWithCredential(credential));
   }
 
 // https://github.com/firebase/flutterfire/blob/master/docs/auth/social.mdx
   Future _webGoogleSignIn() {
     final googleProvider = GoogleAuthProvider();
     googleProvider.addScope('https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email');
-    return _auth.signInWithPopup(googleProvider);
+    return _userCredential(_auth.signInWithPopup(googleProvider));
   }
 
   Future _webFacebookSignIn() {
     final facebookProvider = FacebookAuthProvider();
     facebookProvider.addScope('email');
     facebookProvider.setCustomParameters({'display': 'popup'});
-    return _auth.signInWithPopup(facebookProvider);
+    return _userCredential(_auth.signInWithPopup(facebookProvider));
   }
 
   void debugSignIn() {
-    ref.watch(authProfileProvider.notifier).state = AuthProfile()
+    ref.read(authProfileProvider.notifier).state = AuthProfile()
       ..displayName = 'Debug Name'
       ..email = 'debug@name.xx';
   }
 
   Future signOut() {
-    ref.watch(authProfileProvider.notifier).state = null;
+    ref.read(authProfileProvider.notifier).state = null;
     return _auth.signOut();
   }
 
@@ -157,6 +156,11 @@ class AuthSignIns {
     );
     return result?.verificationId;
   }
+
+  Future _userCredential(Future<UserCredential?>? futureUser) async {
+    final user = futureUser == null ? null : await futureUser;
+    ref.read(authProfileProvider.notifier).state = convert2AuthoProfile(user?.user);
+  }
 }
 
-final authSignInsProvider = Provider<AuthSignIns>((_) => throw UnimplementedError());
+final authSignInsProvider = Provider<AuthSignIns>((ref) => AuthSignIns(ref));

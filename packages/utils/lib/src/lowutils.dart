@@ -28,8 +28,14 @@ class DBRewiseId implements DBId {
   String partitionKey(String email) => '$email!rewise!$speak!$learn';
 }
 
+class DBDeviceId implements DBId {
+  @override
+  bool eq(DBId id) => id is DBDeviceId;
+  @override
+  String partitionKey(String email) => 'device_local_db';
+}
+
 class DBUserId implements DBId {
-  const DBUserId();
   @override
   bool eq(DBId id) => id is DBUserId;
   @override

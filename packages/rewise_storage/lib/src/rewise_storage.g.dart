@@ -44,7 +44,11 @@ class BoxFactAdapter extends TypeAdapter<BoxFact> {
   int get hashCode => typeId.hashCode;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is BoxFactAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BoxFactAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 class BoxDailyAdapter extends TypeAdapter<BoxDaily> {
@@ -85,7 +89,11 @@ class BoxDailyAdapter extends TypeAdapter<BoxDaily> {
   int get hashCode => typeId.hashCode;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is BoxDailyAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BoxDailyAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 class BoxBookAdapter extends TypeAdapter<BoxBook> {
@@ -126,7 +134,11 @@ class BoxBookAdapter extends TypeAdapter<BoxBook> {
   int get hashCode => typeId.hashCode;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is BoxBookAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BoxBookAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 class BoxConfigAdapter extends TypeAdapter<BoxConfig> {
@@ -167,5 +179,9 @@ class BoxConfigAdapter extends TypeAdapter<BoxConfig> {
   int get hashCode => typeId.hashCode;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is BoxConfigAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BoxConfigAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }

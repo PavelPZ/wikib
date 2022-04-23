@@ -5,6 +5,7 @@ import 'package:rewise_storage/rewise_storage.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:utils/utils.dart';
 
+part 'init.dart';
 part 'storage_provider.dart';
 
 // *********** AUTH
@@ -21,13 +22,19 @@ final debugDeviceIdProvider = StateProvider<String?>((_) => null, name: 'debugDe
 // Azure account
 final azureAccountProvider = Provider<AzureAccounts>((_) => const AzureAccounts(), name: 'azureAccountProvider');
 
-// Azure account + 'users'3+
+// Azure account + 'users'
 final azureRewiseUsersTableAccountProvider = Provider<TableAccount?>(
   (ref) => ref.watch(emailProvider) == null
       ? null
       : TableAccount(azureAccounts: ref.watch(azureAccountProvider), tableName: 'users', isEmulator: ref.watch(debugIsAzureEmulator)),
   name: 'azureRewiseUsersTableAccountProvider',
 );
+
+// Local Device Storage
+final deviceStorageProvider = getStorageProvider<DeviceStorage>(DeviceStorage.new, _deviceStorageInfoProvider, null);
+final debugDeviceStorageDeleteProvider = getDebugStorageDeleteProvider<DeviceStorage>(_deviceStorageInfoProvider);
+final _deviceIdProvider = StateProvider<DBDeviceId?>((_) => DBDeviceId(), name: 'deviceIdProvider'); // null => close RewiseStorage
+final _deviceStorageInfoProvider = getStorageInfoProvider<DeviceStorage>(_deviceIdProvider, null);
 
 // Rewise Storage
 final rewiseIdProvider = StateProvider<DBRewiseId?>((_) => null, name: 'rewiseIdProvider'); // null => close RewiseStorage

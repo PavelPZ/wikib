@@ -1,30 +1,31 @@
-part of 'wikb_providers.dart';
+part of 'wikib_providers.dart';
 
 Provider<StorageInfo> getStorageInfoProvider<TStorage extends Storage>(
-  AlwaysAliveProviderBase<DBRewiseId?> dbIdProvider,
-  Provider<TableAccount?> tableAccountProvider,
+  AlwaysAliveProviderBase<DBId?> dbIdProvider,
+  Provider<TableAccount?>? tableAccountProvider,
 ) =>
     Provider<StorageInfo>(
       (ref) => StorageInfo(
         dbId: ref.watch(dbIdProvider),
         emailOrEmpty: ref.watch(emailOrEmptyProvider),
         debugDeviceId: ref.watch(debugDeviceIdProvider),
-        tableAccount: ref.watch(tableAccountProvider),
+        tableAccount: tableAccountProvider == null ? null : ref.watch(tableAccountProvider),
       ),
       name: 'storageInfoProvider.${TStorage.runtimeType}',
     );
 
 FutureProvider<TStorage?> getStorageProvider<TStorage extends Storage>(
-  TStorage create(StorageInfo info),
+  TStorage create(Ref ref, StorageInfo info),
   Provider<StorageInfo> storageInfoProvider,
-  StateProvider<TStorage?> oldStorageProvider,
+  StateProvider<TStorage?>? oldStorageProvider,
 ) =>
     FutureProvider<TStorage?>(
       (ref) async {
         final storageInfo = ref.watch(storageInfoProvider);
-        final oldStorage = ref.read(oldStorageProvider.notifier);
 
-        if (storageInfo.isEmpty) {
+        final oldStorage = oldStorageProvider == null ? null : ref.read(oldStorageProvider.notifier);
+
+        if (oldStorage != null && storageInfo.isEmpty) {
           if (oldStorage.state == null) return null;
           await oldStorage.state!.close();
           oldStorage.state = null;
@@ -33,19 +34,20 @@ FutureProvider<TStorage?> getStorageProvider<TStorage extends Storage>(
 
         await storageInfo.initHiveBox();
 
-        final res = create(storageInfo);
-        if (oldStorage.state != null &&
+        final res = create(ref, storageInfo);
+        if (oldStorage != null &&
+            oldStorage.state != null &&
             oldStorage.state!.info.emailOrEmpty == emptyEMail &&
             storageInfo.emailOrEmpty != emptyEMail &&
             oldStorage.state!.info.id.eq(storageInfo.id)) {
           assert(storageInfo.hiveBox != oldStorage.state!.box);
           await oldStorage.state!.moveTo(res);
         } else {
-          if (oldStorage.state != null && oldStorage.state!.box != storageInfo.hiveBox) await oldStorage.state!.close();
+          if (oldStorage != null && oldStorage.state != null && oldStorage.state!.box != storageInfo.hiveBox) await oldStorage.state!.close();
           assert(storageInfo.hiveBox!.isOpen);
           await res.initialize();
         }
-        oldStorage.state = res;
+        if (oldStorage != null) oldStorage.state = res;
         return res;
       },
       name: 'storageProvider.${TStorage.runtimeType}',

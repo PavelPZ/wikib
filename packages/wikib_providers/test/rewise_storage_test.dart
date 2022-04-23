@@ -11,12 +11,16 @@ import 'package:rewise_storage/rewise_storage.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
 import 'package:utils/utils.dart';
-import 'package:wikib_providers/wikb_providers.dart';
+import 'package:wikib_providers/wikib_providers.dart';
 
-ProviderContainer getCont() => ProviderContainer(); //observers: [Logger()]);
+Future<ProviderContainer> getCont() async {
+  final res = ProviderContainer();
+  await res.read(initWikibProviders.future);
+  return res;
+} //observers: [Logger()]);
 
 Future<RewiseStorage> createDB(
-  ProviderContainer cont,
+  Future<ProviderContainer> cont,
   String? email, {
   bool debugClear = true,
   String? deviceId,
@@ -26,11 +30,12 @@ Future<RewiseStorage> createDB(
 }
 
 Future<RewiseStorage?> createDBLow(
-  ProviderContainer cont,
+  Future<ProviderContainer> fcont,
   String? email, {
   bool? debugClear = true,
   String? deviceId,
 }) async {
+  final cont = await fcont;
   cont.read(authProfileProvider.notifier).state = email == null ? null : (dom.AuthProfile()..email = email);
   cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
   cont.read(debugDeviceIdProvider.notifier).state = deviceId;
@@ -93,6 +98,7 @@ void main() {
     }, skip: false);
     test('fromEmptyEMail', () async {
       final cont = getCont();
+      final ccont = await cont;
       const name = 'fromEmptyEMail';
       // clear
       await createDBLow(cont, emptyEMail, debugClear: null, deviceId: name);
@@ -104,8 +110,8 @@ void main() {
       // await db.debugFlush();
 
       // change email => new Storage
-      cont.read(authProfileProvider.notifier).state = dom.AuthProfile()..email = name;
-      final db2 = await cont.read(rewiseStorageProvider.future);
+      ccont.read(authProfileProvider.notifier).state = dom.AuthProfile()..email = name;
+      final db2 = await ccont.read(rewiseStorageProvider.future);
 
       final facts = db2!.facts.getMsgs().map((m) => m.msg).toList();
       expect(facts.length, 3);

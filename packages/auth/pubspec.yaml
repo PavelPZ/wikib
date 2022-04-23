@@ -27,6 +27,7 @@ dependencies:
   googleapis: 
   googleapis_auth: 
 
+  hive_flutter:
   hooks_riverpod: 2.0.0-dev.5
 
   protobuf_for_dart:

@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:localization/localization_meta.dart';
 import 'package:riverpod_navigator/riverpod_navigator.dart';
+import 'package:wikib_providers/wikib_providers.dart';
 
 import 'localize.dart';
 import 'utils/media_query.dart';
@@ -48,20 +49,20 @@ class HomeSegment extends TypedSegment {
 class AppNavigator extends RNavigator {
   AppNavigator(Ref ref)
       : super(
-          ref,
-          [
-            RRoute<HomeSegment>(
-              'home',
-              HomeSegment.fromUrlPars,
-              HomeScreen.new,
-            ),
-            ...worldRoutes,
-          ],
-          progressIndicatorBuilder: () => const SpinKitCircle(color: Colors.blue, size: 45),
-          navigatorWraperBuilder: (rnavig, navig) => MediaQueryWrapper(
-            child: NavigatorWraper(rnavig, navig),
-          ),
-        );
+            ref,
+            [
+              RRoute<HomeSegment>(
+                'home',
+                HomeSegment.fromUrlPars,
+                HomeScreen.new,
+              ),
+              ...worldRoutes,
+            ],
+            progressIndicatorBuilder: () => const SpinKitCircle(color: Colors.blue, size: 45),
+            navigatorWraperBuilder: (rnavig, navig) => MediaQueryWrapper(
+                  child: NavigatorWraper(rnavig, navig),
+                ),
+            initAppWithRef: () => ref.read(initWikibProviders.future));
 }
 
 class HomeScreen extends RScreen<AppNavigator, HomeSegment> {

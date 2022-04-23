@@ -7,6 +7,7 @@ import 'package:azure/azure.dart';
 import 'package:hive/hive.dart';
 // import 'package:riverpod/riverpod.dart';
 import 'package:protobuf/protobuf.dart' as $pb;
+import 'package:riverpod/riverpod.dart';
 import 'package:utils/utils.dart';
 
 part 'box_item.dart';
@@ -43,7 +44,7 @@ class StorageInfo {
 }
 
 abstract class Storage<TDBId extends DBId> implements IStorage {
-  Storage(this.info) : assert(info.hiveBox != null) {
+  Storage(this.ref, this.info) : assert(info.hiveBox != null) {
     saveToCloudTable = info.getTableStorage();
   }
 
@@ -58,6 +59,7 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
   }
 
   final StorageInfo info;
+  final Ref ref;
   late TableStorage? saveToCloudTable;
   late Map<int, ItemsGroup> row2Group;
   late List<ItemsGroup> allGroups;
@@ -74,9 +76,13 @@ abstract class Storage<TDBId extends DBId> implements IStorage {
         if (!isNullOrEmpty(box.get(BoxKey.eTagHiveKey.boxKey))) return;
       }
       unawaited(box.put(BoxKey.eTagHiveKey.boxKey, ''));
-      // ignore: avoid_function_literals_in_foreach_calls
-      allGroups.forEach((e) => e.seed());
+      seed();
     }
+  }
+
+  void seed() {
+    // ignore: avoid_function_literals_in_foreach_calls
+    allGroups.forEach((e) => e.seed());
   }
 
   // cancel waiting in azureTable save (e.g. when waiting for internet connection)
