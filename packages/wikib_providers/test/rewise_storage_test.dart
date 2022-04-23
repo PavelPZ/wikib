@@ -32,7 +32,6 @@ Future<RewiseStorage?> createDBLow(
   String? deviceId,
 }) async {
   cont.read(authProfileProvider.notifier).state = email == null ? null : (dom.AuthProfile()..email = email);
-  final xxx = cont.read(emailProvider);
   cont.read(rewiseIdProvider.notifier).state = DBRewiseId(learn: 'en', speak: 'cs');
   cont.read(debugDeviceIdProvider.notifier).state = deviceId;
   if (debugClear != false) {
@@ -53,8 +52,10 @@ void main() {
       const name = 'more_devices';
 
       final cont1 = getCont();
-      await createDBLow(cont1, name, debugClear: null, deviceId: '$name-1-');
-      final db1 = await createDB(cont1, name, debugClear: false, deviceId: '$name-1-');
+      // await createDBLow(cont1, name, debugClear: null, deviceId: '$name-1-');
+      // final db1 = await createDB(cont1, name, debugClear: false, deviceId: '$name-1-');
+      final db1 = await createDB(cont1, name, deviceId: '$name-1-');
+
       expect(db1.box.length, 5);
       db1.facts.addItems(range(0, 3).map((e) => dom.Fact()));
       await db1.debugFlush();
@@ -145,7 +146,7 @@ void main() {
         await db3.debugFlush();
         print('=========== 3 ================');
         print(db3.debugDump());
-        expect(db3.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, db3.saveToCloudTable == null ? 4 : 0);
+        expect(db3.box.values.whereType<BoxItem>().where((it) => it.isDefered).toList().length, 0);
       }
       return;
     }, skip: false);
@@ -190,7 +191,8 @@ void main() {
         final db = await createDB(cont, email, deviceId: name);
         print(db.box.values);
         expect(db.box.length, 5);
-        if (db.saveToCloudTable == null) unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
+
+        await db.debugFlush();
 
         db.facts.addItems([
           dom.Fact()..nextInterval = 1,
@@ -201,11 +203,7 @@ void main() {
         expect(db.facts.getItems().where((f) => f.isDefered).length, 4);
 
         // =====================
-        // await db.debugReopen();
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
+        await db.debugFlush();
 
         expect(db.facts.getItems().where((f) => f.isDefered).length, 0);
 
@@ -230,9 +228,6 @@ void main() {
         print(db.debugDump());
 
         db.facts.clear();
-        //expect(db.facts.getItems().length, 1);
-        //db.facts.clear(startItemsIncluded: true);
-        //expect(db.facts.getItems().length, 0);
 
         await db.debugFlush();
         await db.close();
@@ -240,6 +235,27 @@ void main() {
       }
       return;
     }, skip: false);
+    test('daylies_other_device', () async {
+      final now = Day.now;
+      Day.mockSet(now);
+      const name = 'daylies_change_day';
+      const email = name;
+      final cont = getCont();
+      final db1 = await createDB(cont, email, deviceId: name + '-1-');
+
+      db1.daylies.addDaylies(range(0, 255).map((e) => dom.Daily()));
+      await db1.debugFlush();
+      expect(db1.box.length, 260);
+
+      Day.mockSet(now + 1);
+      final cont2 = getCont();
+      final fn = File(db1.box.path!.replaceFirst('-1-', '-2-'));
+      if (fn.existsSync()) fn.deleteSync();
+      final db2 = await createDB(cont2, name, debugClear: false, deviceId: '$name-2-');
+      await db2.debugFlush();
+      expect(db2.box.length, 5);
+      return;
+    });
     test('daylies_change_day', () async {
       final now = Day.now;
       Day.mockSet(now);
@@ -249,20 +265,15 @@ void main() {
         final email = i == 0 ? null : name;
         final db = await createDB(cont, email, deviceId: name);
 
-        db.daylies.addDaylies(range(0, 5).map((e) => dom.Daily()));
-        // save to azure
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
+        db.daylies.addDaylies(range(0, 255).map((e) => dom.Daily()));
+        await db.debugFlush();
+        expect(db.box.length, 260);
 
         Day.mockSet(now + 1);
         db.facts.addItems([dom.Fact()]);
-
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
+        await db.debugFlush();
+        expect(db.box.length, 6);
+        return;
       }
     });
     test('daylies', () async {
@@ -274,20 +285,14 @@ void main() {
         final email = i == 0 ? null : name;
         final db = await createDB(cont, email, deviceId: name);
         // save to azure
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
+        await db.debugFlush();
 
         // ==== addDaylies 2x
         db.daylies.addDaylies(range(0, 5).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 5);
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=6');
         final d1 = db.debugDump();
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
+        await db.debugFlush();
         await db.debugReopen();
         final d11 = db.debugDump();
         expect(db.box.values.whereType<BoxItem>().where((f) => f.isDefered).length, 0);
@@ -297,39 +302,26 @@ void main() {
         db.daylies.addDaylies(range(0, 2).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 2);
         expect(db.debugDeletedAndDefered(), 'deleted=3, defered=7');
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
+        await db.debugFlush();
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=0');
 
         // addDaylies 510x
         Day.mockSet(now + 2);
         db.daylies.addDaylies(range(0, 510).map((e) => dom.Daily()));
         expect(db.daylies.getMsgs().length, 510);
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
+        await db.debugFlush();
 
         // addDaylies 10x, the same day
         Day.mockSet(now + 2);
         db.daylies.addDaylies(range(0, 10).map((e) => dom.Daily()));
         expect(db.debugDeletedAndDefered(), 'deleted=0, defered=11');
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
+        await db.debugFlush();
 
         Day.mockSet(now + 3);
         db.daylies.addDaylies(range(0, 10).map((e) => dom.Daily()));
         expect(db.debugDeletedAndDefered(), 'deleted=510, defered=522');
-        if (db.saveToCloudTable == null)
-          unawaited(db.debugFromAzureAllUploaded(db.toAzureUpload()));
-        else
-          await db.debugFlush();
-
         await db.debugFlush();
+
         continue;
       }
       return;

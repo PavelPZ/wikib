@@ -102,12 +102,10 @@ class MessagesGroupDaily extends MessagesGroupWithCounter<dom.Daily> {
 
   int get actDayValue => actDay.getValueOrMsg();
 
-  void adjustActDay([int newActDay = 0]) {
-    if (newActDay == 0) newActDay = Day.now;
-    if (newActDay == actDayValue) return;
+  void adjustActDay() {
+    if (actDayValue == Day.now) return;
     clear(startItemsIncluded: true);
     seed();
-    actDay.saveValue(newActDay);
   }
 
   void addDaylies(Iterable<dom.Daily> msgs) {

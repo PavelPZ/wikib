@@ -11,7 +11,7 @@ part 'storage_provider.dart';
 final authProfileProvider = StateProvider<AuthProfile?>((_) => null);
 final emailProvider = Provider<String?>((ref) {
   final profile = ref.watch(authProfileProvider);
-  return profile == null || profile.email == '' ? null : profile.email;
+  return isNullOrEmpty(profile?.email) ? null : profile!.email;
 }, name: 'emailProvider');
 final emailOrEmptyProvider = Provider<String>((ref) => ref.watch(emailProvider) ?? emptyEMail, name: 'emailOrEmptyProvider');
 
