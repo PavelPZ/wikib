@@ -14,18 +14,14 @@ Future main() async {
   await firebaseInit();
   hiveRewiseStorageAdapters();
   await Hive.initFlutter();
-  runApp(ProviderScope(
-    overrides: [
-      authSignInsProvider.overrideWithProvider(Provider<AuthSignIns>((ref) => AuthSignIns(ref))),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 @cwidget
 Widget myApp(WidgetRef ref) {
   final authSignIns = ref.watch(authSignInsProvider);
   return MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: Scaffold(
       body: Center(
         child: Consumer(

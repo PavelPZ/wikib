@@ -1,6 +1,10 @@
 {
 	"folders": [
 		{
+			"name": "typescript",
+			"path": "browser\\typescript"
+		},
+		{
 			"name": "wikib",
 			"path": "."
 		},
@@ -49,8 +53,16 @@
 			"path": "packages\\wikib_providers"
 		},
 		{
+			"name": "flutter_utils",
+			"path": "packages\\flutter_utils"
+		},
+		{
 			"name": "auth",
 			"path": "packages\\auth"
+		},
+		{
+			"name": "media",
+			"path": "packages\\media"
 		},
 		{
 			"name": "wikib",

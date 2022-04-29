@@ -1,0 +1,11 @@
+{
+  "name": "simple-vmsg-demo",
+  "scripts": {
+    "compile": "tsc -w", 
+    "start": "lite-server"
+  },
+  "devDependencies": {
+    "@types/audioworklet": "^0.0.26",
+    "@types/webrtc": "^0.0.32"
+  }
+}

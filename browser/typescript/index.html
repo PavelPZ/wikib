@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Simple vmsg audio recording demo - addpipe.com</title>
+    <link rel="stylesheet" type="text/css" href="vmsg.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module">
+      import {toggleStartStop} from './dist/index.js'
+      var button = document.querySelector('#recordButton');
+      var audio = null;
+      function recordStop() {
+        var status = toggleStartStop();
+        button.innerHTML = status ? 'Stop' : 'Record';
+      }
+      document.querySelector('#recordButton').addEventListener('click', recordStop)
+    </script>      
+  </head>
+  <body>
+    <h1>Simple recording demo</h1>
+    <button id="recordButton">Record</button>
+    <div id="formats"></div>
+    <script type="text/javascript">
+      var audioCtx = new AudioContext();
+      document.getElementById("formats").innerHTML="Format: 1 channel mp3 @ "+audioCtx.sampleRate/1000+"kHz"
+      console.log(audioCtx.sampleRate);
+    </script>
+  </body>
+</html>
