@@ -1,39 +1,52 @@
-interface RecordAudio {
-    start: Function;
-    stop: () => Promise<StopAudio>;
-}
+async function init() {
+  const getRecordOrPlay = (callback: (status: number) => void) => {
+    return new Promise<() => Promise<void>>(async resolve => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let mediaRecorder: MediaRecorder | null = null;
+      let audio: HTMLAudioElement | null = null;
 
-interface StopAudio {
-    audioBlob: Blob;
-    audioUrl: string;
-    play: () => Promise<unknown>
-}
-
-
-export const recordAudio = () =>
-  new Promise<RecordAudio>(async resolve => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    const audioChunks: Blob[] = [];
-
-    mediaRecorder.addEventListener("dataavailable", event => {
-      audioChunks.push(event.data);
-    });
-
-    const start = () => mediaRecorder.start();
-
-    const stop = () =>
-      new Promise<StopAudio>(resolve => {
-        mediaRecorder.addEventListener("stop", () => {
-          const audioBlob = new Blob(audioChunks, { type: "audio/mpeg" });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const audio = new Audio(audioUrl);
-          const play = () => audio.play();
-          resolve({ audioBlob, audioUrl, play });
-        });
-
-        mediaRecorder.stop();
+      const recordOrPlay = () => new Promise<void>(resolve => {
+        let audioChunks: Blob[] = [];
+        if (mediaRecorder == null) { //recording
+          if (audio != null) {
+            audio.pause();
+            audio = null;
+          }
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.addEventListener("dataavailable", event => audioChunks!.push(event.data));
+          mediaRecorder.addEventListener("stop", () => {
+            mediaRecorder = null;
+            const audioBlob = new Blob(audioChunks, { type: "audio/mpeg" });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audio = new Audio(audioUrl);
+            audio.addEventListener("ended", () => {
+              callback(0);
+            });
+            callback(2);
+            audio.play();
+          });
+          mediaRecorder.start();
+          callback(1);
+        } else {
+          mediaRecorder.stop();
+        }
       });
 
-    resolve({ start, stop });
+      resolve(recordOrPlay);
+    });
+  }
+
+  let button = document.querySelector('#recordButton') as HTMLButtonElement;
+  let setButton = (text: string, disabled: boolean) => { button.innerHTML = text; button.disabled = disabled; }
+  let recordOrPlay = await getRecordOrPlay(status => {
+    switch (status) {
+      case 0: return setButton('Record', false);
+      case 1: return setButton('Stop', false); button.innerHTML = 'Stop'; button.disabled = false;
+      case 2: return setButton('... playing ...', true);
+    }
   });
+
+  button.addEventListener('click', recordOrPlay)
+}
+init();
+

@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="UTF-8">
-  <title>index_messages</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<body id="body" style="width: 1000px; height:1000px; background-color: aquamarine;">
-  <div id="receiveMessage"></div>
-
-  <script>
+"use strict";
 function dartMessage() {
     let body = document.body;
     let div = document.querySelector('#receiveMessage');
@@ -35,8 +23,3 @@ function dartMessage() {
     });
 }
 dartMessage();
-  </script>
-</body>
-
-
-</html>
