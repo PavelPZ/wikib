@@ -33,7 +33,6 @@ Widget myBody() {
   Future initialize() async {
     if (isInitialized.value || controller.value.isInitialized) return;
     await controller.initialize();
-    await controller.setBackgroundColor(Colors.transparent);
     await controller.loadUrl('http://localhost:3000/');
     controller.webMessage.listen((msg) {
       messageFromWebView.value = jsonEncode(msg);
@@ -57,7 +56,7 @@ Widget myBody() {
                 width: WIDTH,
                 height: HEIGHT,
                 child: const DecoratedBox(
-                  decoration: BoxDecoration(color: Colors.red),
+                  decoration: BoxDecoration(color: Colors.amberAccent),
                   position: DecorationPosition.foreground,
                 ),
               ),

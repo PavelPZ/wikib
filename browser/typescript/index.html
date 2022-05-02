@@ -7,34 +7,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body id="body" style="width: 1000px; height:1000px; background-color: aquamarine;">
+<body id="body" style="margin: 0px; width: 1000px; height:1000px; background-color:transparent; overflow: hidden; cursor: pointer;">
   <div id="receiveMessage"></div>
 
   <script>
-function dartMessage() {
-    let body = document.body;
-    let div = document.querySelector('#receiveMessage');
-    if (window?.chrome?.webview) {
+    function dartMessage() {
+      let body = document.body;
+      let div = document.querySelector('#receiveMessage');
+      if (window?.chrome?.webview) {
         window.chrome.webview.addEventListener('message', (event) => {
-            let json = event.data;
-            try {
-                div.innerHTML = JSON.stringify(json);
-                json.webview = 'Hallo world WebView';
-                json.message = 'resend';
-                window.chrome.webview.postMessage(json);
-            }
-            catch (msg) {
-                div.innerHTML = msg.toString();
-            }
+          let json = event.data;
+          try {
+            div.innerHTML = JSON.stringify(json);
+            json.webview = 'Hallo world WebView';
+            json.message = 'resend';
+            window.chrome.webview.postMessage(json);
+          }
+          catch (msg) {
+            div.innerHTML = msg.toString();
+          }
         });
-    }
-    body.addEventListener('click', () => {
+      }
+      body.addEventListener('click', () => {
         let msg = JSON.parse('{"message":"webview", "number": 1.3, "bool": true, "string": "string"}');
         window?.chrome?.webview?.postMessage(msg);
         div.innerHTML = JSON.stringify(msg);
-    });
-}
-dartMessage();
+      });
+    }
+    dartMessage();
   </script>
 </body>
 
