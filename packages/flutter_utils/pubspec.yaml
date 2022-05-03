@@ -9,10 +9,11 @@ environment:
   sdk: ">=2.16.2 <3.0.0"
 
 dependencies:
-  cupertino_icons: ^1.0.2
+  cupertino_icons:
   device_info_plus:
   flutter:
     sdk: flutter
+  flutter_riverpod: 2.0.0-dev.5
 
 dev_dependencies:
 

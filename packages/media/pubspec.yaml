@@ -6,19 +6,23 @@ environment:
   sdk: ">=2.16.2 <3.0.0"
 
 dependencies:
-  audio_session:
+  audioplayers: 1.0.0-rc.2
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
   flutter_hooks:
-  flutter_sound:
-  flutter_sound_platform_interface:
+  flutter_riverpod: 2.0.0-dev.5
   freezed_annotation: 
   functional_widget_annotation:
-  permission_handler:
-  riverpod:
+  # permission_handler:
+  utils:
+    path: ../utils 
   webview_windows:
-  
+
+dependency_overrides:
+  audioplayers_web:
+    path: ../../../github/audioplayers/packages/audioplayers_web
+
 
 dev_dependencies:
   build_runner: 
