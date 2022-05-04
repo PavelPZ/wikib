@@ -3,19 +3,14 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-Future<AudioPlayerEx?> createPlayer(WidgetRef ref, {String? sourceUrl, void stateChanged(PlayerStateEx state)?}) {
-  print('createPlayer s');
+Future<AudioPlayerEx?> createPlayer(WidgetRef ref, {String? sourceUrl, void stateChanged(PlayerState state)?}) {
   if (sourceUrl == null) {
     ref.audioPlayer = null;
     return Future.value(null);
   }
   final res = AudioPlayerEx();
   res.onPlayerStateChangedEx.forEach((stateEx) => stateChanged?.call(stateEx));
-  print('createPlayer 0');
-  return res.setSourceUrl(sourceUrl).then((value) {
-    ref.audioPlayer = res;
-    print('createPlayer e');
-  });
+  return res.setSourceUrl(sourceUrl).then((value) => ref.audioPlayer = res);
 }
 
 final pronuncUrlProvider = Provider.autoDispose<String?>((_) => throw UnimplementedError());
@@ -32,29 +27,25 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerEx?> {
   }
 }
 
-enum PlayerStateEx { other, playing, completed }
-
 class AudioPlayerEx extends AudioPlayer {
   AudioPlayerEx() : super() {
-    _stateEx = StreamController<PlayerStateEx>();
+    _stateEx = StreamController<PlayerState>();
     onPlayerComplete.forEach((_) {
-      if (!_stateEx.isClosed) _stateEx.add(PlayerStateEx.completed);
+      if (!_stateEx.isClosed) _stateEx.add(PlayerState.completed);
     });
     onPlayerStateChanged.forEach((s) {
-      if (!_stateEx.isClosed) _stateEx.add(s == PlayerState.playing ? PlayerStateEx.playing : PlayerStateEx.other);
+      if (!_stateEx.isClosed) _stateEx.add(s);
     });
   }
 
-  late StreamController<PlayerStateEx> _stateEx;
-  Stream<PlayerStateEx> get onPlayerStateChangedEx => _stateEx.stream;
+  // repair not used "PlayerState.completed"
+  late StreamController<PlayerState> _stateEx;
+  Stream<PlayerState> get onPlayerStateChangedEx => _stateEx.stream;
 
   @override
   Future dispose() async {
-    print('dispose s');
     await _stateEx.close();
-    print('dispose 1');
     await super.dispose();
-    print('dispose e');
   }
 }
 

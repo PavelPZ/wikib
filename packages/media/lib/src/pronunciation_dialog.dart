@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
@@ -56,8 +57,8 @@ Widget playWrapper(WidgetRef ref) {
   final sourceUrl = ref.watchSourceUrl;
   useEffect(() {
     createPlayer(ref, sourceUrl: sourceUrl, stateChanged: (stateEx) {
-      if (stateEx == PlayerStateEx.other) return;
-      ref.state = stateEx == PlayerStateEx.playing ? PronuncState.playing : PronuncState.playRecGap;
+      if (stateEx != PlayerState.playing && stateEx != PlayerState.completed) return; // no state change
+      ref.state = stateEx == PlayerState.playing ? PronuncState.playing : PronuncState.playRecGap;
     });
     return null;
   }, [sourceUrl]);
