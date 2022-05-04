@@ -11,16 +11,15 @@ part 'pronunciation_dialog.g.dart';
 
 enum PronuncState { none, playReady, playing, playRecGap, recReady, recording, recPlayGap, recPlayRecReady, recPlaying }
 
-final pronuncStateProvider =
-    StateProvider.autoDispose<PronuncState>((_) => throw UnimplementedError(), disposeDelay: Duration(milliseconds: disposeDelayMSecs));
+final pronuncStateProvider = StateProvider<PronuncState>((_) => throw UnimplementedError());
 
 @swidget
 Widget pronuncDialog({required String? sourceUrl}) => ProviderScope(
       overrides: [
-        audioPlayerUrlProvider.overrideWithValue(sourceUrl),
-        audioPlayerProvider,
-        audioPlayerNotifierProvider,
-        audioPlayerStateProvider,
+        audioPlayerUrlProvider.overrideWithValue(sourceUrl), // url source
+        audioPlayerProvider, // create AudioPlayerEx and set sourceUrl
+        audioPlayerNotifierProvider, // StateController<AudioPlayerEx?> for AudioPlayerEx disposing
+        audioPlayerStateProvider, // recompute onPlayerComplete => playerState = PlayerState.completed
         pronuncStateProvider.overrideWithValue(StateController<PronuncState>(sourceUrl == null ? PronuncState.none : PronuncState.playReady)),
       ],
       key: ValueKey(sourceUrl),
@@ -63,9 +62,7 @@ Widget playWrapper(WidgetRef ref) {
         ref.pronuncState = PronuncState.playRecGap;
       else if (s == PlayerState.playing) ref.pronuncState = PronuncState.playing;
     });
-    return () {
-      close();
-    };
+    return close;
   });
   return Column(children: [
     PlayButton(),
@@ -105,7 +102,7 @@ Widget myApp() {
             const SizedBox(height: 20),
             ElevatedButton(onPressed: () => state.value == 2 ? state.value = 0 : state.value++, child: Text('RUN ${state.value}')),
             const SizedBox(height: 20),
-            // PronuncDialog(sourceUrl: shortUrl),
+            PronuncDialog(sourceUrl: shortUrl),
           ],
         ),
       ),
