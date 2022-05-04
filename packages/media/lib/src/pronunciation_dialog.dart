@@ -11,24 +11,25 @@ part 'pronunciation_dialog.g.dart';
 
 enum PronuncState { none, playReady, playing, playRecGap, recReady, recording, recPlayGap, recPlayRecReady, recPlaying }
 
-final pronuncStateProvider = StateProvider.autoDispose<PronuncState>((_) => throw UnimplementedError());
+final pronuncStateProvider =
+    StateProvider.autoDispose<PronuncState>((_) => throw UnimplementedError(), disposeDelay: Duration(milliseconds: disposeDelayMSecs));
 
 @swidget
-Widget pronuncDialog({required String? sourceUrl}) {
-  return ProviderScope(
-    overrides: [
-      pronuncUrlProvider.overrideWithValue(sourceUrl),
-      pronuncStateProvider.overrideWithValue(StateController<PronuncState>(sourceUrl == null ? PronuncState.none : PronuncState.playReady)),
-      pronuncAudioPlayerProvider,
-    ],
-    key: ValueKey(sourceUrl),
-    child: Row(
-      children: const [
-        PlayWrapper(),
+Widget pronuncDialog({required String? sourceUrl}) => ProviderScope(
+      overrides: [
+        audioPlayerUrlProvider.overrideWithValue(sourceUrl),
+        audioPlayerProvider,
+        audioPlayerNotifierProvider,
+        audioPlayerStateProvider,
+        pronuncStateProvider.overrideWithValue(StateController<PronuncState>(sourceUrl == null ? PronuncState.none : PronuncState.playReady)),
       ],
-    ),
-  );
-}
+      key: ValueKey(sourceUrl),
+      child: Row(
+        children: const [
+          PlayWrapper(),
+        ],
+      ),
+    );
 
 @cwidget
 Widget playButton(WidgetRef ref) {
@@ -54,14 +55,18 @@ Widget playProgress(WidgetRef ref) {
 
 @hcwidget
 Widget playWrapper(WidgetRef ref) {
-  final sourceUrl = ref.watchSourceUrl;
+  ref.watchAudioPlayer;
+  // recompute PlayerState to PronuncState
   useEffect(() {
-    createPlayer(ref, sourceUrl: sourceUrl, stateChanged: (stateEx) {
-      if (stateEx != PlayerState.playing && stateEx != PlayerState.completed) return; // no state change
-      ref.state = stateEx == PlayerState.playing ? PronuncState.playing : PronuncState.playRecGap;
+    final close = ref.read(audioPlayerStateProvider.notifier).addListener((s) {
+      if (s == PlayerState.completed)
+        ref.pronuncState = PronuncState.playRecGap;
+      else if (s == PlayerState.playing) ref.pronuncState = PronuncState.playing;
     });
-    return null;
-  }, [sourceUrl]);
+    return () {
+      close();
+    };
+  });
   return Column(children: [
     PlayButton(),
     PlayProgress(),
@@ -71,8 +76,8 @@ Widget playWrapper(WidgetRef ref) {
 }
 
 extension WidgetRefPronunc on WidgetRef {
-  PronuncState get state => read(pronuncStateProvider);
-  set state(PronuncState state) => read(pronuncStateProvider.notifier).state = state;
+  PronuncState get pronuncState => read(pronuncStateProvider);
+  set pronuncState(PronuncState state) => read(pronuncStateProvider.notifier).state = state;
   PronuncState get watchState => watch(pronuncStateProvider);
 }
 
@@ -100,7 +105,7 @@ Widget myApp() {
             const SizedBox(height: 20),
             ElevatedButton(onPressed: () => state.value == 2 ? state.value = 0 : state.value++, child: Text('RUN ${state.value}')),
             const SizedBox(height: 20),
-            PronuncDialog(sourceUrl: shortUrl),
+            // PronuncDialog(sourceUrl: shortUrl),
           ],
         ),
       ),

@@ -1,24 +1,34 @@
-import 'dart:async';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:utils/utils.dart';
 
-Future<AudioPlayerEx?> createPlayer(WidgetRef ref, {String? sourceUrl, void stateChanged(PlayerState state)?}) {
-  if (sourceUrl == null) {
-    ref.audioPlayer = null;
-    return Future.value(null);
-  }
-  final res = AudioPlayerEx();
-  res.onPlayerStateChangedEx.forEach((stateEx) => stateChanged?.call(stateEx));
-  return res.setSourceUrl(sourceUrl).then((value) => ref.audioPlayer = res);
-}
+const disposeDelayMSecs = 1000;
 
-final pronuncUrlProvider = Provider.autoDispose<String?>((_) => throw UnimplementedError());
-final pronuncAudioPlayerProvider = StateNotifierProvider.autoDispose<AudioPlayerNotifier, AudioPlayerEx?>((_) => AudioPlayerNotifier(null));
+final audioPlayerUrlProvider = Provider.autoDispose<String?>(
+  (_) => throw UnimplementedError(),
+  disposeDelay: Duration(milliseconds: disposeDelayMSecs),
+);
 
-class AudioPlayerNotifier extends StateNotifier<AudioPlayerEx?> {
+final audioPlayerProvider = FutureProvider.autoDispose<AudioPlayerEx?>((ref) async {
+  final sourceUrl = ref.watch(audioPlayerUrlProvider);
+  if (isNullOrEmpty(sourceUrl)) return null;
+  final res = AudioPlayerEx(ref);
+  await res.setSourceUrl(sourceUrl!);
+  return res;
+}, disposeDelay: Duration(milliseconds: disposeDelayMSecs));
+
+final audioPlayerNotifierProvider = StateNotifierProvider.autoDispose<AudioPlayerNotifier, AudioPlayerEx?>(
+  (ref) => AudioPlayerNotifier(ref.watch(audioPlayerProvider).value),
+  disposeDelay: Duration(milliseconds: disposeDelayMSecs),
+);
+
+final audioPlayerStateProvider = StateProvider.autoDispose<PlayerState>(
+  (_) => PlayerState.stopped,
+  disposeDelay: Duration(milliseconds: disposeDelayMSecs),
+);
+
+class AudioPlayerNotifier extends StateController<AudioPlayerEx?> {
   AudioPlayerNotifier(AudioPlayerEx? player) : super(player);
-  void setPlayer(AudioPlayerEx? player) => state = player;
 
   @override
   void dispose() {
@@ -28,32 +38,27 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerEx?> {
 }
 
 class AudioPlayerEx extends AudioPlayer {
-  AudioPlayerEx() : super() {
-    _stateEx = StreamController<PlayerState>();
-    onPlayerComplete.forEach((_) {
-      if (!_stateEx.isClosed) _stateEx.add(PlayerState.completed);
-    });
-    onPlayerStateChanged.forEach((s) {
-      if (!_stateEx.isClosed) _stateEx.add(s);
-    });
+  AudioPlayerEx(this.ref) : super() {
+    onPlayerComplete.forEach((_) => ref.playerState = PlayerState.completed);
+    onPlayerStateChanged.forEach((s) => ref.playerState = s);
   }
 
-  // repair not used "PlayerState.completed"
-  late StreamController<PlayerState> _stateEx;
-  Stream<PlayerState> get onPlayerStateChangedEx => _stateEx.stream;
-
-  @override
-  Future dispose() async {
-    await _stateEx.close();
-    await super.dispose();
-  }
+  final Ref ref;
 }
 
 extension WidgetRefPlayer on WidgetRef {
-  String? get sourceUrl => read(pronuncUrlProvider);
-  String? get watchSourceUrl => watch(pronuncUrlProvider);
+  String? get sourceUrl => read(audioPlayerUrlProvider);
+  String? get watchSourceUrl => watch(audioPlayerUrlProvider);
 
-  AudioPlayerEx? get audioPlayer => read(pronuncAudioPlayerProvider);
-  set audioPlayer(AudioPlayerEx? player) => read(pronuncAudioPlayerProvider.notifier).setPlayer(player);
-  AudioPlayerEx? get watchAudioPlayer => watch(pronuncAudioPlayerProvider);
+  AudioPlayerEx? get audioPlayer => read(audioPlayerNotifierProvider);
+  set audioPlayer(AudioPlayerEx? player) => read(audioPlayerNotifierProvider.notifier).state = player;
+  AudioPlayerEx? get watchAudioPlayer => watch(audioPlayerNotifierProvider);
+
+  PlayerState get playerState => read(audioPlayerStateProvider);
+  set playerState(PlayerState state) => read(audioPlayerStateProvider.notifier).state = state;
+  PlayerState get watchplayerState => watch(audioPlayerStateProvider);
+}
+
+extension RefPlayer on Ref {
+  set playerState(PlayerState state) => read(audioPlayerStateProvider.notifier).state = state;
 }
