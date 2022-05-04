@@ -81,10 +81,9 @@ void main() {
   runApp(const MyApp());
 }
 
-const mp3Files = [
-  'https://free-loops.com/data/mp3/c8/84/81a4f6cc7340ad558c25bba4f6c3.mp3',
-  'https://file-examples.com/storage/fed7f5feae62719de971a0c/2017/11/file_example_MP3_5MG.mp3',
-];
+const longUrl = 'https://free-loops.com/data/mp3/c8/84/81a4f6cc7340ad558c25bba4f6c3.mp3';
+const shortUrl = 'https://file-examples.com/storage/fed7f5feae62719de971a0c/2017/11/file_example_MP3_5MG.mp3';
+const mp3Files = [longUrl, shortUrl];
 
 @hcwidget
 Widget myApp() {
@@ -100,9 +99,7 @@ Widget myApp() {
             const SizedBox(height: 20),
             ElevatedButton(onPressed: () => state.value == 2 ? state.value = 0 : state.value++, child: Text('RUN ${state.value}')),
             const SizedBox(height: 20),
-            PronuncDialog(
-                sourceUrl:
-                    'https://file-examples.com/storage/fed7f5feae62719de971a0c/2017/11/file_example_MP3_5MG.mp3'), //, key: ValueKey(sourceUrl ?? '')),
+            PronuncDialog(sourceUrl: shortUrl),
           ],
         ),
       ),

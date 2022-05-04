@@ -4,13 +4,18 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 Future<AudioPlayerEx?> createPlayer(WidgetRef ref, {String? sourceUrl, void stateChanged(PlayerStateEx state)?}) {
+  print('createPlayer s');
   if (sourceUrl == null) {
     ref.audioPlayer = null;
     return Future.value(null);
   }
   final res = AudioPlayerEx();
   res.onPlayerStateChangedEx.forEach((stateEx) => stateChanged?.call(stateEx));
-  return res.setSourceUrl(sourceUrl).then((value) => ref.audioPlayer = res);
+  print('createPlayer 0');
+  return res.setSourceUrl(sourceUrl).then((value) {
+    ref.audioPlayer = res;
+    print('createPlayer e');
+  });
 }
 
 final pronuncUrlProvider = Provider.autoDispose<String?>((_) => throw UnimplementedError());
@@ -32,8 +37,12 @@ enum PlayerStateEx { other, playing, completed }
 class AudioPlayerEx extends AudioPlayer {
   AudioPlayerEx() : super() {
     _stateEx = StreamController<PlayerStateEx>();
-    onPlayerComplete.forEach((_) => _stateEx.add(PlayerStateEx.completed));
-    onPlayerStateChanged.forEach((s) => _stateEx.add(s == PlayerState.playing ? PlayerStateEx.playing : PlayerStateEx.other));
+    onPlayerComplete.forEach((_) {
+      if (!_stateEx.isClosed) _stateEx.add(PlayerStateEx.completed);
+    });
+    onPlayerStateChanged.forEach((s) {
+      if (!_stateEx.isClosed) _stateEx.add(s == PlayerState.playing ? PlayerStateEx.playing : PlayerStateEx.other);
+    });
   }
 
   late StreamController<PlayerStateEx> _stateEx;
@@ -41,8 +50,11 @@ class AudioPlayerEx extends AudioPlayer {
 
   @override
   Future dispose() async {
+    print('dispose s');
     await _stateEx.close();
+    print('dispose 1');
     await super.dispose();
+    print('dispose e');
   }
 }
 
