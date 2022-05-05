@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:utils/utils.dart';
@@ -5,10 +7,31 @@ import 'package:utils/utils.dart';
 final audioPlayerUrlProvider = Provider<String?>((_) => throw UnimplementedError());
 
 final audioPlayerProvider = FutureProvider<AudioPlayerEx?>((ref) async {
+  void init() {
+    ref.playerState = PlayerState.stopped;
+    ref.duration = Duration();
+    ref.position = Duration();
+  }
+
   final sourceUrl = ref.watch(audioPlayerUrlProvider);
-  if (isNullOrEmpty(sourceUrl)) return null;
-  final res = AudioPlayerEx(ref);
+
+  if (isNullOrEmpty(sourceUrl)) {
+    await Future.microtask(init);
+    return null;
+  }
+
+  final res = AudioPlayerEx();
+  //await res.setPlayerMode(PlayerMode.mediaPlayer);
+  res.streamSubscription = [
+    res.onDurationChanged.listen((d) => ref.duration = d),
+    res.onPositionChanged.listen((d) => ref.position = d),
+    res.onPlayerComplete.listen((_) => ref.playerState = PlayerState.completed),
+    res.onPlayerStateChanged.listen((s) => ref.playerState = s),
+  ];
+  await res.setReleaseMode(ReleaseMode.stop);
   await res.setSourceUrl(sourceUrl!);
+  init();
+  print('new AudioPlayerEx($sourceUrl) - ${res.playerId}');
   return res;
 });
 
@@ -16,6 +39,8 @@ final audioPlayerNotifierProvider =
     StateNotifierProvider<AudioPlayerNotifier, AudioPlayerEx?>((ref) => AudioPlayerNotifier(ref.watch(audioPlayerProvider).value));
 
 final audioPlayerStateProvider = StateProvider<PlayerState>((_) => PlayerState.stopped);
+final audioPlayerDurationProvider = StateProvider<Duration>((_) => Duration());
+final audioPlayerPositionProvider = StateProvider<Duration>((_) => Duration());
 
 class AudioPlayerNotifier extends StateController<AudioPlayerEx?> {
   AudioPlayerNotifier(AudioPlayerEx? player) : super(player);
@@ -23,26 +48,34 @@ class AudioPlayerNotifier extends StateController<AudioPlayerEx?> {
   @override
   void dispose() {
     if (state != null) {
-      state!._disposed = true;
-      state!.dispose();
-    }
-    super.dispose();
+      final st = state!;
+      st.stop().then((_) => st.dispose()).then((_) {
+        super.dispose();
+        print('dispose AudioPlayerEx - ${st.playerId}');
+      });
+    } else
+      super.dispose();
   }
 }
 
 class AudioPlayerEx extends AudioPlayer {
-  AudioPlayerEx(this.ref) : super() {
-    onPlayerComplete.forEach((_) {
-      if (!_disposed) ref.playerState = PlayerState.completed;
-    });
-    onPlayerStateChanged.forEach((s) {
-      if (!_disposed) ref.playerState = s;
-    });
-  }
+  late List<StreamSubscription> streamSubscription;
 
-  final Ref ref;
-  bool _disposed = false;
+  @override
+  Future dispose() {
+    streamSubscription.forEach((s) => s.cancel());
+    return super.dispose();
+  }
 }
+
+List<Override> playerOverrides(String? sourceUrl) => [
+      audioPlayerUrlProvider.overrideWithValue(sourceUrl), // url source
+      audioPlayerProvider, // AudioPlayerEx
+      audioPlayerNotifierProvider, // StateController<AudioPlayerEx?> for AudioPlayerEx disposing
+      audioPlayerStateProvider, // recompute onPlayerComplete => playerState = PlayerState.completed
+      audioPlayerDurationProvider,
+      audioPlayerPositionProvider,
+    ];
 
 extension WidgetRefPlayer on WidgetRef {
   String? get sourceUrl => read(audioPlayerUrlProvider);
@@ -55,8 +88,13 @@ extension WidgetRefPlayer on WidgetRef {
   PlayerState get playerState => read(audioPlayerStateProvider);
   set playerState(PlayerState state) => read(audioPlayerStateProvider.notifier).state = state;
   PlayerState get watchplayerState => watch(audioPlayerStateProvider);
+
+  Duration get watchDuration => watch(audioPlayerDurationProvider);
+  Duration get watchPosition => watch(audioPlayerPositionProvider);
 }
 
 extension RefPlayer on Ref {
   set playerState(PlayerState state) => read(audioPlayerStateProvider.notifier).state = state;
+  set duration(Duration state) => read(audioPlayerDurationProvider.notifier).state = state;
+  set position(Duration state) => read(audioPlayerPositionProvider.notifier).state = state;
 }

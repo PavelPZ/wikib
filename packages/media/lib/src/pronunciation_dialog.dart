@@ -13,16 +13,13 @@ enum PronuncState { none, playReady, playing, playRecGap, recReady, recording, r
 
 final pronuncStateProvider = StateProvider<PronuncState>((_) => throw UnimplementedError());
 
-@swidget
+@hwidget
 Widget pronuncDialog({required String? sourceUrl}) => ProviderScope(
       overrides: [
-        audioPlayerUrlProvider.overrideWithValue(sourceUrl), // url source
-        audioPlayerProvider, // create AudioPlayerEx and set sourceUrl
-        audioPlayerNotifierProvider, // StateController<AudioPlayerEx?> for AudioPlayerEx disposing
-        audioPlayerStateProvider, // recompute onPlayerComplete => playerState = PlayerState.completed
+        ...playerOverrides(sourceUrl),
         pronuncStateProvider.overrideWithValue(StateController<PronuncState>(sourceUrl == null ? PronuncState.none : PronuncState.playReady)),
       ],
-      key: ValueKey(sourceUrl),
+      // key: ValueKey(sourceUrl),
       child: Row(
         children: const [
           PlayWrapper(),
@@ -46,10 +43,11 @@ Widget playButton(WidgetRef ref) {
 
 @hcwidget
 Widget playProgress(WidgetRef ref) {
-  final player = ref.watchAudioPlayer;
-  final fDuration = useStream(player?.onDurationChanged, initialData: Duration());
-  final fPosition = useStream(player?.onPositionChanged, initialData: Duration());
-  return Text('${fPosition.hasData ? fPosition.data!.inMilliseconds : 0} / ${fDuration.hasData ? fDuration.data!.inMilliseconds : 0}');
+  //final playing = ref.watchplayerState == PlayerState.playing;
+  final duration = ref.watchDuration;
+  final position = ref.watchPosition;
+  //return Text(!playing ? '---' : '${position.inMilliseconds} / ${duration.inMilliseconds}');
+  return Text('${position.inMilliseconds} / ${duration.inMilliseconds}');
 }
 
 @hcwidget
@@ -63,7 +61,7 @@ Widget playWrapper(WidgetRef ref) {
       else if (s == PlayerState.playing) ref.pronuncState = PronuncState.playing;
     });
     return close;
-  });
+  }, []);
   return Column(children: [
     PlayButton(),
     PlayProgress(),
@@ -95,15 +93,17 @@ Widget myApp() {
   return MaterialApp(
     title: 'PronuncDialog',
     home: Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            PronuncDialog(sourceUrl: sourceUrl), //, key: ValueKey(sourceUrl ?? '')),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: () => state.value == 2 ? state.value = 0 : state.value++, child: Text('RUN ${state.value}')),
-            const SizedBox(height: 20),
-            PronuncDialog(sourceUrl: shortUrl),
-          ],
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: [
+              PronuncDialog(sourceUrl: sourceUrl), //, key: ValueKey(sourceUrl ?? '')),
+              const SizedBox(height: 20),
+              ElevatedButton(onPressed: () => state.value == 2 ? state.value = 0 : state.value++, child: Text('RUN ${state.value}')),
+              const SizedBox(height: 20),
+              PronuncDialog(sourceUrl: shortUrl),
+            ],
+          ),
         ),
       ),
     ),

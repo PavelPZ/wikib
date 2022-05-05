@@ -6,7 +6,7 @@ part of 'pronunciation_dialog.dart';
 // FunctionalWidgetGenerator
 // **************************************************************************
 
-class PronuncDialog extends StatelessWidget {
+class PronuncDialog extends HookWidget {
   const PronuncDialog({Key? key, required this.sourceUrl}) : super(key: key);
 
   final String? sourceUrl;
