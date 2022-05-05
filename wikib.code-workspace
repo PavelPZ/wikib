@@ -61,6 +61,10 @@
 			"path": "packages\\auth"
 		},
 		{
+			"name": "audioplayers_web",
+			"path": "..\\github\\audioplayers\\packages\\audioplayers_web"
+		},
+		{
 			"name": "media",
 			"path": "packages\\media"
 		},

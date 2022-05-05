@@ -42,13 +42,7 @@ Widget playButton(WidgetRef ref) {
 }
 
 @hcwidget
-Widget playProgress(WidgetRef ref) {
-  //final playing = ref.watchplayerState == PlayerState.playing;
-  final duration = ref.watchDuration;
-  final position = ref.watchPosition;
-  //return Text(!playing ? '---' : '${position.inMilliseconds} / ${duration.inMilliseconds}');
-  return Text('${position.inMilliseconds} / ${duration.inMilliseconds}');
-}
+Widget playProgress(WidgetRef ref) => Text('${ref.watchPosition.inMilliseconds} / ${ref.watchDuration.inMilliseconds}');
 
 @hcwidget
 Widget playWrapper(WidgetRef ref) {
