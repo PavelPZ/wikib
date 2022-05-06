@@ -69,14 +69,18 @@
 			"path": "packages\\media"
 		},
 		{
+			"name": "media2",
+			"path": "packages\\media2"
+		},
+		{
 			"name": "wikib",
 			"path": "wikib"
 		}
 	],
 	"settings": {
-		"explorer.experimental.fileNesting.enabled": true,
-		"explorer.experimental.fileNesting.expand": false,
-		"explorer.experimental.fileNesting.patterns": {
+		"explorer.fileNesting.enabled": true,
+		"explorer.fileNesting.expand": false,
+		"explorer.fileNesting.patterns": {
 			"*.ts": "$(capture).js, $(capture).*.ts",
 			"*.js": "$(capture).js.map, $(capture).min.js, $(capture).d.ts",
 			"*.jsx": "$(capture).js",
@@ -84,7 +88,8 @@
 			"tsconfig.json": "tsconfig.*.json",
 			"package.json": "package-lock.json, .npmrc, yarn.lock, .yarnrc, pnpm-lock.yaml",
 			"pubspec.yaml": ".*,*.iml,*.lock",
-			"readme.md": "readme.*,changelog.md,license,*.md"
+			"readme.md": "readme.*,changelog.md,license,*.md",
+			"*.dart": "$(capture).*.dart",
 		}
 	}
 }
