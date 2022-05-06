@@ -6,16 +6,23 @@ part of 'audio_recorder.dart';
 // FunctionalWidgetGenerator
 // **************************************************************************
 
-class MyApp extends HookConsumerWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext _context, WidgetRef _ref) => myApp();
+  Widget build(BuildContext _context, WidgetRef _ref) => myApp(_ref);
 }
 
-class Recorder extends HookConsumerWidget {
-  const Recorder({Key? key}) : super(key: key);
+class RecorderWidget extends HookConsumerWidget {
+  const RecorderWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext _context, WidgetRef _ref) => recorder(_ref);
+  Widget build(BuildContext _context, WidgetRef _ref) => recorderWidget(_ref);
+}
+
+class PlayerWidget extends HookConsumerWidget {
+  const PlayerWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context, WidgetRef _ref) => playerWidget(_ref);
 }

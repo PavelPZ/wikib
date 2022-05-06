@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:utils/utils.dart';
 
-enum PlayerState { none, ready, playing, paused, completed }
+enum PlayerState { none, playing, paused, completed }
 
 final audioPlayerUrlProvider = Provider<String?>((_) => throw UnimplementedError());
 
@@ -23,31 +23,16 @@ final audioPlayerProvider = FutureProvider<AudioPlayerEx?>((ref) async {
   }
 
   final res = AudioPlayerEx();
-  //await res.setPlayerMode(PlayerMode.mediaPlayer);
-  res.streamSubscription = [
+  res.streamSubscriptions = [
     res.durationStream.listen((d) => ref.duration = d ?? Duration()),
     res.positionStream.listen((d) => ref.position = d),
     res.playerStateStream.listen((state) {
-      if (state.playing)
-        ref.playerState = PlayerState.playing;
-      else {
-        switch (state.processingState) {
-          case ProcessingState.idle:
-          case ProcessingState.loading:
-          case ProcessingState.buffering:
-            break;
-          case ProcessingState.ready:
-            ref.playerState = PlayerState.ready;
-            break;
-          case ProcessingState.completed:
-            ref.playerState = PlayerState.completed;
-            break;
-        }
-      }
+      if (state.processingState == ProcessingState.completed)
+        ref.playerState = PlayerState.completed;
+      else if (state.playing) ref.playerState = PlayerState.playing;
     }),
   ];
-  res.sourceDuration = await res.setAudioSource(AudioSource.uri(Uri.parse(sourceUrl!))) ?? Duration();
-  await res.setVolume(1.0);
+  await res.setAudioSource(AudioSource.uri(Uri.parse(sourceUrl!))) ?? Duration();
   init();
   print('new AudioPlayerEx($sourceUrl)');
   return res;
@@ -56,7 +41,7 @@ final audioPlayerProvider = FutureProvider<AudioPlayerEx?>((ref) async {
 final audioPlayerNotifierProvider =
     StateNotifierProvider<AudioPlayerNotifier, AudioPlayerEx?>((ref) => AudioPlayerNotifier(ref.watch(audioPlayerProvider).value));
 
-final audioPlayerStateProvider = StateProvider<PlayerState>((_) => PlayerState.ready);
+final audioPlayerStateProvider = StateProvider<PlayerState>((_) => PlayerState.none);
 final audioPlayerDurationProvider = StateProvider<Duration>((_) => Duration());
 final audioPlayerPositionProvider = StateProvider<Duration>((_) => Duration());
 
@@ -77,12 +62,11 @@ class AudioPlayerNotifier extends StateController<AudioPlayerEx?> {
 }
 
 class AudioPlayerEx extends AudioPlayer {
-  late Duration sourceDuration;
-  late List<StreamSubscription> streamSubscription;
+  late List<StreamSubscription> streamSubscriptions;
 
   @override
   Future dispose() {
-    streamSubscription.forEach((s) => s.cancel());
+    streamSubscriptions.forEach((s) => s.cancel());
     return super.dispose();
   }
 }
