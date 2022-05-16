@@ -16,13 +16,7 @@ class MyApp extends ConsumerWidget {
 /// for Row or Column childs
 class Wrapper extends StatelessWidget {
   /// for Row or Column childs
-  const Wrapper(
-      {Key? key,
-      this.flex = 0,
-      this.alignment,
-      this.padding,
-      required this.child})
-      : super(key: key);
+  const Wrapper({Key? key, this.flex = 0, this.alignment, this.padding, required this.child}) : super(key: key);
 
   /// for Row or Column childs
   final int flex;
@@ -37,6 +31,5 @@ class Wrapper extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext _context) =>
-      wrapper(flex: flex, alignment: alignment, padding: padding, child: child);
+  Widget build(BuildContext _context) => wrapper(flex: flex, alignment: alignment, padding: padding, child: child);
 }

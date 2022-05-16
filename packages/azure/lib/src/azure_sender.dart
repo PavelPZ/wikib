@@ -41,6 +41,7 @@ class AzureResponse<T> {
 
 typedef FinishRequest = void Function(AzureRequest req);
 typedef FinalizeResponse<T> = Future<ContinueResult> Function(AzureResponse<T> resp);
+
 // order matter, see selectResponse bellow
 enum ContinueResult { doBreak, doContinue, doWait, doRethrow }
 

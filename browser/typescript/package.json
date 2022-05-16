@@ -1,11 +1,17 @@
 {
   "name": "wikib_lib",
   "scripts": {
-    "compile": "tsc -w", 
-    "start": "lite-server"
+    "compile": "tsc -w",
+    "start": "lite-server",
+    "build": "tsc && rollup -c"
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "^8.3.2",
     "@types/audioworklet": "^0.0.26",
     "@types/webrtc": "^0.0.32"
+  },
+  "dependencies": {
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-uglify": "^5.0.2"
   }
 }

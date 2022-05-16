@@ -201,4 +201,3 @@ class BoxConfig extends BoxMsg<dom.Config> {
 //   actDay = 1;
 // FACT = 8..; // rest: (max (100-4-1-2)*252 items)
 //   uniqueCounter = 0;
-

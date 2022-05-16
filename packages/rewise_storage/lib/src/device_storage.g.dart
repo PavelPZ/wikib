@@ -45,8 +45,5 @@ class BoxAuthProfileAdapter extends TypeAdapter<BoxAuthProfile> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is BoxAuthProfileAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is BoxAuthProfileAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

@@ -61,16 +61,16 @@
 			"path": "packages\\auth"
 		},
 		{
-			"name": "audioplayers_web",
-			"path": "..\\github\\audioplayers\\packages\\audioplayers_web"
-		},
-		{
 			"name": "media",
 			"path": "packages\\media"
 		},
 		{
 			"name": "media2",
 			"path": "packages\\media2"
+		},
+		{
+			"name": "media3",
+			"path": "packages\\media3"
 		},
 		{
 			"name": "wikib",
@@ -90,6 +90,16 @@
 			"pubspec.yaml": ".*,*.iml,*.lock",
 			"readme.md": "readme.*,changelog.md,license,*.md",
 			"*.dart": "$(capture).*.dart",
+		},
+		"liveServer.settings.multiRootWorkspaceName": "typescript",
+		"files.exclude": {
+			"**/flow/": true
+		},
+		"files.watcherExclude": {
+			"**/flow/": true
+		},
+		"search.exclude": {
+			"**/flow/": true
 		}
 	}
 }

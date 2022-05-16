@@ -21,6 +21,5 @@ class WorldScreen extends ConsumerWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext _context, WidgetRef _ref) =>
-      worldScreen(_context, _ref, child: child);
+  Widget build(BuildContext _context, WidgetRef _ref) => worldScreen(_context, _ref, child: child);
 }

@@ -107,6 +107,7 @@ enum BatchMethod {
   put,
   delete,
 }
+
 const batchMethodName = <BatchMethod, String>{
   BatchMethod.merge: 'MERGE',
   BatchMethod.put: 'PUT',

@@ -15,3 +15,4 @@ pubspec.lock
 windows/
 trash/
 macos/
+node_modules/

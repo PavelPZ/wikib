@@ -3,7 +3,7 @@ publish_to: 'none'
 version: 1.0.0
 
 environment:
-  sdk: ">=2.16.2 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   cupertino_icons: ^1.0.2
@@ -12,12 +12,15 @@ dependencies:
   flutter_hooks:
   freezed_annotation: 
   functional_widget_annotation:
-  hooks_riverpod: 2.0.0-dev.5
+  hooks_riverpod: 2.0.0-dev.6
   just_audio:
   record:
   # just_audio_libwinmedia:
   utils:
     path: ../utils 
+  # utils:
+  #   git:
+  #     url: https://github.com/pichillilorenzo/flutter_inappwebview.git  
   webview_windows:
 
 dependency_overrides:

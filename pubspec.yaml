@@ -1,0 +1,13 @@
+name: root
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  lints: ^2.0.0
+

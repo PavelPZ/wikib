@@ -40,9 +40,9 @@ async function init() {
   let setButton = (text: string, disabled: boolean) => { button.innerHTML = text; button.disabled = disabled; }
   let recordOrPlay = await getRecordOrPlay(status => {
     switch (status) {
-      case 0: return setButton('Record', false);
-      case 1: return setButton('Stop', false); button.innerHTML = 'Stop'; button.disabled = false;
-      case 2: return setButton('... playing ...', true);
+      case 0: return setButton('Record', false); 
+      case 1: return setButton('Stop', false); 
+      case 2: return setButton('... playing ...', true); 
     }
   });
 
