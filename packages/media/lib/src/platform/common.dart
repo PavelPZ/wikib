@@ -3,7 +3,6 @@
 // https://pub.dev/documentation/webview_windows/latest/webview_windows/WebviewController/executeScript.html
 // Mobiles:
 // https://inappwebview.dev/docs/javascript/communication/
-
 import 'package:media/media.dart';
 
 class Platforms {
@@ -26,5 +25,9 @@ class StreamIds {
 
 Future mediaAppInit() async {
   await MediaPlatform.appInit();
-  await MediaPlatform.callJavascript('media.setPlatform(${MediaPlatform.actualPlatform.toString()})');
+  await MediaPlatform.callJavascript('window.media.setPlatform(${MediaPlatform.actualPlatform.toString()})');
+  // MediaPlatform.postMessage({'msg': 'test'});
+  MediaPlatform.webMessage.listen((json) {
+    if (json['streamId'] == StreamIds.consoleLog) print('MediaView: ${json['value']}');
+  });
 }

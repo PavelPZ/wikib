@@ -1,11 +1,16 @@
+type TJson = { [idx: string]: any };
 interface Event {
-  data: any;
+  data: TJson;
 }
 interface Window {
   chrome: {
     webview: {
-      postMessage: (json: string) => void;
-      addEventListener: (message: 'message', event: (event: Event) => void) => void;
+      postMessage: (json: dynamic) => void
+      addEventListener: (message: 'message', event: (event: Event) => void) => void
     };
   };
+  htmlplatform: {
+    receivedMessageFromFlutter: (data: IRpcCall) => void
+    sendMessageToFlutter: (data: IOutMessage<any>) => void
+  }
 }

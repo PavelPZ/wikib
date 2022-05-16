@@ -1,13 +1,86 @@
-class HtmlPlatform {
-    constructor(onMessage) {
-        window.htmlplatform.addEventListener('message', function (e) {
-            onMessage(e.data);
-        });
+class HTMLApp {
+    static async appInit() {
+        await HTMLApp.callJavascript('window.media.setPlatform(4)');
+        return Promise.resolve();
     }
-    postMessage(item) {
-        window.htmlplatform.postMessage(item);
+    static callJavascript(script) {
+        eval(script);
+        return Promise.resolve();
+    }
+    static postMessage(json) {
+        window.htmlplatform.receivedMessageFromFlutter(json);
     }
 }
+
+function rpc(calls) {
+    let msg = { rpcId: lastPromiseIdx++, fncs: calls };
+    return new Promise((resolve, reject) => {
+        promises[msg.rpcId] = { resolve: resolve, reject: reject };
+        HTMLApp.postMessage(msg);
+    });
+}
+let promises = [];
+let lastPromiseIdx = 0;
+function rpcCallback(msg) {
+    let resolveReject = promises[msg.value.rpcId];
+    if (!resolveReject)
+        throw 'not found';
+    promises[msg.value.rpcId] = undefined;
+    if (msg.value.error != null)
+        resolveReject.reject(msg.value.error);
+    else
+        resolveReject.resolve(msg.value.result);
+}
+
+let callback;
+function setCallback(_callback) {
+    callback = _callback;
+}
+function rpcResult(promiseId, result, error) {
+    callback.postMessage({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
+}
+
+class HtmlPlatform {
+    postMessage(item) {
+        window.htmlplatform.sendMessageToFlutter(item);
+    }
+}
+window.htmlplatform = {
+    receivedMessageFromFlutter: (rpcCall) => {
+        function getFunction(path, idx, res) {
+            let act = path[idx];
+            if (idx == 0) {
+                if (act != 'window')
+                    throw `receivedMessageFromFlutter.getFunction.act!=window: ${act}`;
+                return getFunction(path, idx + 1, window);
+            }
+            if (idx >= path.length)
+                return res;
+            let newRes = res[act];
+            if (!newRes)
+                throw `receivedMessageFromFlutter.getFunction.act=${act}`;
+            return getFunction(path, idx + 1, res[act]);
+        }
+        try {
+            let res = [];
+            rpcCall.fncs.forEach((fnc) => {
+                let fncObj = getFunction(fnc.name.split('.'), 0, null);
+                res.push(fncObj.call(undefined, ...fnc.arguments));
+            });
+            rpcResult(rpcCall.rpcId, res, null);
+        }
+        catch (msg) {
+            rpcResult(rpcCall.rpcId, null, msg.toString());
+        }
+    },
+    sendMessageToFlutter: (msg) => {
+        switch (msg.streamId) {
+            case 1 /* promiseCallback */:
+                rpcCallback(msg);
+                break;
+        }
+    }
+};
 
 class WebPlatform {
     postMessage(item) {
@@ -29,20 +102,16 @@ class WindowsPlatform {
 function setPlatform(platform) {
     switch (platform) {
         case 1 /* web */:
-            callback = new WebPlatform();
+            setCallback(new WebPlatform());
             break;
         case 3 /* windows */:
-            callback = new WindowsPlatform((_) => { });
+            setCallback(new WindowsPlatform((_) => { }));
             break;
         case 4 /* html */:
-            callback = new HtmlPlatform((_) => { });
+            setCallback(new HtmlPlatform());
             break;
     }
-    console.log("-window.media.setPlatform(${platform})");
-}
-let callback;
-function promiseCallback(promiseId, result, error) {
-    callback.postMessage({ streamId: 1 /* promiseCallback */, value: { promiseId: promiseId, result: result, error: error } });
+    console.log(`-window.media.setPlatform(${platform})`);
 }
 function getErrorMessage(error) {
     if (error instanceof Error)
@@ -128,10 +197,10 @@ class Player {
     _safeCall(promiseId, action) {
         try {
             action();
-            promiseCallback(promiseId, this.id, null);
+            rpcResult(promiseId, this.id, null);
         }
         catch (error) {
-            promiseCallback(promiseId, this.id, getErrorMessage(error));
+            rpcResult(promiseId, this.id, getErrorMessage(error));
         }
     }
 }
@@ -148,12 +217,39 @@ const media = {
     createPlayer: function createPlayer(pars) {
         try {
             let player = new Player(pars);
-            promiseCallback(pars.promiseId, player.id, null);
+            rpcResult(pars.promiseId, player.id, null);
         }
         catch (error) {
-            promiseCallback(pars.promiseId, null, getErrorMessage(error));
+            rpcResult(pars.promiseId, null, getErrorMessage(error));
         }
     },
     players: players,
 };
 window['media'] = media;
+
+async function flutterRun() {
+    await HTMLApp.appInit();
+    let res = await rpc([
+        { name: 'window.testFunctions.simple', arguments: [1, '2'] },
+        { name: 'window.testFunctions.inner.run', arguments: [false] },
+    ]);
+    debugger;
+    console.log(res);
+}
+// javascriptRun
+window['testFunctions'] = {
+    'simple': (p1, p2) => {
+        console.log(`window.testFunctions.simple(${p1}, ${p2})`);
+        return 'res1';
+    },
+    'inner': {
+        'run': (p1) => {
+            console.log(`window.testFunctions.inner.run(${p1})`);
+            return 12.6;
+        }
+    }
+};
+setTimeout(() => {
+    debugger;
+    flutterRun();
+});

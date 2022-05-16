@@ -34,7 +34,7 @@ class LocalhostServer {
 
     runZonedGuarded(() {
       HttpServer.bind('127.0.0.1', port).then((server) {
-        print('Server running on http://localhost:${port.toString()}');
+        // print('Server running on http://localhost:${port.toString()}');
 
         server.listen((HttpRequest request) async {
           final path = request.requestedUri.path;
@@ -43,7 +43,7 @@ class LocalhostServer {
           final html = await rootBundle.loadString('assets/index.html');
           // final js = await rootBundle.loadString('assets/media.js');
           final js = mediaJs;
-          final body = html.replaceFirst('{####}', '<script>\n$js\n</script>/n');
+          final body = html.replaceFirst('{####}', '<script>\n$js\n</script>');
           request.response.add(utf8.encode(body));
           await request.response.close();
         });

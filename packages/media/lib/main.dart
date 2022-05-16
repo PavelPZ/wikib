@@ -25,11 +25,13 @@ Future main() async {
 @cwidget
 Widget myApp(WidgetRef ref) {
   return MediaPlatform.getWebView(
-    child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          body: Center(child: Text('HALLO WORLD')),
+    child: SizedBox.shrink(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SafeArea(
+          child: Scaffold(
+            body: Center(child: Text('HALLO WORLD')),
+          ),
         ),
       ),
     ),

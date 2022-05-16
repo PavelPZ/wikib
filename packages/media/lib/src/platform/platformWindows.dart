@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:webview_windows/webview_windows.dart';
@@ -7,11 +8,9 @@ import 'common.dart';
 import 'localServer.dart';
 
 class WindowsMediaPlatform {
-  static final _localhostServer = LocalhostServer();
   static WebviewController? _windowsWebViewController = null;
 
   static Future appInit() async {
-    await _localhostServer.start();
     _windowsWebViewController = WebviewController();
     await _windowsWebViewController!.initialize();
     await _windowsWebViewController!.loadUrl(localhostServerUrl);
@@ -26,12 +25,14 @@ class WindowsMediaPlatform {
   static const actualPlatform = Platforms.windows;
 
   static Widget getWebView({required Widget child}) => Stack(children: [
-        SizedBox(width: 10, height: 10, child: Webview(_windowsWebViewController!)),
-        SizedBox.expand(child: child),
+        // SizedBox(width: 0, height: 0, child: Webview(_windowsWebViewController!)),
+        // SizedBox.expand(child: child),
+        Webview(_windowsWebViewController!),
+        child,
       ]);
 
   static Future callJavascript(String script) => _windowsWebViewController!.executeScript(script);
 
-  static void postMessage(Map<String, dynamic> msg) {}
+  static void postMessage(Map<String, dynamic> msg) => _windowsWebViewController!.postWebMessage(jsonEncode(msg));
   static Stream<Map<dynamic, dynamic>> get webMessage => _windowsWebViewController!.webMessage;
 }

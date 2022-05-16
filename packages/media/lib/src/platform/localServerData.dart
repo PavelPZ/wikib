@@ -4,20 +4,19 @@ function setCallback(_callback) {
 }
 let callback;
 function promiseCallback(promiseId, result, error) {
-    callback.onStream({ streamId: 1 /* promiseCallback */, value: { promiseId: promiseId, result: result, error: error } });
+    callback.postMessage({ streamId: 1 /* promiseCallback */, value: { promiseId: promiseId, result: result, error: error } });
 }
 function getErrorMessage(error) {
     if (error instanceof Error)
         return error.message;
     return String(error);
 }
-let backupconsolelog = console.log;
-console.log = function (message) {
-    backupconsolelog(message);
-    if (!callback)
-        return;
-    callback.onStream({ streamId: 2 /* consoleLog */, value: message });
-};
+// let backupconsolelog = console.log;
+// console.log = function (message: string) {
+//     backupconsolelog(message);
+//     if (!callback) return;
+//     callback.onStream<string>({streamId: StreamIds.consoleLog, value: message });
+// }
 
 let players = {};
 class Player {
@@ -28,7 +27,7 @@ class Player {
         this.currentPositionTimerMsec = pars.currentPositionTimerMsec ?? 300;
         this.url = url;
         const audio = this.audio = new Audio(url);
-        const onStream = (streamId, value) => callback.onStream({ streamId: streamId, value: { playerId: this.id, value: value } });
+        const onStream = (streamId, value) => callback.postMessage({ streamId: streamId, value: { playerId: this.id, value: value } });
         const addListenner = (type, listener) => { this.listeners[type] = listener; return listener; };
         audio.addEventListener("durationchange", addListenner("durationchange", () => onStream(9 /* playDurationchange */, audio.duration)));
         audio.addEventListener("progress", addListenner("progress", () => {
@@ -101,16 +100,19 @@ Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
 });
 
 class WebPlatform {
-    onStream(item) {
+    postMessage(item) {
         window.onStream(JSON.stringify(item));
     }
 }
 
 class WindowsPlatform {
-    onStream(item) {
-        window.chrome.webview.postMessage(JSON.stringify(item));
+    postMessage(item) {
+        window.chrome.webview.postMessage(item);
     }
 }
+window.chrome.webview.addEventListener('message', function (e) {
+    console.log(e.data.msg);
+});
 
 const media = {
     setPlatform: function setPlatform(platform) {
@@ -122,7 +124,7 @@ const media = {
                 setCallback(new WindowsPlatform());
                 break;
         }
-        console.log('media.setPlatform(\$platform)');
+        console.log("-window.media.setPlatform(\${platform})");
     },
     createPlayer: function createPlayer(pars) {
         try {
@@ -136,4 +138,17 @@ const media = {
     players: players,
 };
 window['media'] = media;
+
+let _backupconsolelog = console.log;
+function _divLog(message) {
+    let consoleLog = document.getElementById("consoleLog");
+    consoleLog.innerHTML = consoleLog.innerHTML + "<br/>" + message;
+}
+console.log = function (message) {
+    _backupconsolelog(message);
+    _divLog(message);
+    if (!callback)
+        return;
+    callback.postMessage({ streamId: 2 /* consoleLog */, value: message });
+};
 ''';

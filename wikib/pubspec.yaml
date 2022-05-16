@@ -18,7 +18,7 @@ dependencies:
   flutter_spinkit:
   functional_widget_annotation: ^0.9.2
   hive_flutter: 
-  hooks_riverpod: 2.0.0-dev.6
+  hooks_riverpod: 2.0.0-dev.7
   localization:     
     path: ../packages/localization
   meta: ^1.7.0

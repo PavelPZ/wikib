@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'mobile.dart';
+part of 'platformMobile.dart';
 
 // **************************************************************************
 // FunctionalWidgetGenerator

@@ -1,5 +1,5 @@
 // import { uglify } from "rollup-plugin-uglify";
-import sourcemaps from 'rollup-plugin-sourcemaps';
+// import sourcemaps from 'rollup-plugin-sourcemaps';
 import typescript from '@rollup/plugin-typescript';
 
 export default
@@ -7,13 +7,14 @@ export default
         input: 'lib/media.ts',
         plugins: [
             typescript(),
-            sourcemaps(),
+            // sourcemaps(),
             // uglify(),
         ],
         output: {
-            sourcemap: true,
+            // sourcemap: true,
             name: 'media',
-            file: "../../packages/media/assets/media.js",  
+            // file: "../../packages/media/assets/media.js",  
+            file: "./media.js",  
             format: 'es'
         }
     }

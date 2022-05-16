@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:webview_windows/webview_windows.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -13,14 +12,12 @@ import 'common.dart';
 import 'localServer.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
-part 'mobile.g.dart';
+part 'platformMobile.g.dart';
 
 class MobileMediaPlatform {
-  static final _localhostServer = LocalhostServer();
   static InAppWebViewController? _mobileWebViewController = null;
 
   static Future appInit() async {
-    await _localhostServer.start();
     await Permission.microphone.request();
     if (Platform.isAndroid) {
       await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
@@ -42,7 +39,7 @@ Widget mobileWebView(WidgetRef ref, {Widget? child}) {
   final webView = useMemoized(() {
     final creator = child == null ? InAppWebView.new : HeadlessInAppWebView.new;
     return creator(
-      initialUrlRequest: URLRequest(url: Uri.parse('http://localhost:$port/index.html')),
+      initialUrlRequest: URLRequest(url: Uri.parse(localhostServerUrl)),
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
           // useShouldOverrideUrlLoading: false, // default

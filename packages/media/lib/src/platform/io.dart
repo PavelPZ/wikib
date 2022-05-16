@@ -2,11 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 
-import 'mobile.dart';
-import 'windows.dart';
+import 'platformMobile.dart';
+import 'platformWindows.dart';
+import 'localServer.dart';
 
 class MediaPlatform {
-  static Future appInit() => _isMobile ? MobileMediaPlatform.appInit() : WindowsMediaPlatform.appInit();
+  static final _localhostServer = LocalhostServer();
+  static Future appInit() async {
+    await _localhostServer.start();
+    await (_isMobile ? MobileMediaPlatform.appInit() : WindowsMediaPlatform.appInit());
+  }
 
   static final actualPlatform = _isMobile ? MobileMediaPlatform.actualPlatform : WindowsMediaPlatform.actualPlatform;
 

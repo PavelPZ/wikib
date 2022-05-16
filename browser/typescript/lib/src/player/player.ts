@@ -1,21 +1,7 @@
-import { IPlayerStreamValue, StreamIds } from "./interface.js"
-import { callback, getErrorMessage, IPlayerConstructor, promiseCallback } from "./common.js"
+import { IPlayerConstructor, IPlayerStreamValue, PlayState, ReadyStates } from "./interface.js";
+import { callback, getErrorMessage, rpcResult, StreamIds } from "../messagerIndex.js";
 
 export let players = {} as { [key: string]: Player }
-
-const enum PlayState {
-    none = 0, play = 1, pause = 2, ended = 3,
-}
-
-// https://developer.mozilla.org/en-US/docs/Web/API/MediaError/code#media_error_code_constants
-const enum ReadyStates {
-    HAVE_NOTHING = 0, HAVE_METADATA = 1, HAVE_CURRENT_DATA = 2, HAVE_FUTURE_DATA = 3, HAVE_ENOUGH_DATA = 4
-}
-
-// https://developer.mozilla.org/en-US/docs/Web/API/MediaError/code#media_error_code_constants
-const enum ErrorCodes {
-    MEDIA_ERR_ABORTED = 1, MEDIA_ERR_NETWORK = 2, MEDIA_ERR_DECODE = 3, MEDIA_ERR_SRC_NOT_SUPPORTED = 4
-}
 
 export class Player {
     constructor(pars: IPlayerConstructor) {
@@ -26,7 +12,7 @@ export class Player {
         this.url = url
         const audio = this.audio = new Audio(url)
 
-        const onStream = (streamId: StreamIds, value: number) => callback.onStream<IPlayerStreamValue>({ streamId: streamId, value: { playerId: this.id, value: value } });
+        const onStream = (streamId: StreamIds, value: number) => callback.postMessage<IPlayerStreamValue>({ streamId: streamId, value: { playerId: this.id, value: value } });
         const addListenner = (type: string, listener: EventListenerOrEventListenerObject) => { this.listeners[type] = listener; return listener; }
 
         audio.addEventListener("durationchange", addListenner("durationchange", () => onStream(StreamIds.playDurationchange, audio.duration)))
@@ -89,9 +75,9 @@ export class Player {
     _safeCall (promiseId: number, action: Function) {
         try {
             action()
-            promiseCallback<number>(promiseId, this.id, null)
+            rpcResult<number>(promiseId, this.id, null)
         } catch (error) {
-            promiseCallback<number>(promiseId, this.id, getErrorMessage(error))
+            rpcResult<number>(promiseId, this.id, getErrorMessage(error))
         }
     }
 
