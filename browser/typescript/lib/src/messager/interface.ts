@@ -43,16 +43,17 @@ export function setCallback(_callback: IPlatform) {
     callback = _callback;
 }
 
-export function rpcResult<TResult>(promiseId: number, result: TResult | null, error: string | null) {
+export function postRpcResult<TResult>(promiseId: number, result: TResult | null, error: string | null) {
     callback.postMessage<IOutRpcResult<TResult>>({ streamId: StreamIds.promiseCallback, value: { rpcId: promiseId, result: result, error: error } })
 }
 
-export function rpcCall(promiseId: number, action: () => any) {
+export function doRpcCall(promiseId: number, action: () => any) {
+    console.log(`webview rpc call (rpcId=${promiseId})`)
     try {
         let res = action()
-        rpcResult<number>(promiseId, res, null)
+        postRpcResult<number>(promiseId, res, null)
     } catch (error) {
-        rpcResult<number>(promiseId, null, getErrorMessage(error))
+        postRpcResult<number>(promiseId, null, getErrorMessage(error))
     }
 }
 
@@ -75,6 +76,7 @@ export function receivedMessageFromFlutter(rpcCall: IRpcCall) {
         return getFunction(path, idx + 1, res[act])
     }
     try {
+        console.log(`receivedMessageFromFlutter (rpcId=${rpcCall.rpcId})`)
         let res: any[] = [];
         rpcCall.fncs.forEach((fnc: IInFncCall) => {
             let path = fnc.name.split('.');
@@ -90,13 +92,15 @@ export function receivedMessageFromFlutter(rpcCall: IRpcCall) {
                     break;
                 default:
                     let fncObj: Function = getFunction(fnc.name.split('.'), 0, null)
-                    res.push(fncObj.call(undefined, ...fnc.arguments))
+                    let handlerId = parseInt(path[1])
+                    let handler = isNaN(handlerId) ?  undefined : window.wikib[path[1]];
+                    res.push(fncObj.call(handler, ...fnc.arguments))
                     break;
             }
         });
-        rpcResult<any[]>(rpcCall.rpcId, res, null)
+        postRpcResult<any[]>(rpcCall.rpcId, res, null)
     } catch (msg) {
-        rpcResult<void>(rpcCall.rpcId, null, getErrorMessage(msg))
+        postRpcResult<void>(rpcCall.rpcId, null, getErrorMessage(msg))
     }
 }
 
@@ -109,7 +113,7 @@ console.log = function (message: string) {
     _backupconsolelog(message);
     _divLog(message);
     if (!callback) return;
-    callback.postMessage<string>({streamId: StreamIds.consoleLog, value: message });
+    callback.postMessage<string>({ streamId: StreamIds.consoleLog, value: message });
 }
 
 window.wikib = {}

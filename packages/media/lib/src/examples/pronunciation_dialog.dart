@@ -76,8 +76,8 @@ void main() {
   runApp(const MyApp());
 }
 
-const longUrl = 'https://free-loops.com/data/mp3/c8/84/81a4f6cc7340ad558c25bba4f6c3.mp3';
-const shortUrl = 'https://file-examples.com/storage/fed7f5feae62719de971a0c/2017/11/file_example_MP3_5MG.mp3';
+const longUrl = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+const shortUrl = 'https://free-loops.com/data/mp3/c8/84/81a4f6cc7340ad558c25bba4f6c3.mp3';
 const mp3Files = [longUrl, shortUrl];
 
 @hcwidget

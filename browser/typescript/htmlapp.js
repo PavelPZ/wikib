@@ -2,16 +2,17 @@ let callback;
 function setCallback(_callback) {
     callback = _callback;
 }
-function rpcResult(promiseId, result, error) {
+function postRpcResult(promiseId, result, error) {
     callback.postMessage({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
 }
-function rpcCall(promiseId, action) {
+function doRpcCall(promiseId, action) {
+    console.log(`webview rpc call (rpcId=${promiseId})`);
     try {
         let res = action();
-        rpcResult(promiseId, res, null);
+        postRpcResult(promiseId, res, null);
     }
     catch (error) {
-        rpcResult(promiseId, null, getErrorMessage(error));
+        postRpcResult(promiseId, null, getErrorMessage(error));
     }
 }
 function getErrorMessage(error) {
@@ -38,6 +39,7 @@ function receivedMessageFromFlutter(rpcCall) {
         return getFunction(path, idx + 1, res[act]);
     }
     try {
+        console.log(`receivedMessageFromFlutter (rpcId=${rpcCall.rpcId})`);
         let res = [];
         rpcCall.fncs.forEach((fnc) => {
             let path = fnc.name.split('.');
@@ -53,14 +55,16 @@ function receivedMessageFromFlutter(rpcCall) {
                     break;
                 default:
                     let fncObj = getFunction(fnc.name.split('.'), 0, null);
-                    res.push(fncObj.call(undefined, ...fnc.arguments));
+                    let handlerId = parseInt(path[1]);
+                    let handler = isNaN(handlerId) ? undefined : window.wikib[path[1]];
+                    res.push(fncObj.call(handler, ...fnc.arguments));
                     break;
             }
         });
-        rpcResult(rpcCall.rpcId, res, null);
+        postRpcResult(rpcCall.rpcId, res, null);
     }
     catch (msg) {
-        rpcResult(rpcCall.rpcId, null, getErrorMessage(msg));
+        postRpcResult(rpcCall.rpcId, null, getErrorMessage(msg));
     }
 }
 let _backupconsolelog = console.log;
@@ -79,7 +83,7 @@ window.wikib = {};
 
 class HtmlPlatform {
     postMessage(item) {
-        sendMessageToFlutter(item);
+        sendMessageToFlutter?.call(undefined, item);
     }
 }
 function setSendMessageToFlutter(_sendMessageToFlutter) {
@@ -121,35 +125,80 @@ window.wikib.setPlatform = (platform) => {
 
 function rpc(calls) {
     let msg = { rpcId: lastPromiseIdx++, fncs: calls };
+    console.log(`flutter rpc (rpcId=${msg.rpcId})`);
     return new Promise((resolve, reject) => {
         promises[msg.rpcId] = { resolve: resolve, reject: reject };
         sendMessageToWebView(msg);
     });
 }
 let promises = [];
-let lastPromiseIdx = 0;
+let lastPromiseIdx = 1;
 let sendMessageToWebView = receivedMessageFromFlutter;
+function newHandlerName() {
+    return handlerCounter++;
+}
+let handlerCounter = 1;
 function receiveMessageFromWebView(msg) {
     switch (msg.streamId) {
         case 1 /* promiseCallback */:
             rpcCallback(msg);
             break;
+        case 2 /* consoleLog */:
+            break;
+        default:
+            if (!msg.name)
+                return;
+            let listenner = listenners[msg.name];
+            if (!listenner)
+                return;
+            listenner(msg.streamId, msg.value);
+            break;
     }
 }
+let listenners = {};
 function rpcCallback(msg) {
+    console.log(`flutter rpc Callback (rpcId=${msg.value.rpcId})`);
     let resolveReject = promises[msg.value.rpcId];
+    delete promises[msg.value.rpcId];
     if (!resolveReject)
         throw 'not found';
-    promises[msg.value.rpcId] = undefined;
     if (msg.value.error != null)
         resolveReject.reject(msg.value.error);
     else
         resolveReject.resolve(msg.value.result);
 }
+function getFncItem(handler, name, type, args) {
+    let fncCall = {
+        name: handler == null ? `.${name}` : `.${handler}.${name}`,
+        type: type,
+        arguments: args ?? [],
+    };
+    return fncCall;
+}
+function getFncCall(handler, name, args) {
+    return getFncItem(handler, name, undefined, args);
+}
+function getGetCall(handler, name) {
+    return getFncItem(handler, name, 0 /* getter */, []);
+}
+function getSetCall(handler, name, value) {
+    return getFncItem(handler, name, 1 /* setter */, [value]);
+}
+async function fncCall(handler, name, args) {
+    let res = await rpc([getFncCall(handler, name, args)]);
+    return res[0];
+}
+async function getCall(handler, name) {
+    let res = await rpc([getGetCall(handler, name)]);
+    return res[0];
+}
+async function setCall(handler, name, value) {
+    await rpc([getSetCall(handler, name, value)]);
+}
 
 class HTMLApp {
     static async appInit() {
-        await HTMLApp.callJavascript('window.media.setPlatform(4)');
+        await HTMLApp.callJavascript('window.wikib.setPlatform(4)');
         setSendMessageToFlutter(receiveMessageFromWebView);
         return Promise.resolve();
     }
@@ -158,12 +207,38 @@ class HTMLApp {
         return Promise.resolve();
     }
 }
+class PlayerProxy {
+    static async create(url, listen) {
+        let res = new PlayerProxy();
+        if (listen)
+            listenners[res.audioName] = listen;
+        await fncCall(null, 'createPlayer', [res.playerName, res.audioName, url]);
+        return res;
+    }
+    playerName = newHandlerName();
+    audioName = newHandlerName();
+    async dispose() {
+        await fncCall(this.playerName, 'dispose');
+        delete listenners[this.audioName];
+    }
+    play() {
+        return fncCall(this.audioName, 'play');
+    }
+    stop() {
+        return rpc([
+            getFncCall(this.audioName, 'pause'),
+            getSetCall(this.audioName, 'currentTime', 0),
+        ]);
+    }
+}
 
-window.wikib.createPlayer = (promiseId, playerName, audioName, url) => rpcCall(promiseId, () => new Player(playerName, audioName, url));
+window.wikib.createPlayer = (playerName, audioName, url) => new Player(playerName, audioName, url);
 class Player {
     constructor(playerName, audioName, url) {
         const audio = new Audio(url);
-        const onStream = (streamId, value) => callback.postMessage({ streamId: streamId, name: audioName, value: value });
+        const onStream = (streamId, value) => {
+            callback.postMessage({ streamId: streamId, name: audioName, value: value });
+        };
         let listeners = {};
         const addListenner = (type, listener) => {
             audio.addEventListener(type, listener);
@@ -212,6 +287,9 @@ Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
     }
 });
 
+const longUrl = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+const shortUrl = 'https://free-loops.com/data/mp3/c8/84/81a4f6cc7340ad558c25bba4f6c3.mp3';
+const playUrl = shortUrl;
 async function flutterRun() {
     await HTMLApp.appInit();
     let res = await rpc([
@@ -222,6 +300,23 @@ async function flutterRun() {
         { name: 'window.testFunctions.test.prop', arguments: [], type: 0 /* getter */ },
     ]);
     console.log(res);
+    let player = await PlayerProxy.create(playUrl, (id, value) => {
+        switch (id) {
+            case 8 /* playDurationchange */:
+                document.getElementById('duration').innerHTML = value.toString();
+                break;
+            case 7 /* playState */:
+            case 5 /* playerReadyState */:
+                let div = document.getElementById('state');
+                div.innerHTML = div.innerHTML + ', ' + id.toString() + '=' + value.toString();
+                break;
+        }
+    });
+    await player.play();
+    await new Promise(resolve => setTimeout(resolve, 100000));
+    await player.stop();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await player.dispose();
 }
 // javascriptRun
 class Test {
@@ -243,4 +338,5 @@ window['testFunctions'] = {
     },
     'test': new Test(),
 };
-setTimeout(flutterRun);
+document.getElementById('playbtn')?.addEventListener('click', () => flutterRun());
+//setTimeout(flutterRun)

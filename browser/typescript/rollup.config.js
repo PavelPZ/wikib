@@ -15,7 +15,7 @@ export default [
             // sourcemap: true,
             name: 'media',
             // file: "../../packages/media/assets/media.js",  
-            file: "./media.js",
+            file: "./htmlapp.js",
             format: 'es'
         }
     },

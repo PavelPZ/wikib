@@ -2,16 +2,17 @@ let callback;
 function setCallback(_callback) {
     callback = _callback;
 }
-function rpcResult(promiseId, result, error) {
+function postRpcResult(promiseId, result, error) {
     callback.postMessage({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
 }
-function rpcCall(promiseId, action) {
+function doRpcCall(promiseId, action) {
+    console.log(`webview rpc call (rpcId=${promiseId})`);
     try {
         let res = action();
-        rpcResult(promiseId, res, null);
+        postRpcResult(promiseId, res, null);
     }
     catch (error) {
-        rpcResult(promiseId, null, getErrorMessage(error));
+        postRpcResult(promiseId, null, getErrorMessage(error));
     }
 }
 function getErrorMessage(error) {
@@ -38,6 +39,7 @@ function receivedMessageFromFlutter(rpcCall) {
         return getFunction(path, idx + 1, res[act]);
     }
     try {
+        console.log(`receivedMessageFromFlutter (rpcId=${rpcCall.rpcId})`);
         let res = [];
         rpcCall.fncs.forEach((fnc) => {
             let path = fnc.name.split('.');
@@ -53,14 +55,16 @@ function receivedMessageFromFlutter(rpcCall) {
                     break;
                 default:
                     let fncObj = getFunction(fnc.name.split('.'), 0, null);
-                    res.push(fncObj.call(undefined, ...fnc.arguments));
+                    let handlerId = parseInt(path[1]);
+                    let handler = isNaN(handlerId) ? undefined : window.wikib[path[1]];
+                    res.push(fncObj.call(handler, ...fnc.arguments));
                     break;
             }
         });
-        rpcResult(rpcCall.rpcId, res, null);
+        postRpcResult(rpcCall.rpcId, res, null);
     }
     catch (msg) {
-        rpcResult(rpcCall.rpcId, null, getErrorMessage(msg));
+        postRpcResult(rpcCall.rpcId, null, getErrorMessage(msg));
     }
 }
 let _backupconsolelog = console.log;
@@ -79,7 +83,7 @@ window.wikib = {};
 
 class HtmlPlatform {
     postMessage(item) {
-        sendMessageToFlutter(item);
+        sendMessageToFlutter?.call(undefined, item);
     }
 }
 function setSendMessageToFlutter(_sendMessageToFlutter) {
@@ -119,11 +123,13 @@ window.wikib.setPlatform = (platform) => {
     console.log(`-window.media.setPlatform(${platform})`);
 };
 
-window.wikib.createPlayer = (promiseId, playerName, audioName, url) => rpcCall(promiseId, () => new Player(playerName, audioName, url));
+window.wikib.createPlayer = (playerName, audioName, url) => new Player(playerName, audioName, url);
 class Player {
     constructor(playerName, audioName, url) {
         const audio = new Audio(url);
-        const onStream = (streamId, value) => callback.postMessage({ streamId: streamId, name: audioName, value: value });
+        const onStream = (streamId, value) => {
+            callback.postMessage({ streamId: streamId, name: audioName, value: value });
+        };
         let listeners = {};
         const addListenner = (type, listener) => {
             audio.addEventListener(type, listener);

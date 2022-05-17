@@ -1,10 +1,13 @@
-import { HTMLApp, rpc } from './src/htmlApp/index';
-import { FncType } from './src/messager/index';
+import { HTMLApp, PlayerProxy, rpc } from './src/htmlApp/index';
+import { FncType, StreamIds } from './src/messager/index';
 
 import './src/messager/index';
 import './src/player/index';
 import './src/htmlApp/app';
 
+const longUrl = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+const shortUrl = 'https://free-loops.com/data/mp3/c8/84/81a4f6cc7340ad558c25bba4f6c3.mp3';
+const playUrl = shortUrl
 
 async function flutterRun() {
     await HTMLApp.appInit();
@@ -16,6 +19,24 @@ async function flutterRun() {
         { name: 'window.testFunctions.test.prop', arguments: [], type: FncType.getter },
     ]);
     console.log(res);
+
+    let player = await PlayerProxy.create(playUrl, (id, value) => {
+        switch (id) {
+            case StreamIds.playDurationchange:
+                document.getElementById('duration')!.innerHTML = value.toString()
+                break
+            case StreamIds.playState:
+            case StreamIds.playerReadyState:
+                let div = document.getElementById('state')!
+                div.innerHTML = div.innerHTML + ', ' + id.toString() + '=' + value.toString()
+                break
+        }
+    })
+    await player.play();
+    await new Promise(resolve => setTimeout(resolve, 100000))
+    await player.stop()
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    await player.dispose()
 }
 
 // javascriptRun
@@ -40,4 +61,5 @@ class Test {
     'test': new Test(),
 }
 
-setTimeout(flutterRun)
+document.getElementById('playbtn')?.addEventListener('click', () => flutterRun())
+//setTimeout(flutterRun)

@@ -2,7 +2,7 @@ import { IPlatform, IOutMessage, StreamIds } from "./interface"
 
 export class HtmlPlatform implements IPlatform {
     postMessage<T>(item: IOutMessage<T>): void {
-        sendMessageToFlutter(item)
+        sendMessageToFlutter?.call(undefined, item)
     }
 }
 

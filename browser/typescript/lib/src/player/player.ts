@@ -1,13 +1,15 @@
 import { PlayState, ReadyStates } from "./interface";
-import { callback, rpcCall, StreamIds } from "../messager/index";
+import { callback, doRpcCall, StreamIds } from "../messager/index";
 
-window.wikib.createPlayer = (promiseId: number, playerName: number, audioName: number, url: string) => rpcCall(promiseId, () => new Player(playerName, audioName, url))
+window.wikib.createPlayer = (playerName: number, audioName: number, url: string) => new Player(playerName, audioName, url)
 
 export class Player {
     constructor(playerName: number, audioName: number, url: string) {
         const audio = new Audio(url)
 
-        const onStream = (streamId: StreamIds, value: number) => callback.postMessage({ streamId: streamId, name: audioName, value: value });
+        const onStream = (streamId: StreamIds, value: number) => { 
+            callback.postMessage({ streamId: streamId, name: audioName, value: value })
+        }
         let listeners: { [type: string]: EventListenerOrEventListenerObject } = {}
         const addListenner = (type: string, listener: EventListenerOrEventListenerObject) => { 
             audio.addEventListener(type, listener);
@@ -49,7 +51,6 @@ export class Player {
             delete window.wikib[playerName.toString()]
             delete window.wikib[audioName.toString()]
         }
-
     }
 
     dispose: () => void
