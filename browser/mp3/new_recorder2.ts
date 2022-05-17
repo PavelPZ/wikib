@@ -1,5 +1,5 @@
-// import {inlineWorker} from "./inline_worker.js";
-import { LameWasm } from "./new_lamewasm.js";
+// import {inlineWorker} from "./inline_worker";
+import { LameWasm } from "./new_lamewasm";
 
 export class Recorder {
     constructor(wasmURL: string) {
@@ -100,4 +100,4 @@ export class Recorder {
 }
 
 // let mp3Worklet_url = URL.createObjectURL(new Blob(['(', inlineWorker.toString(), ')()'], { type: 'application/javascript' }));
-let mp3Worklet_url = "http://localhost:3000/dist/new_inline_worker2.js";
+let mp3Worklet_url = "http://localhost:3000/dist/new_inline_worker2";

@@ -1,5 +1,5 @@
-// import {inlineWorker} from "./inline_worker.js";
-import { inlineWorker } from "./new_inline_worker.js";
+// import {inlineWorker} from "./inline_worker";
+import { inlineWorker } from "./new_inline_worker";
 
 export class Recorder {
     constructor(opts: {

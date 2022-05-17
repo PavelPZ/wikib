@@ -1,13 +1,91 @@
-class HtmlPlatform {
-    constructor(onMessage) {
-        window.htmlplatform.addEventListener('message', function (e) {
-            onMessage(e.data);
-        });
+let callback;
+function setCallback(_callback) {
+    callback = _callback;
+}
+function rpcResult(promiseId, result, error) {
+    callback.postMessage({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
+}
+function rpcCall(promiseId, action) {
+    try {
+        let res = action();
+        rpcResult(promiseId, res, null);
     }
-    postMessage(item) {
-        window.htmlplatform.postMessage(item);
+    catch (error) {
+        rpcResult(promiseId, null, getErrorMessage(error));
     }
 }
+function getErrorMessage(error) {
+    if (error instanceof Error)
+        return error.message;
+    return String(error);
+}
+function receivedMessageFromFlutter(rpcCall) {
+    function getFunction(path, idx, res) {
+        let act = path[idx];
+        if (idx == 0) {
+            if (act == '')
+                return getFunction(path, idx + 1, window.wikib);
+            else if (act != 'window')
+                throw `receivedMessageFromFlutter.getFunction.act!=window: ${act}`;
+            else
+                return getFunction(path, idx + 1, window);
+        }
+        if (idx >= path.length)
+            return res;
+        let newRes = res[act];
+        if (!newRes)
+            throw `receivedMessageFromFlutter.getFunction.act=${act}`;
+        return getFunction(path, idx + 1, res[act]);
+    }
+    try {
+        let res = [];
+        rpcCall.fncs.forEach((fnc) => {
+            let path = fnc.name.split('.');
+            switch (fnc.type) {
+                case 0 /* getter */:
+                    res.push(getFunction(path, 0, null));
+                    break;
+                case 1 /* setter */:
+                    let last = path.pop();
+                    let obj = getFunction(path, 0, null);
+                    obj[last] = fnc.arguments[0];
+                    res.push(undefined);
+                    break;
+                default:
+                    let fncObj = getFunction(fnc.name.split('.'), 0, null);
+                    res.push(fncObj.call(undefined, ...fnc.arguments));
+                    break;
+            }
+        });
+        rpcResult(rpcCall.rpcId, res, null);
+    }
+    catch (msg) {
+        rpcResult(rpcCall.rpcId, null, getErrorMessage(msg));
+    }
+}
+let _backupconsolelog = console.log;
+function _divLog(message) {
+    let consoleLog = document.getElementById("consoleLog");
+    consoleLog.innerHTML = consoleLog.innerHTML + "<br/>" + message;
+}
+console.log = function (message) {
+    _backupconsolelog(message);
+    _divLog(message);
+    if (!callback)
+        return;
+    callback.postMessage({ streamId: 2 /* consoleLog */, value: message });
+};
+window.wikib = {};
+
+class HtmlPlatform {
+    postMessage(item) {
+        sendMessageToFlutter(item);
+    }
+}
+function setSendMessageToFlutter(_sendMessageToFlutter) {
+    sendMessageToFlutter = _sendMessageToFlutter;
+}
+let sendMessageToFlutter;
 
 class WebPlatform {
     postMessage(item) {
@@ -26,134 +104,70 @@ class WindowsPlatform {
     }
 }
 
-function setPlatform(platform) {
+window.wikib.setPlatform = (platform) => {
     switch (platform) {
         case 1 /* web */:
-            callback = new WebPlatform();
+            setCallback(new WebPlatform());
             break;
         case 3 /* windows */:
-            callback = new WindowsPlatform((_) => { });
+            setCallback(new WindowsPlatform((_) => { }));
             break;
         case 4 /* html */:
-            callback = new HtmlPlatform((_) => { });
+            setCallback(new HtmlPlatform());
             break;
     }
-    console.log("-window.media.setPlatform(${platform})");
-}
-let callback;
-function promiseCallback(promiseId, result, error) {
-    callback.postMessage({ streamId: 1 /* promiseCallback */, value: { promiseId: promiseId, result: result, error: error } });
-}
-function getErrorMessage(error) {
-    if (error instanceof Error)
-        return error.message;
-    return String(error);
-}
-let _backupconsolelog = console.log;
-function _divLog(message) {
-    let consoleLog = document.getElementById("consoleLog");
-    consoleLog.innerHTML = consoleLog.innerHTML + "<br/>" + message;
-}
-console.log = function (message) {
-    _backupconsolelog(message);
-    _divLog(message);
-    if (!callback)
-        return;
-    callback.postMessage({ streamId: 2 /* consoleLog */, value: message });
+    console.log(`-window.media.setPlatform(${platform})`);
 };
 
-let players = {};
+window.wikib.createPlayer = (promiseId, playerName, audioName, url) => rpcCall(promiseId, () => new Player(playerName, audioName, url));
 class Player {
-    constructor(pars) {
-        this.id = playerCount++;
-        players[`player_${this.id}`] = this;
-        const { url } = pars;
-        this.currentPositionTimerMsec = pars.currentPositionTimerMsec ?? 300;
-        this.url = url;
-        const audio = this.audio = new Audio(url);
-        const onStream = (streamId, value) => callback.postMessage({ streamId: streamId, value: { playerId: this.id, value: value } });
-        const addListenner = (type, listener) => { this.listeners[type] = listener; return listener; };
-        audio.addEventListener("durationchange", addListenner("durationchange", () => onStream(9 /* playDurationchange */, audio.duration)));
-        audio.addEventListener("progress", addListenner("progress", () => {
-            let curr = this.audio.currentTime;
-            let last = this.lastProgress;
-            this.lastProgress = curr;
-            if (curr > last && curr < last + this.currentPositionTimerMsec)
-                return;
-            onStream(8 /* playPosition */, curr);
-        }));
-        audio.addEventListener("ended", addListenner("ended", () => onStream(7 /* playState */, 3 /* ended */)));
-        audio.addEventListener("pause", addListenner("pause", () => onStream(7 /* playState */, 2 /* pause */)));
-        audio.addEventListener("play", addListenner("play", () => onStream(7 /* playState */, 1 /* play */)));
+    constructor(playerName, audioName, url) {
+        const audio = new Audio(url);
+        const onStream = (streamId, value) => callback.postMessage({ streamId: streamId, name: audioName, value: value });
+        let listeners = {};
+        const addListenner = (type, listener) => {
+            audio.addEventListener(type, listener);
+            listeners[type] = listener;
+            return listener;
+        };
+        addListenner("durationchange", () => onStream(8 /* playDurationchange */, audio.duration));
+        // audio.addEventListener("progress", addListenner("progress", () => {
+        //     let curr = this.audio.currentTime
+        //     let last = this.lastProgress
+        //     this.lastProgress = curr;
+        //     if (curr > last && curr < last + this.currentPositionTimerMsec) return
+        //     onStream(StreamIds.playPosition, curr)
+        // }))
+        addListenner("ended", () => onStream(7 /* playState */, 3 /* ended */));
+        addListenner("pause", () => onStream(7 /* playState */, 2 /* pause */));
+        addListenner("play", () => onStream(7 /* playState */, 1 /* play */));
         // https://developer.mozilla.org/en-US/docs/Web/API/MediaError/code#media_error_code_constants
         // audio.error?.code: MEDIA_ERR_ABORTED, MEDIA_ERR_NETWORK, MEDIA_ERR_DECOD, MEDIA_ERR_SRC_NOT_SUPPORTED            
-        audio.addEventListener("error", addListenner("error", () => onStream(6 /* playerError */, audio.error?.code ?? 0)));
+        addListenner("error", () => onStream(6 /* playerError */, audio.error?.code ?? 0));
         // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
         // readyState == HAVE_META_DATA
-        audio.addEventListener("loadedmetadata", addListenner("loadedmetadata", () => onStream(5 /* playerReadyState */, 1 /* HAVE_METADATA */)));
+        addListenner("loadedmetadata", () => onStream(5 /* playerReadyState */, 1 /* HAVE_METADATA */));
         // readyState == HAVE_CURRENT_DATA
-        audio.addEventListener("loadeddata", addListenner("loadeddata", () => onStream(5 /* playerReadyState */, 2 /* HAVE_CURRENT_DATA */)));
+        addListenner("loadeddata", () => onStream(5 /* playerReadyState */, 2 /* HAVE_CURRENT_DATA */));
         // readyState == HAVE_FUTURE_DATA
-        audio.addEventListener("canplay", addListenner("canplay", () => onStream(5 /* playerReadyState */, 3 /* HAVE_FUTURE_DATA */)));
+        addListenner("canplay", () => onStream(5 /* playerReadyState */, 3 /* HAVE_FUTURE_DATA */));
         // readyState == HAVE_ENOUGH_DATA
-        audio.addEventListener("canplaythrough", addListenner("canplaythrough", () => onStream(5 /* playerReadyState */, 4 /* HAVE_ENOUGH_DATA */)));
+        addListenner("canplaythrough", () => onStream(5 /* playerReadyState */, 4 /* HAVE_ENOUGH_DATA */));
+        window.wikib[playerName.toString()] = this;
+        window.wikib[audioName.toString()] = audio;
+        this.dispose = () => {
+            for (let key in listeners)
+                audio.removeEventListener(key, listeners[key]);
+            audio.pause();
+            delete window.wikib[playerName.toString()];
+            delete window.wikib[audioName.toString()];
+        };
     }
-    id;
-    url;
-    audio;
-    currentPositionTimerMsec;
-    listeners = {};
-    lastProgress = 0;
-    dispose(promiseId) {
-        this._safeCall(promiseId, () => {
-            for (let key in this.listeners)
-                this.audio.removeEventListener(key, this.listeners[key]);
-            this.audio.pause();
-            delete players[`player_${this.id}`];
-        });
-    }
-    play(promiseId) {
-        this._safeCall(promiseId, () => {
-            this.audio.pause();
-            this.audio.currentTime = 0;
-            this.audio.play();
-        });
-    }
-    stop(promiseId) {
-        this._safeCall(promiseId, () => {
-            this.audio.pause();
-            this.audio.currentTime = 0;
-        });
-    }
-    _safeCall(promiseId, action) {
-        try {
-            action();
-            promiseCallback(promiseId, this.id, null);
-        }
-        catch (error) {
-            promiseCallback(promiseId, this.id, getErrorMessage(error));
-        }
-    }
+    dispose;
 }
-let playerCount = 0;
 // https://stackoverflow.com/questions/4338951/how-do-i-determine-if-mediaelement-is-playing
 Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
     get: function () {
         return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
     }
 });
-
-const media = {
-    setPlatform: setPlatform,
-    createPlayer: function createPlayer(pars) {
-        try {
-            let player = new Player(pars);
-            promiseCallback(pars.promiseId, player.id, null);
-        }
-        catch (error) {
-            promiseCallback(pars.promiseId, null, getErrorMessage(error));
-        }
-    },
-    players: players,
-};
-window['media'] = media;

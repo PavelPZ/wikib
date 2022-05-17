@@ -7,10 +7,7 @@ interface Window {
     webview: {
       postMessage: (json: dynamic) => void
       addEventListener: (message: 'message', event: (event: Event) => void) => void
-    };
-  };
-  htmlplatform: {
-    receivedMessageFromFlutter: (data: IRpcCall) => void
-    sendMessageToFlutter: (data: IOutMessage<any>) => void
+    }
   }
+  wikib: { [idx: string]: any }
 }

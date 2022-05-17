@@ -1,4 +1,4 @@
-import { IPlatform, IOutMessage } from "./interface.js";
+import { IPlatform, IOutMessage } from "./interface";
 
 export class WebPlatform implements IPlatform {
     postMessage<T>(item: IOutMessage<T>): void {

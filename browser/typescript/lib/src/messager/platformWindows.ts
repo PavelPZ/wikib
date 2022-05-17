@@ -1,4 +1,4 @@
-import { IPlatform, IOutMessage } from "./interface.js";
+import { IPlatform, IOutMessage } from "./interface";
 
 export class WindowsPlatform implements IPlatform {
     constructor(onMessage: (data: TJson) => void) {

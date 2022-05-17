@@ -1,4 +1,4 @@
-import { Recorder } from "./new_recorder2.js";
+import { Recorder } from "./new_recorder2";
 
 export async function recordClick() { 
   if (!recorder) {
