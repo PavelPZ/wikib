@@ -1,6 +1,6 @@
 type TJson = { [idx: string]: any };
 interface Event {
-  data: TJson;
+  data: IRpc;
 }
 interface Window {
   chrome: {

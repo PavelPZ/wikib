@@ -1,8 +1,7 @@
-import { IStreamMessage } from "./interface"
-import { IPlatform } from "./lib";
+import { IPlatform, IStreamMessage } from "./interface"
 
 export class HtmlPlatform implements IPlatform {
-    postMessage<T>(item: IStreamMessage<T>): void {
+    postToFlutter<T>(item: IStreamMessage<T>): void {
         sendMessageToFlutter?.call(undefined, item)
     }
 }

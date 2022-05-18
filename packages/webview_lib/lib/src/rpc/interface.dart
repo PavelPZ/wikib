@@ -93,8 +93,5 @@ abstract class IMediaPlatform {
   int get actualPlatform => Platforms.web;
   Widget getWebView({required Widget child});
   Future callJavascript(String script);
-  void postMessage(Map<String, dynamic> msg);
-  Stream<Map<dynamic, dynamic>> get webMessage;
+  void postToWebView(IRpc rpcCall);
 }
-
-late IMediaPlatform platform;

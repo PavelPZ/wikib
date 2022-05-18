@@ -1,8 +1,4 @@
-import { IRpc, IRpcFnc, IRpcResult, IStreamMessage, RpcFncTypes, StreamIds } from "./interface";
-
-export interface IPlatform {
-    postMessage<T>(item: IStreamMessage<T>): void
-}
+import { IRpc, IRpcFnc, IRpcResult, IPlatform, RpcFncTypes, StreamIds } from "./interface";
 
 export let platform: IPlatform
 
@@ -10,16 +6,16 @@ export function setPlatform(_callback: IPlatform) {
     platform = _callback;
 }
 
-export function postRpcResult<TResult>(promiseId: number, result: TResult | null, error: string | null) {
-    platform.postMessage<IRpcResult<TResult>>({ streamId: StreamIds.promiseCallback, value: { rpcId: promiseId, result: result, error: error } })
+export function postRpcResultToFlutter<TResult>(promiseId: number, result: TResult | null, error: string | null) {
+    platform.postToFlutter<IRpcResult<TResult>>({ streamId: StreamIds.promiseCallback, value: { rpcId: promiseId, result: result, error: error } })
 }
 
-export function getErrorMessage(error: unknown) {
+export function decodeErrorMsg(error: unknown) {
     if (error instanceof Error) return error.message
     return String(error)
 }
 
-export function receivedMessageFromFlutter(rpcCall: IRpc) {
+export function receivedFromFlutter(rpcCall: IRpc) {
     function getFunction(path: string[], idx: number, res: any): any {
         let act = path[idx]
         if (idx == 0) {
@@ -55,9 +51,9 @@ export function receivedMessageFromFlutter(rpcCall: IRpc) {
                     break;
             }
         });
-        postRpcResult<any[]>(rpcCall.rpcId, res, null)
+        postRpcResultToFlutter<any[]>(rpcCall.rpcId, res, null)
     } catch (msg) {
-        postRpcResult<void>(rpcCall.rpcId, null, getErrorMessage(msg))
+        postRpcResultToFlutter<void>(rpcCall.rpcId, null, decodeErrorMsg(msg))
     }
 }
 
@@ -70,7 +66,7 @@ console.log = function (message: string) {
     _backupconsolelog(message);
     _divLog(message);
     if (!platform) return;
-    platform.postMessage<string>({ streamId: StreamIds.consoleLog, value: message });
+    platform.postToFlutter<string>({ streamId: StreamIds.consoleLog, value: message });
 }
 
 window.wikib = {}

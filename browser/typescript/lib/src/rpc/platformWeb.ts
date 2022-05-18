@@ -1,8 +1,7 @@
-import { IStreamMessage } from "./interface";
-import { IPlatform } from "./lib";
+import { IPlatform, IStreamMessage } from "./interface";
 
 export class WebPlatform implements IPlatform {
-    postMessage<T>(item: IStreamMessage<T>): void {
+    postToFlutter<T>(item: IStreamMessage<T>): void {
         window.onStream(JSON.stringify(item));
     }
 }

@@ -1,5 +1,6 @@
 import { setSendMessageToFlutter, StreamIds } from "../rpc/index";
-import { fncCall, getFncCall, getSetCall, listenners, newHandlerName, receiveMessageFromWebView, rpc } from "./rpc";
+import { listenners, receiveMessageFromWebView, rpc } from "./rpc_call";
+import { fncCall, getFncCall, getSetCall, newHandlerName, } from "./handlers";
 
 export class HTMLApp {
     static async appInit(): Promise<void> {

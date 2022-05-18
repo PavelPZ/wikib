@@ -16,7 +16,7 @@ window.wikib.setPlatform = (platformId: Platforms) => {
             setPlatform(new WebPlatform())
             break
         case Platforms.windows:
-            setPlatform(new WindowsPlatform((_) => { }))
+            setPlatform(new WindowsPlatform());
             break
         case Platforms.html:
             setPlatform(new HtmlPlatform())

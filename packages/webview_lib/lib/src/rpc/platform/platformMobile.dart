@@ -35,9 +35,7 @@ class MobileMediaPlatform implements IMediaPlatform {
   Future callJavascript(String script) => _mobileWebViewController!.evaluateJavascript(source: script);
 
   @override
-  void postMessage(Map<String, dynamic> msg) {}
-  @override
-  Stream<Map<dynamic, dynamic>> get webMessage => throw UnimplementedError();
+  void postToWebView(IRpc rpcCall) => throw UnimplementedError();
 }
 
 @hcwidget

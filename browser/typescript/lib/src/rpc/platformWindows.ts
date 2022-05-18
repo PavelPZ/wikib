@@ -1,13 +1,13 @@
-import { IStreamMessage } from "./interface";
-import { IPlatform } from "./lib";
+import { IPlatform, IStreamMessage } from "./interface";
+import { receivedFromFlutter } from "./lib";
 
 export class WindowsPlatform implements IPlatform {
-    constructor(onMessage: (data: TJson) => void) {
+    constructor() {
         window.chrome.webview.addEventListener('message', function (e) {
-            onMessage(e.data);
+            receivedFromFlutter(e.data);
         });
     }
-    postMessage<T>(item: IStreamMessage<T>): void {
+    postToFlutter<T>(item: IStreamMessage<T>): void {
         window.chrome.webview.postMessage(item);
     }
 }

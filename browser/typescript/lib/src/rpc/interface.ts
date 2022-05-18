@@ -32,3 +32,7 @@ export interface IRpc {
     rpcId: number
     fncs: IRpcFnc[];
 }
+
+export interface IPlatform {
+    postToFlutter<T>(item: IStreamMessage<T>): void
+}

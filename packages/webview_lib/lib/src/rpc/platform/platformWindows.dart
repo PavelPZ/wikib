@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:webview_windows/webview_windows.dart';
 
 import '../interface.dart';
+import '../rpc_call.dart';
 import 'localServer.dart';
 
 class WindowsMediaPlatform implements IMediaPlatform {
@@ -13,6 +14,9 @@ class WindowsMediaPlatform implements IMediaPlatform {
   @override
   Future appInit() async {
     _windowsWebViewController = WebviewController();
+    _windowsWebViewController!.webMessage.listen((event) {
+      receiveFromWebView(IStreamMessage.fromJson(event as Map<String, dynamic>));
+    });
     await _windowsWebViewController!.initialize();
     await _windowsWebViewController!.loadUrl(localhostServerUrl);
     final completer = Completer();
@@ -38,7 +42,5 @@ class WindowsMediaPlatform implements IMediaPlatform {
   Future callJavascript(String script) => _windowsWebViewController!.executeScript(script);
 
   @override
-  void postMessage(Map<String, dynamic> msg) => _windowsWebViewController!.postWebMessage(jsonEncode(msg));
-  @override
-  Stream<Map<dynamic, dynamic>> get webMessage => _windowsWebViewController!.webMessage;
+  void postToWebView(IRpc rpcCall) => _windowsWebViewController!.postWebMessage(jsonEncode(rpcCall.toJson()));
 }

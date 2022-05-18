@@ -9,7 +9,7 @@ part 'main.g.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await mediaAppInit();
+  await webViewRpcInit();
 
   // // await Permission.camera.request();
   // await Permission.microphone.request();

@@ -8,7 +8,7 @@ export class Player {
         const audio = new Audio(url)
 
         const onStream = (streamId: StreamIds, value: number) => { 
-            platform.postMessage({ streamId: streamId, name: audioName, value: value })
+            platform.postToFlutter({ streamId: streamId, name: audioName, value: value })
         }
         let listeners: { [type: string]: EventListenerOrEventListenerObject } = {}
         const addListenner = (type: string, listener: EventListenerOrEventListenerObject) => { 

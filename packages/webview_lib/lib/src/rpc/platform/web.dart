@@ -21,7 +21,5 @@ class MediaPlatform implements IMediaPlatform {
   @override
   Future callJavascript(String script) => Future.value(js.context.callMethod(script, []));
   @override
-  void postMessage(Map<String, dynamic> msg) => throw UnimplementedError();
-  @override
-  Stream<Map<dynamic, dynamic>> get webMessage => throw UnimplementedError();
+  void postToWebView(IRpc rpcCall) => throw UnimplementedError();
 }
