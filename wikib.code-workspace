@@ -61,16 +61,16 @@
 			"path": "packages\\auth"
 		},
 		{
-			"name": "media",
-			"path": "packages\\media"
-		},
-		{
 			"name": "media2",
 			"path": "packages\\media2"
 		},
 		{
 			"name": "media3",
 			"path": "packages\\media3"
+		},
+		{
+			"name": "webview_lib",
+			"path": "packages\\webview_lib"
 		},
 		{
 			"name": "wikib",

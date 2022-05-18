@@ -1,5 +1,5 @@
 import { PlayState, ReadyStates } from "./interface";
-import { callback, doRpcCall, StreamIds } from "../messager/index";
+import { platform, StreamIds } from "../rpc/index";
 
 window.wikib.createPlayer = (playerName: number, audioName: number, url: string) => new Player(playerName, audioName, url)
 
@@ -8,7 +8,7 @@ export class Player {
         const audio = new Audio(url)
 
         const onStream = (streamId: StreamIds, value: number) => { 
-            callback.postMessage({ streamId: streamId, name: audioName, value: value })
+            platform.postMessage({ streamId: streamId, name: audioName, value: value })
         }
         let listeners: { [type: string]: EventListenerOrEventListenerObject } = {}
         const addListenner = (type: string, listener: EventListenerOrEventListenerObject) => { 

@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:media/src/platform/localServerData.dart';
 
 const int port = 7660;
 
@@ -41,8 +40,8 @@ class LocalhostServer {
           if (path != '/index.html') return;
           request.response.headers.contentType = ContentType('text', 'html', charset: 'utf-8');
           final html = await rootBundle.loadString('assets/index.html');
-          // final js = await rootBundle.loadString('assets/media.js');
-          final js = mediaJs;
+          final js = await rootBundle.loadString('assets/media.js');
+          // final js = mediaJs;
           final body = html.replaceFirst('{####}', '<script>\n$js\n</script>');
           request.response.add(utf8.encode(body));
           await request.response.close();

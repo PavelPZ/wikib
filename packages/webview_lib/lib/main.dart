@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:media/media.dart';
+import 'package:webview_lib/webview_lib.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'main.g.dart';

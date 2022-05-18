@@ -1,13 +1,13 @@
-import { HTMLApp, PlayerProxy, rpc } from './src/htmlApp/index';
-import { FncType, StreamIds } from './src/messager/index';
+import { getCall, getSetCall, HTMLApp, PlayerProxy, rpc, setCall } from './src/htmlApp/index';
+import { RpcFncTypes, StreamIds } from './src/rpc/index';
 
-import './src/messager/index';
+import './src/rpc/index';
 import './src/player/index';
 import './src/htmlApp/app';
 
 const longUrl = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 const shortUrl = 'https://free-loops.com/data/mp3/c8/84/81a4f6cc7340ad558c25bba4f6c3.mp3';
-const playUrl = shortUrl
+const playUrl = longUrl
 
 async function flutterRun() {
     await HTMLApp.appInit();
@@ -15,10 +15,10 @@ async function flutterRun() {
         { name: 'window.testFunctions.simple', arguments: [1, '2'] },
         { name: 'window.testFunctions.inner.run', arguments: [false] },
         { name: 'window.testFunctions.test.sum', arguments: [10, 20] },
-        { name: 'window.testFunctions.test.prop', arguments: [100], type: FncType.setter },
-        { name: 'window.testFunctions.test.prop', arguments: [], type: FncType.getter },
+        { name: 'window.testFunctions.test.prop', arguments: [100], type: RpcFncTypes.setter },
+        { name: 'window.testFunctions.test.prop', arguments: [], type: RpcFncTypes.getter },
     ]);
-    console.log(res);
+    console.log(res.toString());
 
     let player = await PlayerProxy.create(playUrl, (id, value) => {
         switch (id) {
@@ -32,6 +32,14 @@ async function flutterRun() {
                 break
         }
     })
+    await rpc([
+        getSetCall(player.audioName, 'currentTime', 360),
+        getSetCall(player.audioName, 'playbackRate', 0.5)
+    ])
+    // await setCall(player.audioName, 'currentTime', 10)
+    // await setCall(player.audioName, 'playbackRate', 0.5)
+    let posDiv = document.getElementById('pos')!
+    setInterval(async () => posDiv.innerHTML = await getCall(player.audioName, 'currentTime'), 100)
     await player.play();
     await new Promise(resolve => setTimeout(resolve, 100000))
     await player.stop()
@@ -62,4 +70,3 @@ class Test {
 }
 
 document.getElementById('playbtn')?.addEventListener('click', () => flutterRun())
-//setTimeout(flutterRun)

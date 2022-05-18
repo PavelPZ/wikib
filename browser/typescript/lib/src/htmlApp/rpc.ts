@@ -1,7 +1,7 @@
-import { FncType, IInFncCall, IOutMessage, IOutRpcResult, IRpcCall, receivedMessageFromFlutter, StreamIds } from "../messager/index";
+import { RpcFncTypes, IRpcFnc, IStreamMessage, IRpcResult, IRpc, receivedMessageFromFlutter, StreamIds } from "../rpc/index";
 
-export function rpc(calls: IInFncCall[]): Promise<any[]> {
-    let msg: IRpcCall = { rpcId: lastPromiseIdx++, fncs: calls };
+export function rpc(calls: IRpcFnc[]): Promise<any[]> {
+    let msg: IRpc = { rpcId: lastPromiseIdx++, fncs: calls };
     console.log(`flutter rpc (rpcId=${msg.rpcId})`)
     return new Promise<any[]>((resolve, reject) => {
         promises[msg.rpcId] = { resolve: resolve, reject: reject };
@@ -18,7 +18,7 @@ export function newHandlerName() {
 }
 let handlerCounter = 1;
 
-export function receiveMessageFromWebView(msg: IOutMessage<any>) {
+export function receiveMessageFromWebView(msg: IStreamMessage<any>) {
     switch (msg.streamId) {
         case StreamIds.promiseCallback:
             rpcCallback(msg)
@@ -35,7 +35,7 @@ export function receiveMessageFromWebView(msg: IOutMessage<any>) {
 }
 export let listenners: {[name:string]:(streamId: StreamIds, valye: any) => void} = {}
 
-function rpcCallback(msg: IOutMessage<IOutRpcResult<any>>) {
+function rpcCallback(msg: IStreamMessage<IRpcResult<any>>) {
     console.log(`flutter rpc Callback (rpcId=${msg.value.rpcId})`)
     let resolveReject = promises[msg.value.rpcId]
     delete promises[msg.value.rpcId]
@@ -49,8 +49,8 @@ interface IResolveReject {
     reject: (error?: any) => void
 }
 
-function getFncItem(handler: number | null, name: string, type?: FncType | undefined, args?: any[]) {
-    let fncCall: IInFncCall = {
+function getFncItem(handler: number | null, name: string, type?: RpcFncTypes | undefined, args?: any[]) {
+    let fncCall: IRpcFnc = {
         name: handler == null ? `.${name}` : `.${handler}.${name}`,
         type: type,
         arguments: args ?? [],
@@ -63,11 +63,11 @@ export function getFncCall(handler: number | null, name: string, args?: any[]) {
 }
 
 export function getGetCall(handler: number, name: string) {
-    return getFncItem(handler, name, FncType.getter, []);
+    return getFncItem(handler, name, RpcFncTypes.getter, []);
 }
 
 export function getSetCall(handler: number, name: string, value: any) {
-    return getFncItem(handler, name, FncType.setter, [value]);
+    return getFncItem(handler, name, RpcFncTypes.setter, [value]);
 }
 
 export async function fncCall<T>(handler: number | null, name: string, args?: any[]) {

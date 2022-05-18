@@ -1,4 +1,4 @@
-name: media
+name: webview_lib
 publish_to: 'none' 
 version: 1.0.0+1
 
@@ -15,6 +15,7 @@ dependencies:
   freezed_annotation: 
   functional_widget_annotation:
   hooks_riverpod: 2.0.0-dev.7
+  json_annotation:
   permission_handler:
   utils:
     path: ../utils 

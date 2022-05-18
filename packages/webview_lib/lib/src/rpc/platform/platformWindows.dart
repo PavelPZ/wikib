@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:webview_windows/webview_windows.dart';
 
-import 'common.dart';
+import '../interface.dart';
 import 'localServer.dart';
 
 class WindowsMediaPlatform {

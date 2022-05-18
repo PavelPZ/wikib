@@ -1,4 +1,4 @@
-import { setSendMessageToFlutter, StreamIds } from "../messager/index";
+import { setSendMessageToFlutter, StreamIds } from "../rpc/index";
 import { fncCall, getFncCall, getSetCall, listenners, newHandlerName, receiveMessageFromWebView, rpc } from "./rpc";
 
 export class HTMLApp {

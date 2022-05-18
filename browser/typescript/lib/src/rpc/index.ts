@@ -1,25 +1,27 @@
-import { Platforms, setCallback } from './interface';
+import { Platforms } from './interface';
+import { setPlatform } from './lib.js';
 import { HtmlPlatform } from './platformHtml';
 import { WebPlatform } from './platformWeb';
 import { WindowsPlatform } from './platformWindows';
 
 export * from './interface.js';
+export * from './lib.js';
 export * from './platformHtml.js';
 export * from './platformWeb.js';
 export * from './platformWindows.js';
 
-window.wikib.setPlatform = (platform: Platforms) => {
-    switch (platform) {
+window.wikib.setPlatform = (platformId: Platforms) => {
+    switch (platformId) {
         case Platforms.web:
-            setCallback(new WebPlatform())
+            setPlatform(new WebPlatform())
             break
         case Platforms.windows:
-            setCallback(new WindowsPlatform((_) => { }))
+            setPlatform(new WindowsPlatform((_) => { }))
             break
         case Platforms.html:
-            setCallback(new HtmlPlatform())
+            setPlatform(new HtmlPlatform())
             break
     }
-    console.log(`-window.media.setPlatform(${platform})`);
+    console.log(`-window.media.setPlatform(${platformId})`);
 }
 

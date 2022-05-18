@@ -6,6 +6,7 @@ import 'dart:js_util';
 
 import 'package:flutter/material.dart';
 
+import '../interface.dart';
 import 'common.dart';
 
 class MediaPlatform {

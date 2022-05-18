@@ -1,4 +1,5 @@
-import { IPlatform, IOutMessage } from "./interface";
+import { IStreamMessage } from "./interface";
+import { IPlatform } from "./lib";
 
 export class WindowsPlatform implements IPlatform {
     constructor(onMessage: (data: TJson) => void) {
@@ -6,7 +7,7 @@ export class WindowsPlatform implements IPlatform {
             onMessage(e.data);
         });
     }
-    postMessage<T>(item: IOutMessage<T>): void {
+    postMessage<T>(item: IStreamMessage<T>): void {
         window.chrome.webview.postMessage(item);
     }
 }

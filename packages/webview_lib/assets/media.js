@@ -34,12 +34,12 @@ function receivedMessageFromFlutter(rpcCall) {
         if (idx >= path.length)
             return res;
         let newRes = res[act];
-        if (!newRes)
+        if (newRes == undefined)
             throw `receivedMessageFromFlutter.getFunction.act=${act}`;
         return getFunction(path, idx + 1, res[act]);
     }
     try {
-        console.log(`receivedMessageFromFlutter (rpcId=${rpcCall.rpcId})`);
+        // console.log(`receivedMessageFromFlutter (rpcId=${rpcCall.rpcId})`)
         let res = [];
         rpcCall.fncs.forEach((fnc) => {
             let path = fnc.name.split('.');

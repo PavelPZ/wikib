@@ -8,7 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-import 'common.dart';
+import '../interface.dart';
 import 'localServer.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs

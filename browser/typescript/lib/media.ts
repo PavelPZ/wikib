@@ -1,3 +1,3 @@
-import './src/messager/index';
+import './src/rpc/index';
 import './src/player/index';
 
