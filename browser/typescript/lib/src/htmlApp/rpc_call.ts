@@ -13,7 +13,7 @@ let promises: { [idx: string]: IResolveReject | undefined } = {};
 let lastPromiseIdx = 1;
 let sendMessageToWebView = receivedFromFlutter;
 
-export function receiveMessageFromWebView(msg: IStreamMessage<any>) {
+export function receiveFromWebView(msg: IStreamMessage<any>) {
     switch (msg.streamId) {
         case StreamIds.promiseCallback:
             rpcCallback(msg)
@@ -21,14 +21,18 @@ export function receiveMessageFromWebView(msg: IStreamMessage<any>) {
         case StreamIds.consoleLog:
             break
         default:
-            if (!msg.name) return
-            let listenner = listenners[msg.name];
-            if (!listenner) return;
-            listenner(msg.streamId, msg.value);
+            handlerCallback(msg)
             break
     }
 }
-export let listenners: {[name:string]:(streamId: StreamIds, valye: any) => void} = {}
+export let handlerListenners: { [name: string]: (streamId: StreamIds, valye: any) => void } = {}
+
+function handlerCallback(msg: IStreamMessage<IRpcResult<any>>) {
+    if (!msg.name) return
+    let listenner = handlerListenners[msg.name]
+    if (!listenner) return
+    listenner(msg.streamId, msg.value)
+}
 
 function rpcCallback(msg: IStreamMessage<IRpcResult<any>>) {
     console.log(`flutter rpc Callback (rpcId=${msg.value.rpcId})`)

@@ -124,7 +124,7 @@ function rpc(calls) {
 let promises = {};
 let lastPromiseIdx = 1;
 let sendMessageToWebView = receivedFromFlutter;
-function receiveMessageFromWebView(msg) {
+function receiveFromWebView(msg) {
     switch (msg.streamId) {
         case 1 /* promiseCallback */:
             rpcCallback(msg);
@@ -132,16 +132,19 @@ function receiveMessageFromWebView(msg) {
         case 2 /* consoleLog */:
             break;
         default:
-            if (!msg.name)
-                return;
-            let listenner = listenners[msg.name];
-            if (!listenner)
-                return;
-            listenner(msg.streamId, msg.value);
+            handlerCallback(msg);
             break;
     }
 }
 let listenners = {};
+function handlerCallback(msg) {
+    if (!msg.name)
+        return;
+    let listenner = listenners[msg.name];
+    if (!listenner)
+        return;
+    listenner(msg.streamId, msg.value);
+}
 function rpcCallback(msg) {
     console.log(`flutter rpc Callback (rpcId=${msg.value.rpcId})`);
     let resolveReject = promises[msg.value.rpcId.toString()];
@@ -190,7 +193,7 @@ async function setCall(handler, name, value) {
 class HTMLApp {
     static async appInit() {
         await HTMLApp.callJavascript('window.wikib.setPlatform(4)');
-        setSendMessageToFlutter(receiveMessageFromWebView);
+        setSendMessageToFlutter(receiveFromWebView);
         return Promise.resolve();
     }
     static callJavascript(script) {

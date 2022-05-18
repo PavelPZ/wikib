@@ -1,11 +1,11 @@
 import { setSendMessageToFlutter, StreamIds } from "../rpc/index";
-import { listenners, receiveMessageFromWebView, rpc } from "./rpc_call";
+import { handlerListenners, receiveFromWebView, rpc } from "./rpc_call";
 import { fncCall, getFncCall, getSetCall, newHandlerName, } from "./handlers";
 
 export class HTMLApp {
     static async appInit(): Promise<void> {
         await HTMLApp.callJavascript('window.wikib.setPlatform(4)');
-        setSendMessageToFlutter(receiveMessageFromWebView);
+        setSendMessageToFlutter(receiveFromWebView);
         return Promise.resolve();
     }
     static callJavascript(script: string): Promise<void> {
@@ -17,7 +17,7 @@ export class HTMLApp {
 export class PlayerProxy {
     static async create(url: string, listen?: (streamId: StreamIds, value: any)=>void) {
         let res = new PlayerProxy();
-        if (listen) listenners[res.audioName] = listen;
+        if (listen) handlerListenners[res.audioName] = listen;
         await fncCall(null, 'createPlayer', [res.playerName, res.audioName, url])
         return res
     }
@@ -25,7 +25,7 @@ export class PlayerProxy {
     audioName = newHandlerName();
     async dispose() {
         await fncCall(this.playerName, 'dispose')
-        delete listenners[this.audioName]
+        delete handlerListenners[this.audioName]
     }
     play() {
         return fncCall(this.audioName, 'play')

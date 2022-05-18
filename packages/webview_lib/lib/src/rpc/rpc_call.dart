@@ -22,14 +22,28 @@ void rpcCallback(IStreamMessage msg) {
     comp.complete(msg.value.result);
 }
 
-void receiveFromWebView<T>(IStreamMessage<T> item) {
-  listenners[item.streamId]!(item);
+void handlerCallback(IStreamMessage msg) {
+  if (msg.name == null) return;
+  final listenner = handlerListenners[msg.name];
+  if (listenner == null) return;
+  listenner(msg);
 }
 
-final listenners = <int, void Function(IStreamMessage)>{
-  StreamIds.consoleLog: (item) => print(item.value),
-  StreamIds.promiseCallback: rpcCallback,
-};
+void receiveFromWebView<T>(IStreamMessage<T> msg) {
+  switch (msg.streamId) {
+    case StreamIds.consoleLog:
+      print(msg.value);
+      break;
+    case StreamIds.promiseCallback:
+      rpcCallback(msg);
+      break;
+    default:
+      handlerCallback(msg);
+      break;
+  }
+}
+
+final handlerListenners = <int, void Function(IStreamMessage)>{};
 
 final promises = <int, Completer>{};
 var lastPromiseIdx = 1;
