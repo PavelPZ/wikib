@@ -24,7 +24,7 @@ Future main() async {
 
 @cwidget
 Widget myApp(WidgetRef ref) {
-  return MediaPlatform.getWebView(
+  return platform.getWebView(
     child: SizedBox.shrink(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

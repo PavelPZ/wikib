@@ -7,10 +7,11 @@ import 'package:webview_windows/webview_windows.dart';
 import '../interface.dart';
 import 'localServer.dart';
 
-class WindowsMediaPlatform {
+class WindowsMediaPlatform implements IMediaPlatform {
   static WebviewController? _windowsWebViewController = null;
 
-  static Future appInit() async {
+  @override
+  Future appInit() async {
     _windowsWebViewController = WebviewController();
     await _windowsWebViewController!.initialize();
     await _windowsWebViewController!.loadUrl(localhostServerUrl);
@@ -22,17 +23,22 @@ class WindowsMediaPlatform {
     await unlisten.cancel();
   }
 
-  static const actualPlatform = Platforms.windows;
+  @override
+  final actualPlatform = Platforms.windows;
 
-  static Widget getWebView({required Widget child}) => Stack(children: [
+  @override
+  Widget getWebView({required Widget child}) => Stack(children: [
         // SizedBox(width: 0, height: 0, child: Webview(_windowsWebViewController!)),
         // SizedBox.expand(child: child),
         Webview(_windowsWebViewController!),
         child,
       ]);
 
-  static Future callJavascript(String script) => _windowsWebViewController!.executeScript(script);
+  @override
+  Future callJavascript(String script) => _windowsWebViewController!.executeScript(script);
 
-  static void postMessage(Map<String, dynamic> msg) => _windowsWebViewController!.postWebMessage(jsonEncode(msg));
-  static Stream<Map<dynamic, dynamic>> get webMessage => _windowsWebViewController!.webMessage;
+  @override
+  void postMessage(Map<String, dynamic> msg) => _windowsWebViewController!.postWebMessage(jsonEncode(msg));
+  @override
+  Stream<Map<dynamic, dynamic>> get webMessage => _windowsWebViewController!.webMessage;
 }

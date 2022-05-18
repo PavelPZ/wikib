@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
@@ -86,3 +87,14 @@ class IRpc {
   factory IRpc.fromJson(Map<String, dynamic> json) => _$IRpcFromJson(json);
   Map<String, dynamic> toJson() => _$IRpcToJson(this);
 }
+
+abstract class IMediaPlatform {
+  Future appInit() async {}
+  int get actualPlatform => Platforms.web;
+  Widget getWebView({required Widget child});
+  Future callJavascript(String script);
+  void postMessage(Map<String, dynamic> msg);
+  Stream<Map<dynamic, dynamic>> get webMessage;
+}
+
+late IMediaPlatform platform;

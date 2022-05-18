@@ -14,24 +14,30 @@ import 'localServer.dart';
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'platformMobile.g.dart';
 
-class MobileMediaPlatform {
+class MobileMediaPlatform implements IMediaPlatform {
   static InAppWebViewController? _mobileWebViewController = null;
 
-  static Future appInit() async {
+  @override
+  Future appInit() async {
     await Permission.microphone.request();
     if (Platform.isAndroid) {
       await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
     }
   }
 
-  static const actualPlatform = Platforms.mobile;
+  @override
+  final actualPlatform = Platforms.mobile;
 
-  static Widget getWebView({required Widget child}) => MobileWebView(child: child);
+  @override
+  Widget getWebView({required Widget child}) => MobileWebView(child: child);
 
-  static Future callJavascript(String script) => _mobileWebViewController!.evaluateJavascript(source: script);
+  @override
+  Future callJavascript(String script) => _mobileWebViewController!.evaluateJavascript(source: script);
 
-  static void postMessage(Map<String, dynamic> msg) {}
-  static Stream<Map<dynamic, dynamic>> get webMessage => throw UnimplementedError();
+  @override
+  void postMessage(Map<String, dynamic> msg) {}
+  @override
+  Stream<Map<dynamic, dynamic>> get webMessage => throw UnimplementedError();
 }
 
 @hcwidget

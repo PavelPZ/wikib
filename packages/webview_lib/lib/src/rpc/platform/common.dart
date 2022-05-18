@@ -6,10 +6,11 @@
 import 'package:webview_lib/webview_lib.dart';
 
 Future mediaAppInit() async {
-  await MediaPlatform.appInit();
-  await MediaPlatform.callJavascript('window.media.setPlatform(${MediaPlatform.actualPlatform.toString()})');
+  platform = createPlatform();
+  await platform.appInit();
+  await platform.callJavascript('window.media.setPlatform(${platform.actualPlatform.toString()})');
   // MediaPlatform.postMessage({'msg': 'test'});
-  MediaPlatform.webMessage.listen((json) {
+  platform.webMessage.listen((json) {
     if (json['streamId'] == StreamIds.consoleLog) print('MediaView: ${json['value']}');
   });
 }
