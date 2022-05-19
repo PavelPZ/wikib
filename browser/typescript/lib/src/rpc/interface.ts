@@ -10,7 +10,7 @@ export const enum StreamIds {
 
 export interface IStreamMessage<T> {
     streamId: StreamIds
-    name?: number | undefined
+    handlerId?: number | undefined
     value: T
 }
 

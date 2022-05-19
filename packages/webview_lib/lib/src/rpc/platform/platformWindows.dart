@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
+import 'package:webview_lib/src/rpc/platform/io.dart';
 import 'package:webview_windows/webview_windows.dart';
 
 import '../interface.dart';
@@ -13,6 +14,7 @@ class WindowsMediaPlatform implements IMediaPlatform {
 
   @override
   Future appInit() async {
+    await localhostServer.start();
     _windowsWebViewController = WebviewController();
     _windowsWebViewController!.webMessage.listen((event) {
       receiveFromWebView(IStreamMessage.fromJson(event as Map<String, dynamic>));
@@ -31,16 +33,38 @@ class WindowsMediaPlatform implements IMediaPlatform {
   final actualPlatform = Platforms.windows;
 
   @override
-  Widget getWebView({required Widget child}) => Stack(children: [
-        // SizedBox(width: 0, height: 0, child: Webview(_windowsWebViewController!)),
-        // SizedBox.expand(child: child),
-        Webview(_windowsWebViewController!),
-        child,
+  Widget getWebView({required Widget child}) => _getWebViewDebug(child: child);
+
+  Widget _getWebViewDebug({required Widget child}) => Row(
+        children: [
+          Expanded(child: child),
+          Expanded(
+              child: Webview(
+            _windowsWebViewController!,
+            permissionRequested: (url, kind, isUserInitiated) => Future.value(WebviewPermissionDecision.allow),
+          )),
+        ],
+      );
+
+  Widget _getWebView({required Widget child}) => Stack(children: [
+        SizedBox(
+          width: 0,
+          height: 0,
+          child: Webview(
+            _windowsWebViewController!,
+            permissionRequested: (url, kind, isUserInitiated) => Future.value(WebviewPermissionDecision.allow),
+          ),
+        ),
+        SizedBox.expand(child: child),
       ]);
 
   @override
   Future callJavascript(String script) => _windowsWebViewController!.executeScript(script);
 
   @override
-  void postToWebView(IRpc rpcCall) => _windowsWebViewController!.postWebMessage(jsonEncode(rpcCall.toJson()));
+  void postToWebView(IRpc rpcCall) {
+    final msg = jsonEncode(rpcCall.toJson());
+    print(msg);
+    _windowsWebViewController!.postWebMessage(msg);
+  }
 }

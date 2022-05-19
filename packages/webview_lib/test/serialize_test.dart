@@ -22,7 +22,7 @@ void main() {
   });
 
   test('IStreamMessage', () async {
-    final obj = IStreamMessage<IRpcResult<String>>(streamId: 1, name: 2, value: IRpcResult<String>(rpcId: 3, result: 'xxxx', error: null));
+    final obj = IStreamMessage<IRpcResult<String>>(streamId: 1, handlerId: 2, value: IRpcResult<String>(rpcId: 3, result: 'xxxx', error: null));
     final json = obj.toJson();
     final obj2 = IStreamMessage<IRpcResult<String>>.fromJson(json);
     final json2 = obj2.toJson();

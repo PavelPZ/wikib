@@ -30,7 +30,7 @@ export default [
         output: {
             // sourcemap: true,
             name: 'media',
-            file: "../../packages/media/assets/media.js",  
+            file: "../../packages/webview_lib/assets/media.js",  
             format: 'es'
         }
     }

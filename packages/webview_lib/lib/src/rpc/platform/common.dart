@@ -8,6 +8,6 @@ import 'package:webview_lib/webview_lib.dart';
 Future webViewRpcInit() async {
   platform = createPlatform();
   await platform.appInit();
-  await platform.callJavascript('window.media.setPlatform(${platform.actualPlatform.toString()})');
+  await platform.callJavascript('window.wikib.setPlatform(${platform.actualPlatform.toString()})');
   // MediaPlatform.postMessage({'msg': 'test'});
 }

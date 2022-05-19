@@ -1,14 +1,14 @@
 import { Platforms } from './interface';
-import { setPlatform } from './lib.js';
+import { setPlatform } from './lib';
 import { HtmlPlatform } from './platformHtml';
 import { WebPlatform } from './platformWeb';
 import { WindowsPlatform } from './platformWindows';
 
-export * from './interface.js';
-export * from './lib.js';
-export * from './platformHtml.js';
-export * from './platformWeb.js';
-export * from './platformWindows.js';
+export * from './interface';
+export * from './lib';
+export * from './platformHtml';
+export * from './platformWeb';
+export * from './platformWindows';
 
 window.wikib.setPlatform = (platformId: Platforms) => {
     switch (platformId) {

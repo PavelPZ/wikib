@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../interface.dart';
+import 'io.dart';
 import 'localServer.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
@@ -19,6 +20,7 @@ class MobileMediaPlatform implements IMediaPlatform {
 
   @override
   Future appInit() async {
+    await localhostServer.start();
     await Permission.microphone.request();
     if (Platform.isAndroid) {
       await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);

@@ -9,14 +9,14 @@ part of 'interface.dart';
 IStreamMessage<T> _$IStreamMessageFromJson<T>(Map<String, dynamic> json) =>
     IStreamMessage<T>(
       streamId: json['streamId'] as int,
-      name: json['name'] as int?,
+      handlerId: json['handlerId'] as int?,
       value: IStreamMessage._fromJson(json['value'] as Object),
     );
 
 Map<String, dynamic> _$IStreamMessageToJson<T>(IStreamMessage<T> instance) =>
     <String, dynamic>{
       'streamId': instance.streamId,
-      'name': instance.name,
+      'handlerId': instance.handlerId,
       'value': IStreamMessage._toJson(instance.value),
     };
 

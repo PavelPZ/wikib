@@ -12,21 +12,21 @@ Future<List<dynamic>> rpc(List<IRpcFnc> calls) {
   return comp.future;
 }
 
-void rpcCallback(IStreamMessage msg) {
-  print('flutter rpc Callback (rpcId=${msg.value.rpcId})');
-  final comp = promises.remove(msg.value.rpcId);
+void rpcCallback(IRpcResult rpcResult) {
+  print('flutter rpc Callback (rpcId=${rpcResult.rpcId})');
+  final comp = promises.remove(rpcResult.rpcId);
   if (comp == null) throw Exception('not found');
-  if (msg.value.error != null)
-    comp.completeError(msg.value.error);
+  if (rpcResult.error != null)
+    comp.completeError(rpcResult.error!);
   else
-    comp.complete(msg.value.result);
+    comp.complete(rpcResult.result);
 }
 
 void handlerCallback(IStreamMessage msg) {
-  if (msg.name == null) return;
-  final listenner = handlerListenners[msg.name];
+  if (msg.handlerId == null) return;
+  final listenner = handlerListenners[msg.handlerId];
   if (listenner == null) return;
-  listenner(msg);
+  listenner(msg.streamId, msg.value);
 }
 
 void receiveFromWebView<T>(IStreamMessage<T> msg) {
@@ -35,7 +35,7 @@ void receiveFromWebView<T>(IStreamMessage<T> msg) {
       print(msg.value);
       break;
     case StreamIds.promiseCallback:
-      rpcCallback(msg);
+      rpcCallback(IRpcResult.fromJson(msg.value as Map<String, dynamic>));
       break;
     default:
       handlerCallback(msg);
@@ -43,7 +43,7 @@ void receiveFromWebView<T>(IStreamMessage<T> msg) {
   }
 }
 
-final handlerListenners = <int, void Function(IStreamMessage)>{};
+final handlerListenners = <int, void Function(int streamId, IRpcResult value)>{};
 
 final promises = <int, Completer>{};
 var lastPromiseIdx = 1;

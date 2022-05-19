@@ -27,9 +27,9 @@ class StreamIds {
 
 @JsonSerializable(explicitToJson: true)
 class IStreamMessage<T> {
-  IStreamMessage({required this.streamId, required this.name, required this.value});
+  IStreamMessage({required this.streamId, required this.handlerId, required this.value});
   final int streamId;
-  final int? name;
+  final int? handlerId;
   @JsonKey(fromJson: _fromJson, toJson: _toJson)
   final T value;
   factory IStreamMessage.fromJson(Map<String, dynamic> json) => _$IStreamMessageFromJson(json);

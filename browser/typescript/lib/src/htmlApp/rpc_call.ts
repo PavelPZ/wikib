@@ -25,11 +25,11 @@ export function receiveFromWebView(msg: IStreamMessage<any>) {
             break
     }
 }
-export let handlerListenners: { [name: string]: (streamId: StreamIds, valye: any) => void } = {}
+export let handlerListenners: { [name: string]: (streamId: StreamIds, value: IRpcResult<any>) => void } = {}
 
 function handlerCallback(msg: IStreamMessage<IRpcResult<any>>) {
-    if (!msg.name) return
-    let listenner = handlerListenners[msg.name]
+    if (!msg.handlerId) return
+    let listenner = handlerListenners[msg.handlerId]
     if (!listenner) return
     listenner(msg.streamId, msg.value)
 }

@@ -1,3 +1,22 @@
+const _html = '''
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>index_messages</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body id="body"
+    style="margin: 0px; width: 1000px; height:1000px; background-color:red; overflow: hidden; cursor: pointer;">
+    <div style="float: right;width:400px" id="consoleLog"></div> 
+    <script>
+{####}
+    </script>
+</body>
+</html>''';
+const _js = '''
 let platform;
 function setPlatform(_callback) {
     platform = _callback;
@@ -17,7 +36,7 @@ function receivedFromFlutter(rpcCall) {
             if (act == '')
                 return getFunction(path, idx + 1, window.wikib);
             else if (act != 'window')
-                throw `receivedMessageFromFlutter.getFunction.act!=window: ${act}`;
+                throw `receivedMessageFromFlutter.getFunction.act!=window: \${act}`;
             else
                 return getFunction(path, idx + 1, window);
         }
@@ -25,11 +44,11 @@ function receivedFromFlutter(rpcCall) {
             return res;
         let newRes = res[act];
         if (newRes == undefined)
-            throw `receivedMessageFromFlutter.getFunction.act=${act}`;
+            throw `receivedMessageFromFlutter.getFunction.act=\${act}`;
         return getFunction(path, idx + 1, res[act]);
     }
     try {
-        // console.log(`receivedMessageFromFlutter (rpcId=${rpcCall.rpcId})`)
+        // console.log(`receivedMessageFromFlutter (rpcId=\${rpcCall.rpcId})`)
         let res = [];
         rpcCall.fncs.forEach((fnc) => {
             let path = fnc.name.split('.');
@@ -111,7 +130,7 @@ window.wikib.setPlatform = (platformId) => {
             setPlatform(new HtmlPlatform());
             break;
     }
-    console.log(`-window.media.setPlatform(${platformId})`);
+    console.log(`-window.media.setPlatform(\${platformId})`);
 };
 
 window.wikib.createPlayer = (playerName, audioName, url) => new Player(playerName, audioName, url);
@@ -168,5 +187,6 @@ Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
         return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
     }
 });
+''';
 
-export { HtmlPlatform, Player, WebPlatform, WindowsPlatform, decodeErrorMsg, platform, postRpcResultToFlutter, receivedFromFlutter, setPlatform, setSendMessageToFlutter };
+String debugHTML() => _html.replaceFirst('{####}', _js);

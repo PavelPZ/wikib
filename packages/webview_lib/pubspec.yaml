@@ -20,7 +20,7 @@ dependencies:
   utils:
     path: ../utils 
   webview_windows:
-    path: d:/github/flutter-webview-windows
+    # path: d:/github/flutter-webview-windows
 
 dev_dependencies:
   build_runner: 

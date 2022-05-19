@@ -90,6 +90,7 @@ class WebPlatform {
 class WindowsPlatform {
     constructor() {
         window.chrome.webview.addEventListener('message', function (e) {
+            console.log(`WindowsPlatform.message:`);
             receivedFromFlutter(e.data);
         });
     }
@@ -136,11 +137,11 @@ function receiveFromWebView(msg) {
             break;
     }
 }
-let listenners = {};
+let handlerListenners = {};
 function handlerCallback(msg) {
-    if (!msg.name)
+    if (!msg.handlerId)
         return;
-    let listenner = listenners[msg.name];
+    let listenner = handlerListenners[msg.handlerId];
     if (!listenner)
         return;
     listenner(msg.streamId, msg.value);
@@ -155,6 +156,18 @@ function rpcCallback(msg) {
         resolveReject.reject(msg.value.error);
     else
         resolveReject.resolve(msg.value.result);
+}
+
+class HTMLApp {
+    static async appInit() {
+        await HTMLApp.callJavascript('window.wikib.setPlatform(4)');
+        setSendMessageToFlutter(receiveFromWebView);
+        return Promise.resolve();
+    }
+    static callJavascript(script) {
+        eval(script);
+        return Promise.resolve();
+    }
 }
 
 function newHandlerName() {
@@ -190,22 +203,11 @@ async function setCall(handler, name, value) {
     await rpc([getSetCall(handler, name, value)]);
 }
 
-class HTMLApp {
-    static async appInit() {
-        await HTMLApp.callJavascript('window.wikib.setPlatform(4)');
-        setSendMessageToFlutter(receiveFromWebView);
-        return Promise.resolve();
-    }
-    static callJavascript(script) {
-        eval(script);
-        return Promise.resolve();
-    }
-}
 class PlayerProxy {
     static async create(url, listen) {
         let res = new PlayerProxy();
         if (listen)
-            listenners[res.audioName] = listen;
+            handlerListenners[res.audioName] = listen;
         await fncCall(null, 'createPlayer', [res.playerName, res.audioName, url]);
         return res;
     }
@@ -213,7 +215,7 @@ class PlayerProxy {
     audioName = newHandlerName();
     async dispose() {
         await fncCall(this.playerName, 'dispose');
-        delete listenners[this.audioName];
+        delete handlerListenners[this.audioName];
     }
     play() {
         return fncCall(this.audioName, 'play');
@@ -231,7 +233,7 @@ class Player {
     constructor(playerName, audioName, url) {
         const audio = new Audio(url);
         const onStream = (streamId, value) => {
-            platform.postToFlutter({ streamId: streamId, name: audioName, value: value });
+            platform.postToFlutter({ streamId: streamId, handlerId: audioName, value: value });
         };
         let listeners = {};
         const addListenner = (type, listener) => {

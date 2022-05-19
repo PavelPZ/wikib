@@ -1,26 +1,16 @@
-let callback;
-function setCallback(_callback) {
-    callback = _callback;
+let platform;
+function setPlatform(_callback) {
+    platform = _callback;
 }
-function postRpcResult(promiseId, result, error) {
-    callback.postMessage({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
+function postRpcResultToFlutter(promiseId, result, error) {
+    platform.postToFlutter({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
 }
-function doRpcCall(promiseId, action) {
-    console.log(`webview rpc call (rpcId=${promiseId})`);
-    try {
-        let res = action();
-        postRpcResult(promiseId, res, null);
-    }
-    catch (error) {
-        postRpcResult(promiseId, null, getErrorMessage(error));
-    }
-}
-function getErrorMessage(error) {
+function decodeErrorMsg(error) {
     if (error instanceof Error)
         return error.message;
     return String(error);
 }
-function receivedMessageFromFlutter(rpcCall) {
+function receivedFromFlutter(rpcCall) {
     function getFunction(path, idx, res) {
         let act = path[idx];
         if (idx == 0) {
@@ -61,10 +51,10 @@ function receivedMessageFromFlutter(rpcCall) {
                     break;
             }
         });
-        postRpcResult(rpcCall.rpcId, res, null);
+        postRpcResultToFlutter(rpcCall.rpcId, res, null);
     }
     catch (msg) {
-        postRpcResult(rpcCall.rpcId, null, getErrorMessage(msg));
+        postRpcResultToFlutter(rpcCall.rpcId, null, decodeErrorMsg(msg));
     }
 }
 let _backupconsolelog = console.log;
@@ -75,14 +65,14 @@ function _divLog(message) {
 console.log = function (message) {
     _backupconsolelog(message);
     _divLog(message);
-    if (!callback)
+    if (!platform)
         return;
-    callback.postMessage({ streamId: 2 /* consoleLog */, value: message });
+    platform.postToFlutter({ streamId: 2 /* consoleLog */, value: message });
 };
 window.wikib = {};
 
 class HtmlPlatform {
-    postMessage(item) {
+    postToFlutter(item) {
         sendMessageToFlutter?.call(undefined, item);
     }
 }
@@ -92,35 +82,36 @@ function setSendMessageToFlutter(_sendMessageToFlutter) {
 let sendMessageToFlutter;
 
 class WebPlatform {
-    postMessage(item) {
+    postToFlutter(item) {
         window.onStream(JSON.stringify(item));
     }
 }
 
 class WindowsPlatform {
-    constructor(onMessage) {
+    constructor() {
         window.chrome.webview.addEventListener('message', function (e) {
-            onMessage(e.data);
+            console.log(`WindowsPlatform.message:`);
+            receivedFromFlutter(e.data);
         });
     }
-    postMessage(item) {
+    postToFlutter(item) {
         window.chrome.webview.postMessage(item);
     }
 }
 
-window.wikib.setPlatform = (platform) => {
-    switch (platform) {
+window.wikib.setPlatform = (platformId) => {
+    switch (platformId) {
         case 1 /* web */:
-            setCallback(new WebPlatform());
+            setPlatform(new WebPlatform());
             break;
         case 3 /* windows */:
-            setCallback(new WindowsPlatform((_) => { }));
+            setPlatform(new WindowsPlatform());
             break;
         case 4 /* html */:
-            setCallback(new HtmlPlatform());
+            setPlatform(new HtmlPlatform());
             break;
     }
-    console.log(`-window.media.setPlatform(${platform})`);
+    console.log(`-window.media.setPlatform(${platformId})`);
 };
 
 window.wikib.createPlayer = (playerName, audioName, url) => new Player(playerName, audioName, url);
@@ -128,7 +119,7 @@ class Player {
     constructor(playerName, audioName, url) {
         const audio = new Audio(url);
         const onStream = (streamId, value) => {
-            callback.postMessage({ streamId: streamId, name: audioName, value: value });
+            platform.postToFlutter({ streamId: streamId, handlerId: audioName, value: value });
         };
         let listeners = {};
         const addListenner = (type, listener) => {
