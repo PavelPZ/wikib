@@ -29,18 +29,20 @@ Future main() async {
 
 @cwidget
 Widget myApp(WidgetRef ref) {
-  return platform.getWebView(
-    child: SizedBox.expand(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: SafeArea(
-          child: Scaffold(
-            body: Center(
-                child: ElevatedButton(
+  return MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Column(children: [
+            ElevatedButton(
               onPressed: play,
               child: Text('PLAY'),
-            )),
-          ),
+            ),
+            Expanded(
+              child: platform.getWebView(child: null),
+            ),
+          ]),
         ),
       ),
     ),

@@ -11,6 +11,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../interface.dart';
 import '../rpc_call.dart';
+import 'init.dart';
 import 'io.dart';
 import 'localServer.dart';
 
@@ -33,10 +34,11 @@ class MobileMediaPlatform extends IMediaPlatform {
   final actualPlatform = Platforms.mobile;
 
   @override
-  Widget getWebView({required Widget child}) => MobileWebView(child: child);
+  Widget getWebView({required Widget? child}) => MobileWebView(child: child);
 
   @override
-  Future callJavascript(String script) => _mobileWebViewController!.evaluateJavascript(source: script);
+  Future callJavascript(String script) =>
+      _mobileWebViewController == null ? Future.value() : _mobileWebViewController!.evaluateJavascript(source: script);
 
   // @override
   // void postToWebView(IRpc rpcCall) {
@@ -54,7 +56,7 @@ Widget mobileWebView(WidgetRef ref, {Widget? child}) {
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
           // useShouldOverrideUrlLoading: false, // default
-          // mediaPlaybackRequiresUserGesture: false,
+          mediaPlaybackRequiresUserGesture: false,
           clearCache: true,
         ),
         android: AndroidInAppWebViewOptions(
@@ -64,13 +66,12 @@ Widget mobileWebView(WidgetRef ref, {Widget? child}) {
           allowsInlineMediaPlayback: true,
         ),
       ),
-      onWebViewCreated: (controller) {
+      onWebViewCreated: (controller) async {
         MobileMediaPlatform._mobileWebViewController = controller;
         controller.addJavaScriptHandler(
             handlerName: 'webMessageHandler',
             callback: (args) {
-              print(args[0]);
-              receiveFromWebView(IStreamMessage.fromJson(jsonDecode(args[0])));
+              receiveFromWebView(IStreamMessage.fromJson(args[0]));
             });
         //ref.read(mobileWebViewControllerProvider.notifier).state = controller;
         // controller.loadFile(assetFilePath: "assets/index.html");
@@ -83,7 +84,9 @@ Widget mobileWebView(WidgetRef ref, {Widget? child}) {
       },
       onLoadError: (controller, uri, id, txt) => print('$id: $txt'),
       onLoadHttpError: (controller, uri, id, txt) => print('$id: $txt'),
-      onLoadStop: (controller, url) async {},
+      onLoadStop: (controller, url) async {
+        await onDocumentLoaded();
+      },
     );
   }, []);
   return child ?? webView as InAppWebView;

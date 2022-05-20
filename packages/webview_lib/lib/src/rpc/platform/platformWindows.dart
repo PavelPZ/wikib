@@ -6,6 +6,7 @@ import 'package:webview_windows/webview_windows.dart';
 
 import '../interface.dart';
 import '../rpc_call.dart';
+import 'init.dart';
 import 'localServer.dart';
 
 class WindowsMediaPlatform extends IMediaPlatform {
@@ -25,6 +26,7 @@ class WindowsMediaPlatform extends IMediaPlatform {
       if (loadingState == LoadingState.navigationCompleted) completer.complete();
     });
     await completer.future;
+    await onDocumentLoaded();
     await unlisten.cancel();
   }
 
@@ -32,7 +34,7 @@ class WindowsMediaPlatform extends IMediaPlatform {
   final actualPlatform = Platforms.windows;
 
   @override
-  Widget getWebView({required Widget child}) => _getWebView(child: child);
+  Widget getWebView({required Widget? child}) => _getWebView(child: child ?? SizedBox());
 
   // ignore: unused_element
   Widget _getWebViewDebug({required Widget child}) => Row(

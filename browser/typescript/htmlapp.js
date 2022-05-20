@@ -1,8 +1,10 @@
 let platform;
-function setPlatform(_callback) {
-    platform = _callback;
+function setPlatform(_platform) {
+    platform = _platform;
 }
 function postRpcResultToFlutter(promiseId, result, error) {
+    if (!platform)
+        throw '!platform';
     platform.postToFlutter({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
 }
 function decodeErrorMsg(error) {
@@ -75,7 +77,9 @@ window.wikib = {
 
 class HtmlPlatform {
     postToFlutter(item) {
-        sendMessageToFlutter?.call(undefined, item);
+        if (sendMessageToFlutter == null)
+            return;
+        sendMessageToFlutter(item);
     }
 }
 function setSendMessageToFlutter(_sendMessageToFlutter) {
@@ -83,14 +87,21 @@ function setSendMessageToFlutter(_sendMessageToFlutter) {
 }
 let sendMessageToFlutter;
 
+let isFlutterInAppWebViewReady = false;
+window.addEventListener("flutterInAppWebViewPlatformReady", function (event) {
+    isFlutterInAppWebViewReady = true;
+});
 class MobilePlatform {
-    constructor() {
-        window.addEventListener('message', function (e) {
-            receivedFromFlutter(e.data);
-        });
-    }
+    // constructor() {
+    //     window.addEventListener('message', function (e) {
+    //         receivedFromFlutter(e.data)
+    //     });
+    // }
     postToFlutter(item) {
-        window.flutter_inappwebview.callHandler('webMessageHandler', JSON.stringify(item));
+        if (!isFlutterInAppWebViewReady)
+            return;
+        // window.flutter_inappwebview.callHandler('webMessageHandler', JSON.stringify(item))
+        window.flutter_inappwebview.callHandler('webMessageHandler', item);
     }
 }
 
@@ -101,11 +112,11 @@ class WebPlatform {
 }
 
 class WindowsPlatform {
-    constructor() {
-        window.chrome.webview.addEventListener('message', function (e) {
-            receivedFromFlutter(e.data);
-        });
-    }
+    // constructor() {
+    //     window.chrome.webview.addEventListener('message', function (e) {
+    //         receivedFromFlutter(e.data)
+    //     });
+    // }
     postToFlutter(item) {
         window.chrome.webview.postMessage(item);
     }
@@ -247,6 +258,8 @@ class Player {
     constructor(playerName, audioName, url) {
         const audio = new Audio(url);
         const onStream = (streamId, value) => {
+            if (!platform)
+                throw '!platform';
             platform.postToFlutter({ streamId: streamId, handlerId: audioName, value: value });
         };
         let listeners = {};

@@ -93,10 +93,10 @@ class IRpc {
 abstract class IMediaPlatform {
   Future appInit() async {}
   int get actualPlatform => Platforms.web;
-  Widget getWebView({required Widget child});
+  Widget getWebView({required Widget? child});
   Future callJavascript(String script);
   void postToWebView(IRpc rpcCall) {
     final script = '${jsonEncode(rpcCall.toJson()).replaceAll('\\', '\\\\').replaceAll("'", "\'")}';
-    callJavascript('wikib.receivedFromFlutter ($script)');
+    callJavascript('window.wikib.receivedFromFlutter ($script)');
   }
 }

@@ -10,7 +10,7 @@ const _html = '''
 
 <body id="body"
     style="margin: 0px; width: 1000px; height:1000px; background-color:red; overflow: hidden; cursor: pointer;">
-    <div style="float: right;width:400px" id="consoleLog"></div> 
+    <div style="float: left;width:400px" id="consoleLog"></div> 
     <script>
 {####}
     </script>
@@ -18,10 +18,13 @@ const _html = '''
 </html>''';
 const _js = '''
 let platform;
-function setPlatform(_callback) {
-    platform = _callback;
+function setPlatform(_platform) {
+    platform = _platform;
 }
 function postRpcResultToFlutter(promiseId, result, error) {
+    // console.log('postRpcResultToFlutter'); console.log(platform);
+    if (!platform)
+        throw '!platform';
     platform.postToFlutter({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
 }
 function decodeErrorMsg(error) {
@@ -73,6 +76,7 @@ function receivedFromFlutter(rpcCall) {
         postRpcResultToFlutter(rpcCall.rpcId, res, null);
     }
     catch (msg) {
+        console.log('receivedFromFlutter ERROR:' + msg.toString());
         postRpcResultToFlutter(rpcCall.rpcId, null, decodeErrorMsg(msg));
     }
 }
@@ -88,17 +92,39 @@ console.log = function (message) {
         return;
     platform.postToFlutter({ streamId: 2 /* consoleLog */, value: message });
 };
-window.wikib = {};
+window.wikib = {
+    receivedFromFlutter: receivedFromFlutter
+};
 
 class HtmlPlatform {
     postToFlutter(item) {
-        sendMessageToFlutter?.call(undefined, item);
+        if (sendMessageToFlutter == null)
+            return;
+        sendMessageToFlutter(item);
     }
 }
 function setSendMessageToFlutter(_sendMessageToFlutter) {
     sendMessageToFlutter = _sendMessageToFlutter;
 }
 let sendMessageToFlutter;
+
+let isFlutterInAppWebViewReady = false;
+window.addEventListener("flutterInAppWebViewPlatformReady", function (event) {
+    isFlutterInAppWebViewReady = true;
+});
+class MobilePlatform {
+    // constructor() {
+    //     window.addEventListener('message', function (e) {
+    //         receivedFromFlutter(e.data)
+    //     });
+    // }
+    postToFlutter(item) {
+        if (!isFlutterInAppWebViewReady)
+            return;
+        // window.flutter_inappwebview.callHandler('webMessageHandler', JSON.stringify(item))
+        window.flutter_inappwebview.callHandler('webMessageHandler', item);
+    }
+}
 
 class WebPlatform {
     postToFlutter(item) {
@@ -108,10 +134,9 @@ class WebPlatform {
 
 class WindowsPlatform {
     constructor() {
-        window.chrome.webview.addEventListener('message', function (e) {
-            console.log(`WindowsPlatform.message:`);
-            receivedFromFlutter(e.data);
-        });
+    //     window.chrome.webview.addEventListener('message', function (e) {
+    //         receivedFromFlutter(e.data)
+    //     });
     }
     postToFlutter(item) {
         window.chrome.webview.postMessage(item);
@@ -129,6 +154,9 @@ window.wikib.setPlatform = (platformId) => {
         case 4 /* html */:
             setPlatform(new HtmlPlatform());
             break;
+        case 2 /* mobile */:
+            setPlatform(new MobilePlatform());
+            break;
     }
     console.log(`-window.media.setPlatform(\${platformId})`);
 };
@@ -138,6 +166,9 @@ class Player {
     constructor(playerName, audioName, url) {
         const audio = new Audio(url);
         const onStream = (streamId, value) => {
+            console.log('postRpcResultToFlutter'); console.log(platform);
+        if (!platform)
+                throw '!platform';
             platform.postToFlutter({ streamId: streamId, handlerId: audioName, value: value });
         };
         let listeners = {};

@@ -2,11 +2,12 @@ import { IRpc, IRpcFnc, IRpcResult, IPlatform, RpcFncTypes, StreamIds } from "./
 
 export let platform: IPlatform
 
-export function setPlatform(_callback: IPlatform) {
-    platform = _callback;
+export function setPlatform(_platform: IPlatform) {
+    platform = _platform;
 }
 
 export function postRpcResultToFlutter<TResult>(promiseId: number, result: TResult | null, error: string | null) {
+    if (!platform) throw '!platform';
     platform.postToFlutter<IRpcResult<TResult>>({ streamId: StreamIds.promiseCallback, value: { rpcId: promiseId, result: result, error: error } })
 }
 

@@ -7,17 +7,20 @@ import 'dart:js_util';
 import 'package:flutter/material.dart';
 
 import '../interface.dart';
-import 'common.dart';
+import 'init.dart';
 
 IMediaPlatform createPlatform() => MediaPlatform();
 
 class MediaPlatform extends IMediaPlatform {
   @override
-  Future appInit() async => throw UnimplementedError();
+  Future appInit() async {
+    await onDocumentLoaded();
+  }
+
   @override
   int get actualPlatform => Platforms.web;
   @override
-  Widget getWebView({required Widget child}) => SizedBox();
+  Widget getWebView({required Widget? child}) => SizedBox();
   @override
   Future callJavascript(String script) => Future.value(js.context.callMethod(script, []));
 
