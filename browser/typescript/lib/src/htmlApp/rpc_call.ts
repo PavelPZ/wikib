@@ -2,7 +2,7 @@ import { IRpcFnc, IStreamMessage, IRpcResult, IRpc, receivedFromFlutter, StreamI
 
 export function rpc(calls: IRpcFnc[]): Promise<any[]> {
     let msg: IRpc = { rpcId: lastPromiseIdx++, fncs: calls };
-    console.log(`flutter rpc (rpcId=${msg.rpcId})`)
+    console.log(`html rpc (rpcId=${msg.rpcId})`)
     return new Promise<any[]>((resolve, reject) => {
         promises[msg.rpcId.toString()] = { resolve: resolve, reject: reject };
         callJavascript(`wikib.receivedFromFlutter (${JSON.stringify(msg).replace('\\','\\\\').replace("'", "\'")})`);

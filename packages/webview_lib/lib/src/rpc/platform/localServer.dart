@@ -6,8 +6,6 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 
-import 'localServerData.dart';
-
 const int port = 7660;
 
 const localhostServerUrl = 'http://localhost:$port/index.html';
@@ -28,15 +26,13 @@ class LocalhostServer {
   ///```
   ///The `NSAllowsLocalNetworking` key is available since **iOS 10**.
   Future<void> start() async {
-    if (_started) throw Exception('Server already started on http://localhost:$port');
+    if (_started) throw Exception('LocalhostServer already started on http://localhost:$port');
     _started = true;
 
     final completer = Completer();
 
     runZonedGuarded(() {
       HttpServer.bind('127.0.0.1', port).then((server) {
-        // print('Server running on http://localhost:${port.toString()}');
-
         server.listen((HttpRequest request) async {
           final path = request.requestedUri.path;
           if (path != '/index.html') return;
@@ -45,15 +41,15 @@ class LocalhostServer {
           final html = await rootBundle.loadString('assets/index.html');
           // ignore: unused_local_variable
           final js = await rootBundle.loadString('assets/media.js');
-          // final body = html.replaceFirst('{####}', '<script>\n$js\n</script>');
-          final body = debugHTML();
+          final body = html.replaceFirst('{####}', js);
+          // final body = debugHTML();
           request.response.add(utf8.encode(body));
           await request.response.close();
         });
 
         completer.complete();
       });
-    }, (e, stackTrace) => print('Error: $e $stackTrace'));
+    }, (e, stackTrace) => print('LocalhostServer error: $e $stackTrace'));
 
     return completer.future;
   }

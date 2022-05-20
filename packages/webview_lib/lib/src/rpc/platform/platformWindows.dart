@@ -34,18 +34,12 @@ class WindowsMediaPlatform extends IMediaPlatform {
   final actualPlatform = Platforms.windows;
 
   @override
-  Widget getWebView({required Widget? child}) => _getWebView(child: child ?? SizedBox());
+  Widget getWebView({required Widget? child}) => _getWebViewDebug(child: child ?? SizedBox());
 
   // ignore: unused_element
-  Widget _getWebViewDebug({required Widget child}) => Row(
-        children: [
-          Expanded(child: child),
-          Expanded(
-              child: Webview(
-            _windowsWebViewController!,
-            permissionRequested: (url, kind, isUserInitiated) => Future.value(WebviewPermissionDecision.allow),
-          )),
-        ],
+  Widget _getWebViewDebug({required Widget child}) => Webview(
+        _windowsWebViewController!,
+        permissionRequested: (url, kind, isUserInitiated) => Future.value(WebviewPermissionDecision.allow),
       );
 
   // ignore: unused_element

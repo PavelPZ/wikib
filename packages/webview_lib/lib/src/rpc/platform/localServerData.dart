@@ -9,7 +9,7 @@ const _html = '''
 </head>
 
 <body id="body"
-    style="margin: 0px; width: 1000px; height:1000px; background-color:red; overflow: hidden; cursor: pointer;">
+    style="margin: 0px; width: 100%; height:100%; background-color:red; overflow: hidden; cursor: pointer;">
     <div style="float: left;width:400px" id="consoleLog"></div> 
     <script>
 {####}

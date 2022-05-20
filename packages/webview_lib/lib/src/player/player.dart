@@ -6,7 +6,15 @@ export 'interface.dart';
 class PlayerProxy {
   static Future<PlayerProxy> create(String url, {void Function(int streamId, IRpcResult value)? listen}) async {
     final res = new PlayerProxy();
-    if (listen != null) handlerListenners[res.audioName] = listen;
+    handlerListenners[res.audioName] = (streamId, value) {
+      switch (streamId) {
+        case StreamIds.playerError:
+          throw Exception(value.toString());
+        default:
+          listen?.call(streamId, value);
+          break;
+      }
+    };
     await fncCall(null, 'createPlayer', [res.playerName, res.audioName, url]);
     return res;
   }

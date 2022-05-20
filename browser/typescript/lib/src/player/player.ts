@@ -7,25 +7,17 @@ export class Player {
     constructor(playerName: number, audioName: number, url: string) {
         const audio = new Audio(url)
 
-        const onStream = (streamId: StreamIds, value: number) => { 
+        const onStream = (streamId: StreamIds, value: number) => {
             if (!platform) throw '!platform';
             platform.postToFlutter({ streamId: streamId, handlerId: audioName, value: value })
         }
         let listeners: { [type: string]: EventListenerOrEventListenerObject } = {}
-        const addListenner = (type: string, listener: EventListenerOrEventListenerObject) => { 
-            audio.addEventListener(type, listener);
-            listeners[type] = listener; return listener; 
+        const addListenner = (type: string, listener: EventListenerOrEventListenerObject) => {
+            audio.addEventListener(type, listener)
+            listeners[type] = listener
+            return listener
         }
-
         addListenner("durationchange", () => onStream(StreamIds.playDurationchange, audio.duration))
-        // audio.addEventListener("progress", addListenner("progress", () => {
-        //     let curr = this.audio.currentTime
-        //     let last = this.lastProgress
-        //     this.lastProgress = curr;
-        //     if (curr > last && curr < last + this.currentPositionTimerMsec) return
-        //     onStream(StreamIds.playPosition, curr)
-        // }))
-
         addListenner("ended", () => onStream(StreamIds.playState, PlayState.ended))
         addListenner("pause", () => onStream(StreamIds.playState, PlayState.pause))
         addListenner("play", () => onStream(StreamIds.playState, PlayState.play))
@@ -43,8 +35,8 @@ export class Player {
         // readyState == HAVE_ENOUGH_DATA
         addListenner("canplaythrough", () => onStream(StreamIds.playerReadyState, ReadyStates.HAVE_ENOUGH_DATA))
 
-        window.wikib[playerName.toString()] = this;
-        window.wikib[audioName.toString()] = audio;
+        window.wikib[playerName.toString()] = this
+        window.wikib[audioName.toString()] = audio
 
         this.dispose = () => {
             for (let key in listeners) audio.removeEventListener(key, listeners[key])
@@ -57,10 +49,10 @@ export class Player {
     dispose: () => void
 }
 
-// https://stackoverflow.com/questions/4338951/how-do-i-determine-if-mediaelement-is-playing
-Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
-    get: function () {
-        return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
-    }
-})
+// // https://stackoverflow.com/questions/4338951/how-do-i-determine-if-mediaelement-is-playing
+// Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
+//     get: function () {
+//         return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
+//     }
+// })
 

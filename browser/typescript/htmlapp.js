@@ -142,7 +142,7 @@ window.wikib.setPlatform = (platformId) => {
 
 function rpc(calls) {
     let msg = { rpcId: lastPromiseIdx++, fncs: calls };
-    console.log(`flutter rpc (rpcId=${msg.rpcId})`);
+    console.log(`html rpc (rpcId=${msg.rpcId})`);
     return new Promise((resolve, reject) => {
         promises[msg.rpcId.toString()] = { resolve: resolve, reject: reject };
         callJavascript(`wikib.receivedFromFlutter (${JSON.stringify(msg).replace('\\', '\\\\').replace("'", "\'")})`);
@@ -269,13 +269,6 @@ class Player {
             return listener;
         };
         addListenner("durationchange", () => onStream(8 /* playDurationchange */, audio.duration));
-        // audio.addEventListener("progress", addListenner("progress", () => {
-        //     let curr = this.audio.currentTime
-        //     let last = this.lastProgress
-        //     this.lastProgress = curr;
-        //     if (curr > last && curr < last + this.currentPositionTimerMsec) return
-        //     onStream(StreamIds.playPosition, curr)
-        // }))
         addListenner("ended", () => onStream(7 /* playState */, 3 /* ended */));
         addListenner("pause", () => onStream(7 /* playState */, 2 /* pause */));
         addListenner("play", () => onStream(7 /* playState */, 1 /* play */));
@@ -303,12 +296,12 @@ class Player {
     }
     dispose;
 }
-// https://stackoverflow.com/questions/4338951/how-do-i-determine-if-mediaelement-is-playing
-Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
-    get: function () {
-        return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
-    }
-});
+// // https://stackoverflow.com/questions/4338951/how-do-i-determine-if-mediaelement-is-playing
+// Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
+//     get: function () {
+//         return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
+//     }
+// })
 
 const longUrl = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 const shortUrl = 'https://free-loops.com/data/mp3/c8/84/81a4f6cc7340ad558c25bba4f6c3.mp3';

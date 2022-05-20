@@ -156,13 +156,6 @@ class Player {
             return listener;
         };
         addListenner("durationchange", () => onStream(8 /* playDurationchange */, audio.duration));
-        // audio.addEventListener("progress", addListenner("progress", () => {
-        //     let curr = this.audio.currentTime
-        //     let last = this.lastProgress
-        //     this.lastProgress = curr;
-        //     if (curr > last && curr < last + this.currentPositionTimerMsec) return
-        //     onStream(StreamIds.playPosition, curr)
-        // }))
         addListenner("ended", () => onStream(7 /* playState */, 3 /* ended */));
         addListenner("pause", () => onStream(7 /* playState */, 2 /* pause */));
         addListenner("play", () => onStream(7 /* playState */, 1 /* play */));
@@ -190,9 +183,9 @@ class Player {
     }
     dispose;
 }
-// https://stackoverflow.com/questions/4338951/how-do-i-determine-if-mediaelement-is-playing
-Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
-    get: function () {
-        return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
-    }
-});
+// // https://stackoverflow.com/questions/4338951/how-do-i-determine-if-mediaelement-is-playing
+// Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
+//     get: function () {
+//         return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
+//     }
+// })
