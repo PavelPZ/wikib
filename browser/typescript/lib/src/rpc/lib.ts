@@ -69,4 +69,6 @@ console.log = function (message: string) {
     platform.postToFlutter<string>({ streamId: StreamIds.consoleLog, value: message });
 }
 
-window.wikib = {}
+window.wikib = {
+    receivedFromFlutter: receivedFromFlutter
+}

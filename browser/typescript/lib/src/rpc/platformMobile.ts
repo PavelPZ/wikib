@@ -1,14 +1,13 @@
 import { IPlatform, IStreamMessage } from "./interface";
 import { receivedFromFlutter } from "./lib";
 
-export class WindowsPlatform implements IPlatform {
+export class MobilePlatform implements IPlatform {
     constructor() {
-        window.chrome.webview.addEventListener('message', function (e) {
+        window.addEventListener('message', function (e) {
             receivedFromFlutter(e.data)
         });
     }
     postToFlutter<T>(item: IStreamMessage<T>): void {
-        window.chrome.webview.postMessage(item)
+        window.flutter_inappwebview.callHandler('webMessageHandler', JSON.stringify(item))
     }
 }
-

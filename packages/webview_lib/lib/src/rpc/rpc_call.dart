@@ -29,7 +29,7 @@ void handlerCallback(IStreamMessage msg) {
   listenner(msg.streamId, msg.value);
 }
 
-void receiveFromWebView<T>(IStreamMessage<T> msg) {
+void receiveFromWebView(IStreamMessage msg) {
   switch (msg.streamId) {
     case StreamIds.consoleLog:
       print(msg.value);

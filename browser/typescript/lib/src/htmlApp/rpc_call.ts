@@ -5,13 +5,17 @@ export function rpc(calls: IRpcFnc[]): Promise<any[]> {
     console.log(`flutter rpc (rpcId=${msg.rpcId})`)
     return new Promise<any[]>((resolve, reject) => {
         promises[msg.rpcId.toString()] = { resolve: resolve, reject: reject };
-        sendMessageToWebView(msg);
+        callJavascript(`wikib.receivedFromFlutter (${JSON.stringify(msg).replace('\\','\\\\').replace("'", "\'")})`);
     });
+}
+
+export function callJavascript(script: string): Promise<void> {
+    eval(script)
+    return Promise.resolve()
 }
 
 let promises: { [idx: string]: IResolveReject | undefined } = {};
 let lastPromiseIdx = 1;
-let sendMessageToWebView = receivedFromFlutter;
 
 export function receiveFromWebView(msg: IStreamMessage<any>) {
     switch (msg.streamId) {

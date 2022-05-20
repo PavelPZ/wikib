@@ -6,31 +6,30 @@ part of 'interface.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-IStreamMessage<T> _$IStreamMessageFromJson<T>(Map<String, dynamic> json) =>
-    IStreamMessage<T>(
+IStreamMessage _$IStreamMessageFromJson(Map<String, dynamic> json) =>
+    IStreamMessage(
       streamId: json['streamId'] as int,
       handlerId: json['handlerId'] as int?,
-      value: IStreamMessage._fromJson(json['value'] as Object),
+      value: json['value'],
     );
 
-Map<String, dynamic> _$IStreamMessageToJson<T>(IStreamMessage<T> instance) =>
+Map<String, dynamic> _$IStreamMessageToJson(IStreamMessage instance) =>
     <String, dynamic>{
       'streamId': instance.streamId,
       'handlerId': instance.handlerId,
-      'value': IStreamMessage._toJson(instance.value),
+      'value': instance.value,
     };
 
-IRpcResult<T> _$IRpcResultFromJson<T>(Map<String, dynamic> json) =>
-    IRpcResult<T>(
+IRpcResult _$IRpcResultFromJson(Map<String, dynamic> json) => IRpcResult(
       rpcId: json['rpcId'] as int,
-      result: IRpcResult._fromJson(json['result'] as Object),
+      result: json['result'],
       error: json['error'] as String?,
     );
 
-Map<String, dynamic> _$IRpcResultToJson<T>(IRpcResult<T> instance) =>
+Map<String, dynamic> _$IRpcResultToJson(IRpcResult instance) =>
     <String, dynamic>{
       'rpcId': instance.rpcId,
-      'result': IRpcResult._toJson(instance.result),
+      'result': instance.result,
       'error': instance.error,
     };
 

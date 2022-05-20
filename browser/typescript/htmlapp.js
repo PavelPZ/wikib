@@ -69,7 +69,9 @@ console.log = function (message) {
         return;
     platform.postToFlutter({ streamId: 2 /* consoleLog */, value: message });
 };
-window.wikib = {};
+window.wikib = {
+    receivedFromFlutter: receivedFromFlutter
+};
 
 class HtmlPlatform {
     postToFlutter(item) {
@@ -81,6 +83,17 @@ function setSendMessageToFlutter(_sendMessageToFlutter) {
 }
 let sendMessageToFlutter;
 
+class MobilePlatform {
+    constructor() {
+        window.addEventListener('message', function (e) {
+            receivedFromFlutter(e.data);
+        });
+    }
+    postToFlutter(item) {
+        window.flutter_inappwebview.callHandler('webMessageHandler', JSON.stringify(item));
+    }
+}
+
 class WebPlatform {
     postToFlutter(item) {
         window.onStream(JSON.stringify(item));
@@ -90,7 +103,6 @@ class WebPlatform {
 class WindowsPlatform {
     constructor() {
         window.chrome.webview.addEventListener('message', function (e) {
-            console.log(`WindowsPlatform.message:`);
             receivedFromFlutter(e.data);
         });
     }
@@ -110,6 +122,9 @@ window.wikib.setPlatform = (platformId) => {
         case 4 /* html */:
             setPlatform(new HtmlPlatform());
             break;
+        case 2 /* mobile */:
+            setPlatform(new MobilePlatform());
+            break;
     }
     console.log(`-window.media.setPlatform(${platformId})`);
 };
@@ -119,12 +134,15 @@ function rpc(calls) {
     console.log(`flutter rpc (rpcId=${msg.rpcId})`);
     return new Promise((resolve, reject) => {
         promises[msg.rpcId.toString()] = { resolve: resolve, reject: reject };
-        sendMessageToWebView(msg);
+        callJavascript(`wikib.receivedFromFlutter (${JSON.stringify(msg).replace('\\', '\\\\').replace("'", "\'")})`);
     });
+}
+function callJavascript(script) {
+    eval(script);
+    return Promise.resolve();
 }
 let promises = {};
 let lastPromiseIdx = 1;
-let sendMessageToWebView = receivedFromFlutter;
 function receiveFromWebView(msg) {
     switch (msg.streamId) {
         case 1 /* promiseCallback */:
@@ -160,12 +178,8 @@ function rpcCallback(msg) {
 
 class HTMLApp {
     static async appInit() {
-        await HTMLApp.callJavascript('window.wikib.setPlatform(4)');
+        await callJavascript('window.wikib.setPlatform(4)');
         setSendMessageToFlutter(receiveFromWebView);
-        return Promise.resolve();
-    }
-    static callJavascript(script) {
-        eval(script);
         return Promise.resolve();
     }
 }

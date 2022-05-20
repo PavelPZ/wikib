@@ -11,7 +11,7 @@ import 'common.dart';
 
 IMediaPlatform createPlatform() => MediaPlatform();
 
-class MediaPlatform implements IMediaPlatform {
+class MediaPlatform extends IMediaPlatform {
   @override
   Future appInit() async => throw UnimplementedError();
   @override
@@ -20,6 +20,7 @@ class MediaPlatform implements IMediaPlatform {
   Widget getWebView({required Widget child}) => SizedBox();
   @override
   Future callJavascript(String script) => Future.value(js.context.callMethod(script, []));
-  @override
-  void postToWebView(IRpc rpcCall) => throw UnimplementedError();
+
+  // @override
+  // void postToWebView(IRpc rpcCall) => throw UnimplementedError();
 }

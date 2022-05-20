@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -26,40 +28,40 @@ class StreamIds {
 }
 
 @JsonSerializable(explicitToJson: true)
-class IStreamMessage<T> {
+class IStreamMessage {
   IStreamMessage({required this.streamId, required this.handlerId, required this.value});
   final int streamId;
   final int? handlerId;
-  @JsonKey(fromJson: _fromJson, toJson: _toJson)
-  final T value;
+  //@JsonKey(fromJson: _fromJson, toJson: _toJson)
+  final dynamic value;
   factory IStreamMessage.fromJson(Map<String, dynamic> json) => _$IStreamMessageFromJson(json);
   Map<String, dynamic> toJson() => _$IStreamMessageToJson(this);
 
-  static T _fromJson<T>(Object json) {
-    if (T == IRpcResult<String>)
-      return IRpcResult<String>.fromJson(json as Map<String, dynamic>) as T;
-    else if (T == IRpcResult<int>) return IRpcResult<int>.fromJson(json as Map<String, dynamic>) as T;
-    return json as T;
-  }
+  // static T _fromJson<T>(Object json) {
+  //   if (T == IRpcResult<String>)
+  //     return IRpcResult<String>.fromJson(json as Map<String, dynamic>) as T;
+  //   else if (T == IRpcResult<int>) return IRpcResult<int>.fromJson(json as Map<String, dynamic>) as T;
+  //   return json as T;
+  // }
 
-  static Object _toJson<T>(T object) {
-    if (object is IRpcResult) return object.toJson();
-    return object as Object;
-  }
+  // static Object _toJson<T>(T object) {
+  //   if (object is IRpcResult) return object.toJson();
+  //   return object as Object;
+  // }
 }
 
 @JsonSerializable(explicitToJson: true)
-class IRpcResult<T> {
+class IRpcResult {
   IRpcResult({required this.rpcId, required this.result, required this.error});
   final int rpcId;
-  @JsonKey(fromJson: _fromJson, toJson: _toJson)
-  final T? result;
+  //@JsonKey(fromJson: _fromJson, toJson: _toJson)
+  final dynamic result;
   final String? error;
   factory IRpcResult.fromJson(Map<String, dynamic> json) => _$IRpcResultFromJson(json);
   Map<String, dynamic> toJson() => _$IRpcResultToJson(this);
 
-  static T _fromJson<T>(Object json) => json as T;
-  static Object _toJson<T>(T object) => object as Object;
+  // static T _fromJson<T>(Object json) => json as T;
+  // static Object _toJson<T>(T object) => object as Object;
 }
 
 class RpcFncTypes {
@@ -93,5 +95,8 @@ abstract class IMediaPlatform {
   int get actualPlatform => Platforms.web;
   Widget getWebView({required Widget child});
   Future callJavascript(String script);
-  void postToWebView(IRpc rpcCall);
+  void postToWebView(IRpc rpcCall) {
+    final script = '${jsonEncode(rpcCall.toJson()).replaceAll('\\', '\\\\').replaceAll("'", "\'")}';
+    callJavascript('wikib.receivedFromFlutter ($script)');
+  }
 }

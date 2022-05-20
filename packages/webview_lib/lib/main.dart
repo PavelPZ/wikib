@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:webview_lib/src/rpc/handlers.dart';
 import 'package:webview_lib/webview_lib.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
@@ -48,9 +49,13 @@ Widget myApp(WidgetRef ref) {
 
 Future play() async {
   final player = await PlayerProxy.create(playUrl);
+  await rpc([
+    getSetCall(player.audioName, 'currentTime', 360),
+    getSetCall(player.audioName, 'playbackRate', 0.5),
+  ]);
   await player.play();
-  await Future.delayed(Duration(milliseconds: 100000));
+  await Future.delayed(Duration(milliseconds: 2000));
   await player.stop();
-  await Future.delayed(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 500));
   await player.dispose();
 }

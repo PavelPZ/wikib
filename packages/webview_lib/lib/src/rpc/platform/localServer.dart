@@ -41,10 +41,12 @@ class LocalhostServer {
           final path = request.requestedUri.path;
           if (path != '/index.html') return;
           request.response.headers.contentType = ContentType('text', 'html', charset: 'utf-8');
+          // ignore: unused_local_variable
           final html = await rootBundle.loadString('assets/index.html');
+          // ignore: unused_local_variable
           final js = await rootBundle.loadString('assets/media.js');
-          // final body = html.replaceFirst('{####}', '<script>\n$js\n</script>');
-          final body = debugHTML();
+          final body = html.replaceFirst('{####}', '<script>\n$js\n</script>');
+          // final body = debugHTML();
           request.response.add(utf8.encode(body));
           await request.response.close();
         });

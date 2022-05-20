@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:webview_lib/src/rpc/platform/io.dart';
@@ -9,7 +8,7 @@ import '../interface.dart';
 import '../rpc_call.dart';
 import 'localServer.dart';
 
-class WindowsMediaPlatform implements IMediaPlatform {
+class WindowsMediaPlatform extends IMediaPlatform {
   static WebviewController? _windowsWebViewController = null;
 
   @override
@@ -33,8 +32,9 @@ class WindowsMediaPlatform implements IMediaPlatform {
   final actualPlatform = Platforms.windows;
 
   @override
-  Widget getWebView({required Widget child}) => _getWebViewDebug(child: child);
+  Widget getWebView({required Widget child}) => _getWebView(child: child);
 
+  // ignore: unused_element
   Widget _getWebViewDebug({required Widget child}) => Row(
         children: [
           Expanded(child: child),
@@ -46,6 +46,7 @@ class WindowsMediaPlatform implements IMediaPlatform {
         ],
       );
 
+  // ignore: unused_element
   Widget _getWebView({required Widget child}) => Stack(children: [
         SizedBox(
           width: 0,
@@ -61,10 +62,10 @@ class WindowsMediaPlatform implements IMediaPlatform {
   @override
   Future callJavascript(String script) => _windowsWebViewController!.executeScript(script);
 
-  @override
-  void postToWebView(IRpc rpcCall) {
-    final msg = jsonEncode(rpcCall.toJson());
-    print(msg);
-    _windowsWebViewController!.postWebMessage(msg);
-  }
+  // @override
+  // void postToWebView(IRpc rpcCall) {
+  //   final msg = jsonEncode(rpcCall.toJson());
+  //   print(msg);
+  //   _windowsWebViewController!.postWebMessage(msg);
+  // }
 }

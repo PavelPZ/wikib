@@ -1,6 +1,7 @@
 import { Platforms } from './interface';
 import { setPlatform } from './lib';
 import { HtmlPlatform } from './platformHtml';
+import { MobilePlatform } from './platformMobile';
 import { WebPlatform } from './platformWeb';
 import { WindowsPlatform } from './platformWindows';
 
@@ -20,6 +21,9 @@ window.wikib.setPlatform = (platformId: Platforms) => {
             break
         case Platforms.html:
             setPlatform(new HtmlPlatform())
+            break
+        case Platforms.mobile:
+            setPlatform(new MobilePlatform())
             break
     }
     console.log(`-window.media.setPlatform(${platformId})`);

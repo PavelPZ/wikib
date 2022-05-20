@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
@@ -9,13 +10,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../interface.dart';
+import '../rpc_call.dart';
 import 'io.dart';
 import 'localServer.dart';
 
 // flutter pub run build_runner watch --delete-conflicting-outputs
 part 'platformMobile.g.dart';
 
-class MobileMediaPlatform implements IMediaPlatform {
+class MobileMediaPlatform extends IMediaPlatform {
   static InAppWebViewController? _mobileWebViewController = null;
 
   @override
@@ -36,8 +38,11 @@ class MobileMediaPlatform implements IMediaPlatform {
   @override
   Future callJavascript(String script) => _mobileWebViewController!.evaluateJavascript(source: script);
 
-  @override
-  void postToWebView(IRpc rpcCall) => throw UnimplementedError();
+  // @override
+  // void postToWebView(IRpc rpcCall) {
+  //   final par = jsonEncode(rpcCall.toJson()).replaceAll('\'', '\\\'');
+  //   _mobileWebViewController!.evaluateJavascript(source: 'window.postMessage(JSON.parse("$par"), "*")');
+  // }
 }
 
 @hcwidget
@@ -61,6 +66,12 @@ Widget mobileWebView(WidgetRef ref, {Widget? child}) {
       ),
       onWebViewCreated: (controller) {
         MobileMediaPlatform._mobileWebViewController = controller;
+        controller.addJavaScriptHandler(
+            handlerName: 'webMessageHandler',
+            callback: (args) {
+              print(args[0]);
+              receiveFromWebView(IStreamMessage.fromJson(jsonDecode(args[0])));
+            });
         //ref.read(mobileWebViewControllerProvider.notifier).state = controller;
         // controller.loadFile(assetFilePath: "assets/index.html");
       },
