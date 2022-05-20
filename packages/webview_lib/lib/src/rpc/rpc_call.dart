@@ -43,7 +43,7 @@ void receiveFromWebView(IStreamMessage msg) {
   }
 }
 
-final handlerListenners = <int, void Function(int streamId, IRpcResult value)>{};
+final handlerListenners = <int, void Function(int streamId, dynamic value)>{};
 
 final promises = <int, Completer>{};
 var lastPromiseIdx = 1;

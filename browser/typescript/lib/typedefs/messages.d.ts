@@ -17,4 +17,6 @@ interface Window {
   flutter_inappwebview: {
     callHandler: (name: 'webMessageHandler', arg: any) => void
   }
+
+  setWikibWebPostMessage: (_wikibWebPostMessage: (item: string) => void) => void
 }

@@ -15,6 +15,7 @@ dependencies:
   freezed_annotation: 
   functional_widget_annotation:
   hooks_riverpod: 2.0.0-dev.7
+  js:
   json_annotation:
   permission_handler:
   utils:

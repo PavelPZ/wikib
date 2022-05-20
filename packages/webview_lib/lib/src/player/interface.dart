@@ -21,3 +21,5 @@ class ErrorCodes {
   static int MEDIA_ERR_DECODE = 3;
   static int MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
 }
+
+final fake = 1;

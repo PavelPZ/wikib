@@ -1,4 +1,5 @@
 import { IRpc, IRpcFnc, IRpcResult, IPlatform, RpcFncTypes, StreamIds } from "./interface";
+import { WebPlatform } from "./platformWeb";
 
 export let platform: IPlatform
 
@@ -58,15 +59,16 @@ export function receivedFromFlutter(rpcCall: IRpc) {
     }
 }
 
-let _backupconsolelog = console.log;
+let _backupconsolelog = console.log
 function _divLog(message: string) {
-    let consoleLog = document.getElementById("consoleLog")!;
-    consoleLog.innerHTML = consoleLog.innerHTML + "<br/>" + message;
+    let consoleLog = document.getElementById("consoleLog")!
+    consoleLog.innerHTML = consoleLog.innerHTML + "<br/>" + message
 }
 console.log = function (message: string) {
-    _backupconsolelog(message);
+    _backupconsolelog(message)
     _divLog(message);
-    if (!platform) return;
+    if (!platform) return
+    if (platform instanceof WebPlatform) return;
     platform.postToFlutter<string>({ streamId: StreamIds.consoleLog, value: message });
 }
 

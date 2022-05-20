@@ -2,6 +2,12 @@ import { IPlatform, IStreamMessage } from "./interface";
 
 export class WebPlatform implements IPlatform {
     postToFlutter<T>(item: IStreamMessage<T>): void {
-        window.onStream(JSON.stringify(item));
+        wikibWebPostMessage(JSON.stringify(item));
     }
 }
+
+window.setWikibWebPostMessage = _wikibWebPostMessage => {
+    wikibWebPostMessage = _wikibWebPostMessage;
+}
+
+let wikibWebPostMessage: (item: string) => void

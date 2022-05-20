@@ -1,3 +1,13 @@
+class WebPlatform {
+    postToFlutter(item) {
+        wikibWebPostMessage(JSON.stringify(item));
+    }
+}
+window.setWikibWebPostMessage = _wikibWebPostMessage => {
+    wikibWebPostMessage = _wikibWebPostMessage;
+};
+let wikibWebPostMessage;
+
 let platform;
 function setPlatform(_platform) {
     platform = _platform;
@@ -69,6 +79,8 @@ console.log = function (message) {
     _divLog(message);
     if (!platform)
         return;
+    if (platform instanceof WebPlatform)
+        return;
     platform.postToFlutter({ streamId: 2 /* consoleLog */, value: message });
 };
 window.wikib = {
@@ -102,12 +114,6 @@ class MobilePlatform {
             return;
         // window.flutter_inappwebview.callHandler('webMessageHandler', JSON.stringify(item))
         window.flutter_inappwebview.callHandler('webMessageHandler', item);
-    }
-}
-
-class WebPlatform {
-    postToFlutter(item) {
-        window.onStream(JSON.stringify(item));
     }
 }
 
