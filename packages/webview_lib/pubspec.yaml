@@ -6,15 +6,14 @@ environment:
   sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
-  audioplayers: 1.0.0-rc.2
-  cupertino_icons: ^1.0.2
+  cupertino_icons: 
   flutter:
     sdk: flutter
   flutter_hooks:
   flutter_inappwebview:
   freezed_annotation: 
   functional_widget_annotation:
-  hooks_riverpod: 2.0.0-dev.7
+  hooks_riverpod: 2.0.0-dev.8
   js:
   json_annotation:
   permission_handler:

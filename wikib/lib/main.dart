@@ -48,8 +48,9 @@ class HomeSegment extends TypedSegment {
 
 class AppNavigator extends RNavigator {
   AppNavigator(Ref ref)
-      : super(ref,
-            routes: [
+      : super(
+            ref,
+            [
               RRoute<HomeSegment>(
                 'home',
                 HomeSegment.fromUrlPars,

@@ -12,7 +12,7 @@ dependencies:
   flutter_hooks:
   flutter_inappwebview:
   functional_widget_annotation:
-  hooks_riverpod: 2.0.0-dev.7
+  hooks_riverpod: 2.0.0-dev.8
   json_annotation:
   permission_handler:
   url_launcher:

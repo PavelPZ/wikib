@@ -11,17 +11,17 @@ environment:
 dependencies:
   azure_storage:
     path: ../packages/azure_storage  
-  cupertino_icons: ^1.0.2
+  cupertino_icons: 
   flutter:
     sdk: flutter
   flutter_hooks:
   flutter_spinkit:
-  functional_widget_annotation: ^0.9.2
+  functional_widget_annotation:
   hive_flutter: 
-  hooks_riverpod: 2.0.0-dev.7
+  hooks_riverpod: 2.0.0-dev.8
   localization:     
     path: ../packages/localization
-  meta: ^1.7.0
+  meta: 
   protobuf:
   protobuf_for_dart:
     path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
@@ -36,11 +36,11 @@ dependencies:
 
 dev_dependencies:
   build_runner: 
-  functional_widget: ^0.9.2
+  functional_widget: 
   test:
 
 dependency_overrides:
-  analyzer: ^2.1.0
+  # analyzer: ^2.1.0
 
 flutter:
 

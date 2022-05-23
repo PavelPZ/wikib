@@ -11,7 +11,7 @@ dependencies:
   azure:
     path: ../azure 
   hive:
-  riverpod: 2.0.0-dev.7
+  riverpod: 2.0.0-dev.8
   utils:
     path: ../utils 
 
