@@ -16,14 +16,6 @@ Future main() async {
 
   await webViewRpcInit();
 
-  // // await Permission.camera.request();
-  // await Permission.microphone.request();
-  // await localhostServer.start();
-
-  // if (Platform.isAndroid) {
-  //   await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
-  // }
-
   runApp(const ProviderScope(child: MaterialApp(home: MyApp())));
 }
 
