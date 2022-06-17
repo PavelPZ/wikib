@@ -71,10 +71,6 @@
 		{
 			"name": "webview_lib",
 			"path": "packages\\webview_lib"
-		},
-		{
-			"name": "wikib",
-			"path": "wikib"
 		}
 	],
 	"settings": {

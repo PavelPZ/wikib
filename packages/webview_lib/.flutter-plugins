@@ -1,7 +1,7 @@
 # This is a generated file; do not edit or check into version control.
-flutter_inappwebview=C:\\Users\\pzika\\AppData\\Roaming\\Pub\\Cache\\hosted\\pub.dartlang.org\\flutter_inappwebview-5.4.3+7\\
-permission_handler=C:\\Users\\pzika\\AppData\\Roaming\\Pub\\Cache\\hosted\\pub.dartlang.org\\permission_handler-9.2.0\\
-permission_handler_android=C:\\Users\\pzika\\AppData\\Roaming\\Pub\\Cache\\hosted\\pub.dartlang.org\\permission_handler_android-9.0.2+1\\
-permission_handler_apple=C:\\Users\\pzika\\AppData\\Roaming\\Pub\\Cache\\hosted\\pub.dartlang.org\\permission_handler_apple-9.0.4\\
-permission_handler_windows=C:\\Users\\pzika\\AppData\\Roaming\\Pub\\Cache\\hosted\\pub.dartlang.org\\permission_handler_windows-0.1.0\\
-webview_windows=C:\\Users\\pzika\\AppData\\Roaming\\Pub\\Cache\\hosted\\pub.dartlang.org\\webview_windows-0.1.8\\
+flutter_inappwebview=c:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_inappwebview-5.4.3+7\\
+permission_handler=c:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\permission_handler-10.0.0\\
+permission_handler_android=c:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\permission_handler_android-10.0.0\\
+permission_handler_apple=c:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\permission_handler_apple-9.0.4\\
+permission_handler_windows=c:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\permission_handler_windows-0.1.0\\
+webview_windows=c:\\src\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\webview_windows-0.2.0\\
