@@ -71,6 +71,9 @@
 		{
 			"name": "webview_lib",
 			"path": "packages\\webview_lib"
+		},
+		{
+			"path": "../riverpod_navigator/examples/doc"
 		}
 	],
 	"settings": {
