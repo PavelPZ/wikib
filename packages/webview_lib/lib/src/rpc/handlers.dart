@@ -4,17 +4,22 @@ import 'rpc_call.dart';
 var handlerCounter = 1;
 int newHandlerName() => handlerCounter++;
 
-IRpcFnc getFncItem(int? handler, String? name, int? type, [List<dynamic>? args]) => IRpcFnc(
+IRpcFnc getFncItem(int? handler, String? name, int? type,
+        [List<dynamic>? args]) =>
+    IRpcFnc(
       name: handler == null ? '.${name}' : '.${handler}.${name}',
       type: type,
       arguments: args ?? [],
     );
 
-IRpcFnc getFncCall(int? handler, String name, [List<dynamic>? args]) => getFncItem(handler, name, null, args);
+IRpcFnc getFncCall(int? handler, String name, [List<dynamic>? args]) =>
+    getFncItem(handler, name, null, args);
 
-IRpcFnc getGetCall(int handler, String name) => getFncItem(handler, name, null);
+IRpcFnc getGetCall(int handler, String name) =>
+    getFncItem(handler, name, RpcFncTypes.getter);
 
-IRpcFnc getSetCall(int handler, String name, dynamic value) => getFncItem(handler, name, RpcFncTypes.setter, [value]);
+IRpcFnc getSetCall(int handler, String name, dynamic value) =>
+    getFncItem(handler, name, RpcFncTypes.setter, [value]);
 
 Future<T> fncCall<T>(int? handler, String name, [List<dynamic>? args]) async {
   final res = await rpc([getFncCall(handler, name, args)]);

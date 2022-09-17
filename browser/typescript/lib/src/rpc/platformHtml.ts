@@ -8,7 +8,7 @@ export class HtmlPlatform implements IPlatform {
 }
 
 export function setSendMessageToFlutter (_sendMessageToFlutter: (item: IStreamMessage<any>) => void) {
-    sendMessageToFlutter = _sendMessageToFlutter;
+    sendMessageToFlutter = _sendMessageToFlutter
 }
 
 let sendMessageToFlutter: (item: IStreamMessage<any>) => void | null

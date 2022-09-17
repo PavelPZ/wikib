@@ -15,7 +15,7 @@ function setPlatform(_platform) {
 function postRpcResultToFlutter(promiseId, result, error) {
     if (!platform)
         throw '!platform';
-    platform.postToFlutter({ streamId: 1 /* promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
+    platform.postToFlutter({ streamId: 1 /* StreamIds.promiseCallback */, value: { rpcId: promiseId, result: result, error: error } });
 }
 function decodeErrorMsg(error) {
     if (error instanceof Error)
@@ -46,10 +46,10 @@ function receivedFromFlutter(rpcCall) {
         rpcCall.fncs.forEach((fnc) => {
             let path = fnc.name.split('.');
             switch (fnc.type) {
-                case 0 /* getter */:
+                case 0 /* RpcFncTypes.getter */:
                     res.push(getFunction(path, 0, null));
                     break;
-                case 1 /* setter */:
+                case 1 /* RpcFncTypes.setter */:
                     let last = path.pop();
                     let obj = getFunction(path, 0, null);
                     obj[last] = fnc.arguments[0];
@@ -81,7 +81,7 @@ console.log = function (message) {
         return;
     if (platform instanceof WebPlatform)
         return;
-    platform.postToFlutter({ streamId: 2 /* consoleLog */, value: message });
+    platform.postToFlutter({ streamId: 2 /* StreamIds.consoleLog */, value: message });
 };
 window.wikib = {
     receivedFromFlutter: receivedFromFlutter
@@ -130,16 +130,16 @@ class WindowsPlatform {
 
 window.wikib.setPlatform = (platformId) => {
     switch (platformId) {
-        case 1 /* web */:
+        case 1 /* Platforms.web */:
             setPlatform(new WebPlatform());
             break;
-        case 3 /* windows */:
+        case 3 /* Platforms.windows */:
             setPlatform(new WindowsPlatform());
             break;
-        case 4 /* html */:
+        case 4 /* Platforms.html */:
             setPlatform(new HtmlPlatform());
             break;
-        case 2 /* mobile */:
+        case 2 /* Platforms.mobile */:
             setPlatform(new MobilePlatform());
             break;
     }
@@ -161,22 +161,22 @@ class Player {
             listeners[type] = listener;
             return listener;
         };
-        addListenner("durationchange", () => onStream(8 /* playDurationchange */, audio.duration));
-        addListenner("ended", () => onStream(7 /* playState */, 3 /* ended */));
-        addListenner("pause", () => onStream(7 /* playState */, 2 /* pause */));
-        addListenner("play", () => onStream(7 /* playState */, 1 /* play */));
+        addListenner("durationchange", () => onStream(8 /* StreamIds.playDurationchange */, audio.duration));
+        addListenner("ended", () => onStream(7 /* StreamIds.playState */, 3 /* PlayState.ended */));
+        addListenner("pause", () => onStream(7 /* StreamIds.playState */, 2 /* PlayState.pause */));
+        addListenner("play", () => onStream(7 /* StreamIds.playState */, 1 /* PlayState.play */));
         // https://developer.mozilla.org/en-US/docs/Web/API/MediaError/code#media_error_code_constants
         // audio.error?.code: MEDIA_ERR_ABORTED, MEDIA_ERR_NETWORK, MEDIA_ERR_DECOD, MEDIA_ERR_SRC_NOT_SUPPORTED            
-        addListenner("error", () => onStream(6 /* playerError */, audio.error?.code ?? 0));
+        addListenner("error", () => onStream(6 /* StreamIds.playerError */, audio.error?.code ?? 0));
         // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
         // readyState == HAVE_META_DATA
-        addListenner("loadedmetadata", () => onStream(5 /* playerReadyState */, 1 /* HAVE_METADATA */));
+        addListenner("loadedmetadata", () => onStream(5 /* StreamIds.playerReadyState */, 1 /* ReadyStates.HAVE_METADATA */));
         // readyState == HAVE_CURRENT_DATA
-        addListenner("loadeddata", () => onStream(5 /* playerReadyState */, 2 /* HAVE_CURRENT_DATA */));
+        addListenner("loadeddata", () => onStream(5 /* StreamIds.playerReadyState */, 2 /* ReadyStates.HAVE_CURRENT_DATA */));
         // readyState == HAVE_FUTURE_DATA
-        addListenner("canplay", () => onStream(5 /* playerReadyState */, 3 /* HAVE_FUTURE_DATA */));
+        addListenner("canplay", () => onStream(5 /* StreamIds.playerReadyState */, 3 /* ReadyStates.HAVE_FUTURE_DATA */));
         // readyState == HAVE_ENOUGH_DATA
-        addListenner("canplaythrough", () => onStream(5 /* playerReadyState */, 4 /* HAVE_ENOUGH_DATA */));
+        addListenner("canplaythrough", () => onStream(5 /* StreamIds.playerReadyState */, 4 /* ReadyStates.HAVE_ENOUGH_DATA */));
         window.wikib[playerName.toString()] = this;
         window.wikib[audioName.toString()] = audio;
         this.dispose = () => {

@@ -26,7 +26,9 @@ class LocalhostServer {
   ///```
   ///The `NSAllowsLocalNetworking` key is available since **iOS 10**.
   Future<void> start() async {
-    if (_started) throw Exception('LocalhostServer already started on http://localhost:$port');
+    if (_started)
+      throw Exception(
+          'LocalhostServer already started on http://localhost:$port');
     _started = true;
 
     final completer = Completer();
@@ -36,10 +38,9 @@ class LocalhostServer {
         server.listen((HttpRequest request) async {
           final path = request.requestedUri.path;
           if (path != '/index.html') return;
-          request.response.headers.contentType = ContentType('text', 'html', charset: 'utf-8');
-          // ignore: unused_local_variable
+          request.response.headers.contentType =
+              ContentType('text', 'html', charset: 'utf-8');
           final html = await rootBundle.loadString('assets/index.html');
-          // ignore: unused_local_variable
           final js = await rootBundle.loadString('assets/media.js');
           final body = html.replaceFirst('{####}', js);
           // final body = debugHTML();
