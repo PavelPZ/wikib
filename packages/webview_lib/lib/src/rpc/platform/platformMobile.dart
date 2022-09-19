@@ -36,14 +36,9 @@ class MobileMediaPlatform extends IMediaPlatform {
   Widget getWebView({required Widget? child}) => MobileWebView(child: child);
 
   @override
-  Future callJavascript(String script) =>
-      _mobileWebViewController == null ? Future.value() : _mobileWebViewController!.evaluateJavascript(source: script);
-
-  // @override
-  // void postToWebView(IRpc rpcCall) {
-  //   final par = jsonEncode(rpcCall.toJson()).replaceAll('\'', '\\\'');
-  //   _mobileWebViewController!.evaluateJavascript(source: 'window.postMessage(JSON.parse("$par"), "*")');
-  // }
+  Future callJavascript(String script) => _mobileWebViewController == null
+      ? Future.value()
+      : _mobileWebViewController!.evaluateJavascript(source: script);
 }
 
 @hcwidget
@@ -76,7 +71,9 @@ Widget mobileWebView(WidgetRef ref, {Widget? child}) {
         // controller.loadFile(assetFilePath: "assets/index.html");
       },
       androidOnPermissionRequest: (controller, origin, resources) async {
-        return PermissionRequestResponse(resources: resources, action: PermissionRequestResponseAction.GRANT);
+        return PermissionRequestResponse(
+            resources: resources,
+            action: PermissionRequestResponseAction.GRANT);
       },
       onConsoleMessage: (controller, consoleMessage) {
         print(consoleMessage);

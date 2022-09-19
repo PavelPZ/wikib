@@ -9,7 +9,7 @@ export function setPlatform(_platform: IPlatform) {
 
 export function postRpcResultToFlutter<TResult>(promiseId: number, result: TResult | null, error: string | null) {
     if (!platform) throw '!platform';
-    platform.postToFlutter<IRpcResult<TResult>>({ streamId: StreamIds.promiseCallback, value: { rpcId: promiseId, result: result, error: error } })
+    platform.postToFlutter<IRpcResult<TResult>>({ streamId: StreamIds.rpcCallback, value: { rpcId: promiseId, result: result, error: error } })
 }
 
 export function decodeErrorMsg(error: unknown) {

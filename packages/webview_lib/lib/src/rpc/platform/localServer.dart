@@ -36,10 +36,10 @@ class LocalhostServer {
     runZonedGuarded(() {
       HttpServer.bind('127.0.0.1', port).then((server) {
         server.listen((HttpRequest request) async {
+          // https://github.com/mitsuoka/mime_type/blob/master/lib/mime_type.dart
           final path = request.requestedUri.path;
           if (path != '/index.html') return;
-          request.response.headers.contentType =
-              ContentType('text', 'html', charset: 'utf-8');
+          request.response.headers.contentType = ContentType.html;
           final html = await rootBundle.loadString('assets/index.html');
           final js = await rootBundle.loadString('assets/media.js');
           final body = html.replaceFirst('{####}', js);

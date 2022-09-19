@@ -19,7 +19,7 @@ let lastPromiseIdx = 1;
 
 export function receiveFromWebView(msg: IStreamMessage<any>) {
     switch (msg.streamId) {
-        case StreamIds.promiseCallback:
+        case StreamIds.rpcCallback:
             rpcCallback(msg)
             break
         case StreamIds.consoleLog:

@@ -12,7 +12,7 @@ Future<List<dynamic>> rpc(List<IRpcFnc> calls) {
   return comp.future;
 }
 
-void rpcCallback(IRpcResult rpcResult) {
+void _rpcCallback(IRpcResult rpcResult) {
   print('flutter rpc Callback (rpcId=${rpcResult.rpcId})');
   final comp = promises.remove(rpcResult.rpcId);
   if (comp == null) throw Exception('not found');
@@ -34,8 +34,8 @@ void receiveFromWebView(IStreamMessage msg) {
     case StreamIds.consoleLog:
       print(msg.value);
       break;
-    case StreamIds.promiseCallback:
-      rpcCallback(IRpcResult.fromJson(msg.value as Map<String, dynamic>));
+    case StreamIds.rpcCallback:
+      _rpcCallback(IRpcResult.fromJson(msg.value as Map<String, dynamic>));
       break;
     default:
       handlerCallback(msg);

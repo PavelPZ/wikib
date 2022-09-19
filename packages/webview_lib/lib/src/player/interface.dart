@@ -1,3 +1,5 @@
+//*** see \wikib\browser\typescript\lib\src\player\interface.ts */
+
 class PlayState {
   static int none = 0;
   static int play = 1;
@@ -5,7 +7,7 @@ class PlayState {
   static int ended = 3;
 }
 
-// https://developer.mozilla.org/en-US/docs/Web/API/MediaError/code#media_error_code_constants
+// https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
 class ReadyStates {
   static int HAVE_NOTHING = 0;
   static int HAVE_METADATA = 1;

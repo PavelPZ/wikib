@@ -18,7 +18,7 @@ class Platforms {
 
 class StreamIds {
   static const none = 0;
-  static const promiseCallback = 1;
+  static const rpcCallback = 1;
   static const consoleLog = 2;
   static const playerReadyState = 5;
   static const playerError = 6;
@@ -29,12 +29,14 @@ class StreamIds {
 
 @JsonSerializable(explicitToJson: true)
 class IStreamMessage {
-  IStreamMessage({required this.streamId, required this.handlerId, required this.value});
+  IStreamMessage(
+      {required this.streamId, required this.handlerId, required this.value});
   final int streamId;
   final int? handlerId;
   final dynamic value;
 
-  factory IStreamMessage.fromJson(Map<String, dynamic> json) => _$IStreamMessageFromJson(json);
+  factory IStreamMessage.fromJson(Map<String, dynamic> json) =>
+      _$IStreamMessageFromJson(json);
   Map<String, dynamic> toJson() => _$IStreamMessageToJson(this);
 }
 
@@ -45,7 +47,8 @@ class IRpcResult {
   final dynamic result;
   final String? error;
 
-  factory IRpcResult.fromJson(Map<String, dynamic> json) => _$IRpcResultFromJson(json);
+  factory IRpcResult.fromJson(Map<String, dynamic> json) =>
+      _$IRpcResultFromJson(json);
   Map<String, dynamic> toJson() => _$IRpcResultToJson(this);
 }
 
@@ -61,7 +64,8 @@ class IRpcFnc {
   final int? type;
   final List<dynamic> arguments;
 
-  factory IRpcFnc.fromJson(Map<String, dynamic> json) => _$IRpcFncFromJson(json);
+  factory IRpcFnc.fromJson(Map<String, dynamic> json) =>
+      _$IRpcFncFromJson(json);
   Map<String, dynamic> toJson() => _$IRpcFncToJson(this);
 }
 
@@ -77,11 +81,12 @@ class IRpc {
 
 abstract class IMediaPlatform {
   Future appInit() async {}
-  int get actualPlatform => Platforms.web;
+  int get actualPlatform; // => Platforms.web;
   Widget getWebView({required Widget? child});
   Future callJavascript(String script);
   void postToWebView(IRpc rpcCall) {
-    final script = '${jsonEncode(rpcCall.toJson()).replaceAll('\\', '\\\\').replaceAll("'", "\'")}';
+    final script =
+        '${jsonEncode(rpcCall.toJson()).replaceAll('\\', '\\\\').replaceAll("'", "\'")}';
     callJavascript('window.wikib.receivedFromFlutter ($script)');
   }
 }

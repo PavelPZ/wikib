@@ -1,3 +1,6 @@
+// CODECS: https://developer.mozilla.org/en-US/docs/Web/Media/Formats/WebRTC_codecs
+// ****** see \wikib\packages\webview_lib\lib\src\player\interface.dart
+
 export const enum PlayState {
     none = 0, play = 1, pause = 2, ended = 3,
 }

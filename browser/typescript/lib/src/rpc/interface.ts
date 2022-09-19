@@ -4,7 +4,7 @@ export const enum Platforms {
 
 export const enum StreamIds {
     none = 0,
-    promiseCallback = 1, consoleLog = 2,
+    rpcCallback = 1, consoleLog = 2,
     playerReadyState = 5, playerError = 6, playState = 7, playDurationchange = 8,
 }
 

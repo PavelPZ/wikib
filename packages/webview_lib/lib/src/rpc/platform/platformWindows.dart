@@ -17,13 +17,16 @@ class WindowsMediaPlatform extends IMediaPlatform {
     await localhostServer.start();
     _windowsWebViewController = WebviewController();
     _windowsWebViewController!.webMessage.listen((event) {
-      receiveFromWebView(IStreamMessage.fromJson(event as Map<String, dynamic>));
+      receiveFromWebView(
+          IStreamMessage.fromJson(event as Map<String, dynamic>));
     });
     await _windowsWebViewController!.initialize();
     await _windowsWebViewController!.loadUrl(localhostServerUrl);
     final completer = Completer();
-    final unlisten = _windowsWebViewController!.loadingState.listen((loadingState) {
-      if (loadingState == LoadingState.navigationCompleted) completer.complete();
+    final unlisten =
+        _windowsWebViewController!.loadingState.listen((loadingState) {
+      if (loadingState == LoadingState.navigationCompleted)
+        completer.complete();
     });
     await completer.future;
     await onDocumentLoaded();
@@ -34,12 +37,14 @@ class WindowsMediaPlatform extends IMediaPlatform {
   final actualPlatform = Platforms.windows;
 
   @override
-  Widget getWebView({required Widget? child}) => _getWebViewDebug(child: child ?? SizedBox());
+  Widget getWebView({required Widget? child}) =>
+      _getWebViewDebug(child: child ?? SizedBox());
 
   // ignore: unused_element
   Widget _getWebViewDebug({required Widget child}) => Webview(
         _windowsWebViewController!,
-        permissionRequested: (url, kind, isUserInitiated) => Future.value(WebviewPermissionDecision.allow),
+        permissionRequested: (url, kind, isUserInitiated) =>
+            Future.value(WebviewPermissionDecision.allow),
       );
 
   // ignore: unused_element
@@ -49,19 +54,14 @@ class WindowsMediaPlatform extends IMediaPlatform {
           height: 0,
           child: Webview(
             _windowsWebViewController!,
-            permissionRequested: (url, kind, isUserInitiated) => Future.value(WebviewPermissionDecision.allow),
+            permissionRequested: (url, kind, isUserInitiated) =>
+                Future.value(WebviewPermissionDecision.allow),
           ),
         ),
         SizedBox.expand(child: child),
       ]);
 
   @override
-  Future callJavascript(String script) => _windowsWebViewController!.executeScript(script);
-
-  // @override
-  // void postToWebView(IRpc rpcCall) {
-  //   final msg = jsonEncode(rpcCall.toJson());
-  //   print(msg);
-  //   _windowsWebViewController!.postWebMessage(msg);
-  // }
+  Future callJavascript(String script) =>
+      _windowsWebViewController!.executeScript(script);
 }

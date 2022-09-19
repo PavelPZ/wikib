@@ -26,7 +26,7 @@ export class Player {
         // audio.error?.code: MEDIA_ERR_ABORTED, MEDIA_ERR_NETWORK, MEDIA_ERR_DECOD, MEDIA_ERR_SRC_NOT_SUPPORTED            
         addListenner("error", () => onStream(StreamIds.playerError, audio.error?.code ?? 0))
         // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
-        // readyState == HAVE_META_DATA
+        // readyState == HAVE_METADATA
         addListenner("loadedmetadata", () => onStream(StreamIds.playerReadyState, ReadyStates.HAVE_METADATA))
         // readyState == HAVE_CURRENT_DATA
         addListenner("loadeddata", () => onStream(StreamIds.playerReadyState, ReadyStates.HAVE_CURRENT_DATA))
