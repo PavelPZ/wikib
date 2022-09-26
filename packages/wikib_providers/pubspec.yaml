@@ -17,7 +17,7 @@ dependencies:
     path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
   rewise_storage:
     path: ../rewise_storage
-  riverpod: 2.0.0-dev.8
+  riverpod: 2.0.0-dev.9
   utils:
     path: ../utils 
 
