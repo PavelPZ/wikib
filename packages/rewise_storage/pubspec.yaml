@@ -18,7 +18,7 @@ dependencies:
   protobuf:
   protobuf_for_dart:
     path: ../../../wikibulary/shared/protobufs/protobuf_for_dart
-  riverpod: 2.0.0-dev.9
+  riverpod: 2.0.2
   utils:
     path: ../utils 
 

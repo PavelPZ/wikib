@@ -12,7 +12,7 @@ dependencies:
   flutter_hooks:
   freezed_annotation: 
   functional_widget_annotation:
-  hooks_riverpod: 2.0.0-dev.9
+  hooks_riverpod: 2.0.2
   just_audio:
   record:
   # just_audio_libwinmedia:
